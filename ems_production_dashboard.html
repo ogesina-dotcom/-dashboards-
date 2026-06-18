@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMS Mining — Fleet Rebuild Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0B1F3A;color:#1A1A2E;min-height:100vh}
+
+/* ── Header ── */
+.header{background:#0B1F3A;padding:14px 28px;border-bottom:2px solid #F0B429;display:flex;justify-content:space-between;align-items:center}
+.hdr-logo{font-size:10px;color:#6B7FA8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.hdr-title{font-size:21px;font-weight:800;color:#FFF}
+.hdr-sub{font-size:11px;color:#6B7FA8;margin-top:2px}
+.hdr-badge{background:#C0392B;color:#FFF;font-size:11px;font-weight:700;padding:8px 16px;border-radius:7px;text-align:center;line-height:1.4}
+.hdr-badge small{display:block;font-size:9px;font-weight:400;opacity:.85}
+
+/* ── SARS Banner ── */
+.sars-banner{background:#2C0900;border-bottom:1px solid #5C1A00;padding:9px 28px;display:flex;align-items:center;gap:14px}
+.sars-dot{width:9px;height:9px;border-radius:50%;background:#E74C3C;flex-shrink:0;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.sars-text{font-size:12px;color:#FFCDB2;flex:1;line-height:1.45}
+.sars-text strong{color:#FF7F5C;font-size:13px}
+.sars-btn{background:#C0392B;color:#FFF;font-size:10px;font-weight:700;padding:5px 14px;border-radius:5px;white-space:nowrap;cursor:pointer}
+
+/* ── Nav ── */
+.nav{background:#081830;border-bottom:1px solid #162C4A;display:flex;padding:0 24px;gap:2px}
+.nav-item{padding:12px 20px;font-size:13px;font-weight:600;color:#6B7FA8;cursor:pointer;border-bottom:3px solid transparent;transition:.18s;user-select:none}
+.nav-item:hover{color:#FFF}
+.nav-item.active{color:#F0B429;border-bottom-color:#F0B429}
+
+/* ── Content area ── */
+.content{padding:24px 28px;background:#EEF2F8;min-height:calc(100vh - 132px)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Cards ── */
+.card{background:#FFF;border-radius:10px;padding:18px 22px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.c-label{font-size:10px;font-weight:700;color:#9AABBD;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.c-val{font-size:26px;font-weight:800;color:#0B1F3A}
+.c-sub{font-size:11px;color:#9AABBD;margin-top:5px;line-height:1.4}
+
+/* ── Grids ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+
+/* ── Section titles ── */
+.sec{margin-bottom:24px}
+.sec-title{font-size:13px;font-weight:700;color:#0B1F3A;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:#D4DCE8}
+
+/* ── Progress bars ── */
+.pb{height:8px;background:#E6EBF3;border-radius:100px;overflow:hidden;margin-top:6px}
+.pb-fill{height:100%;border-radius:100px}
+.f-green{background:#27AE60}
+.f-amber{background:#E8A838}
+.f-red{background:#E74C3C}
+.f-navy{background:#1A3A5C}
+.f-blue{background:#2980B9}
+
+/* ── Color helpers ── */
+.green{color:#1D8A4A}.amber{color:#C57D08}.red{color:#C0392B}.grey{color:#9AABBD}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700}
+.b-green{background:#EAFAF1;color:#1A7A42}
+.b-amber{background:#FEF9E7;color:#A87000}
+.b-red{background:#FDEDEC;color:#C0392B}
+.b-grey{background:#EEF2F8;color:#8899BB}
+.b-blue{background:#EBF5FB;color:#1A5276}
+
+/* ── Rig cards (active) ── */
+.rig-card{background:#FFF;border-radius:10px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.07);border-top:4px solid #D4DCE8}
+.rig-card.r-active{border-top-color:#27AE60}
+.rig-card.r-warn{border-top-color:#E8A838}
+.rig-hdr{display:flex;justify-content:space-between;align-items:flex-start}
+.rig-id{font-size:18px;font-weight:800;color:#0B1F3A}
+.rig-meta{font-size:11px;color:#9AABBD;margin-top:3px;line-height:1.5}
+.rig-pct{font-size:22px;font-weight:800}
+.rig-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:5px;margin-right:4px}
+.tag-deploy{background:#EAFAF1;color:#1A7A42}
+.tag-warn{background:#FEF9E7;color:#A87000}
+.tag-backlog{background:#FDEDEC;color:#C0392B}
+.tag-contract{background:#EBF5FB;color:#1A5276}
+
+/* ── Phase bars ── */
+.phases{margin-top:12px}
+.phase-lbls{display:flex;gap:3px;margin-bottom:3px}
+.phase-lbl{flex:1;font-size:8px;color:#B0BBC8;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phase-bars-row{display:flex;gap:3px}
+.phase-b{flex:1;height:7px;background:#E6EBF3;border-radius:2px;overflow:hidden}
+.phase-pf{height:100%}
+.ph0{background:#7986CB}
+.ph1{background:#42A5F5}
+.ph2{background:#26A69A}
+.ph3{background:#66BB6A}
+.ph4{background:#FFA726}
+.ph5{background:#EF5350}
+.phase-pcts{display:flex;gap:3px;margin-top:4px}
+.phase-pct{flex:1;font-size:8px;color:#9AABBD;text-align:center}
+
+/* ── Planned rig mini cards ── */
+.planned-card{background:#F7F9FC;border:1px solid #D8E2EF;border-radius:8px;padding:12px;text-align:center;opacity:.7}
+.planned-id{font-size:14px;font-weight:800;color:#4A5568}
+.planned-lbl{font-size:10px;color:#9AABBD;margin-top:3px}
+
+/* ── Gantt ── */
+.gantt-wrap{padding:8px 0 4px}
+.gantt-scale-row{position:relative;height:20px;margin-bottom:16px;border-bottom:1px solid #D4DCE8}
+.gantt-tick{position:absolute;font-size:9px;color:#9AABBD;transform:translateX(-50%)}
+.gantt-today-line{position:absolute;top:-4px;bottom:-200px;width:2px;background:#E74C3C;z-index:3;pointer-events:none}
+.gantt-today-line::before{content:'Jun 12';position:absolute;top:-14px;left:4px;font-size:8px;color:#E74C3C;font-weight:700;white-space:nowrap}
+.gantt-row{display:flex;align-items:center;height:34px;margin-bottom:8px;position:relative}
+.gantt-lbl{width:56px;font-size:12px;font-weight:700;color:#0B1F3A;flex-shrink:0}
+.gantt-area{flex:1;position:relative;height:26px}
+.gantt-bar{position:absolute;top:2px;height:22px;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:#FFF;overflow:hidden;white-space:nowrap}
+.gb-past{background:linear-gradient(90deg,#1A6B40,#27AE60)}
+.gb-remain{background:linear-gradient(90deg,#2471A3,#3498DB)}
+.gb-remain-warn{background:linear-gradient(90deg,#A87000,#E8A838);color:#0B1F3A}
+.gantt-legend{display:flex;gap:20px;font-size:10px;color:#9AABBD;padding:6px 0 0 56px}
+.gantt-legend span{display:flex;align-items:center;gap:5px}
+.gl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── Budget bars ── */
+.bb-row{margin-bottom:14px}
+.bb-hdr{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.bb-id{font-weight:700;color:#0B1F3A}
+.bb-meta{color:#9AABBD}
+
+/* ── Table ── */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#F2F5FA;color:#9AABBD;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:10px 14px;text-align:left;border-bottom:2px solid #E2E8F2}
+td{padding:10px 14px;border-bottom:1px solid #F2F5FA;color:#0B1F3A;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F8FAFD}
+
+/* ── Placeholder / Future Data ── */
+.placeholder{background:#FDFAF2;border:2px dashed #E8A838;border-radius:10px;padding:20px 22px;text-align:center}
+.ph-icon{font-size:28px;margin-bottom:8px}
+.ph-title{font-size:13px;font-weight:700;color:#A07800;margin-bottom:6px}
+.ph-desc{font-size:11px;color:#8B6A14;line-height:1.6}
+.ph-list{list-style:none;text-align:left;margin-top:10px;font-size:11px;color:#8B6A14}
+.ph-list li{padding:4px 0;border-bottom:1px dashed #E8A83855;display:flex;gap:6px}
+.ph-list li::before{content:"○";color:#E8A838;font-size:9px;flex-shrink:0;padding-top:1px}
+
+/* ── Risk cards ── */
+.risk-card{border-radius:9px;padding:14px 18px;margin-bottom:12px}
+.risk-crit{background:#FDEDEC;border-left:4px solid #E74C3C}
+.risk-high{background:#FEF9E7;border-left:4px solid #E8A838}
+.risk-ok{background:#EAFAF1;border-left:4px solid #27AE60}
+.risk-title{font-size:13px;font-weight:700;margin-bottom:5px}
+.risk-desc{font-size:12px;line-height:1.55;color:#555}
+.risk-action{font-size:11px;font-weight:700;margin-top:7px;color:#333}
+
+/* ── Backlog rows ── */
+.backlog-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-left:3px solid #E74C3C;background:#FEF6F6;border-radius:0 7px 7px 0;margin-bottom:8px}
+.backlog-part{font-size:12px;font-weight:700;color:#C0392B;flex:1}
+.backlog-detail{font-size:10px;color:#999}
+
+/* ── Parts table ── */
+.parts-note{font-size:11px;color:#9AABBD;margin-top:8px;line-height:1.5;padding:8px 12px;background:#F7F9FC;border-radius:6px}
+
+/* ── Utility ── */
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mt24{margin-top:24px}
+.text-muted{color:#9AABBD}
+.divider{height:1px;background:#EEF2F8;margin:12px 0}
+
+/* ── Auth overlay ── */
+#auth-overlay{position:fixed;inset:0;background:#0B1F3A;z-index:9999;display:flex;align-items:center;justify-content:center}
+.auth-box{background:#FFF;border-radius:14px;padding:38px 44px;width:320px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.auth-logo{font-size:10px;color:#6B7FA8;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.auth-title{font-size:18px;font-weight:800;color:#0B1F3A;margin-bottom:6px}
+.auth-sub{font-size:11px;color:#9AABBD;margin-bottom:24px}
+.auth-field{width:100%;border:1.5px solid #D4DCE8;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:12px;outline:none;color:#0B1F3A;transition:border-color .2s;box-sizing:border-box}
+.auth-field:focus{border-color:#F0B429}
+.auth-btn{width:100%;background:#F0B429;color:#0B1F3A;border:none;border-radius:7px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;transition:background .2s}
+.auth-btn:hover{background:#D4A020}
+.auth-err{color:#C0392B;font-size:11px;margin-top:10px;display:none}
+.auth-divider{width:40px;height:3px;background:#F0B429;border-radius:2px;margin:0 auto 20px}
+
+/* ── Cross-tab links ── */
+.goto-link{cursor:pointer;text-decoration:underline dotted currentColor;transition:opacity .15s}
+.goto-link:hover{opacity:.7}
+.goto-tag{cursor:pointer;transition:opacity .15s}
+.goto-tag:hover{opacity:.75}
+@keyframes hl-flash{0%,100%{outline:none}25%,75%{outline:3px solid #F0B429;outline-offset:3px;border-radius:6px}}
+.hl{animation:hl-flash 1.4s ease}
+</style>
+</head>
+
+<body>
+
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">EMS Mining</div>
+    <div class="auth-title">Fleet Rebuild Dashboard</div>
+    <div class="auth-divider"></div>
+    <input class="auth-field" id="auth-user" type="text" placeholder="Username" autocomplete="username">
+    <input class="auth-field" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="auth-btn" onclick="doLogin()">Login</button>
+    <div class="auth-err" id="auth-err">Incorrect username or password</div>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div>
+    <div class="hdr-logo">EMS Mining · Production Division</div>
+    <div class="hdr-title">Fleet Rebuild Dashboard</div>
+    <div class="hdr-sub">Sandvik D25KS · 15 units · Snapshot: 12 June 2026</div>
+  </div>
+  <div class="hdr-badge">SARS RISK ACTIVE<small>Account Freeze — See Banner</small></div>
+</div>
+
+<!-- ═══ SARS RISK BANNER ═══ -->
+<div class="sars-banner">
+  <div class="sars-dot"></div>
+  <div class="sars-text">
+    <strong>CRITICAL — SARS Account Freeze:</strong>
+    Tax compliance account blocked &nbsp;·&nbsp; Invoice processing at risk &nbsp;·&nbsp; Supplier payments for rebuild parts may be delayed &nbsp;·&nbsp; Threatens deployment timeline for all 4 active rigs
+  </div>
+  <div class="sars-btn" onclick="goTo('blockers','b-sars')">Escalate to MD Now &rarr;</div>
+</div>
+
+<!-- ═══ NAV TABS ═══ -->
+<div class="nav">
+  <div class="nav-item active" onclick="switchTab('overview',this)">Fleet Overview</div>
+  <div class="nav-item" onclick="switchTab('progress',this)">Rebuild Progress</div>
+  <div class="nav-item" onclick="switchTab('budget',this)">Budget & Spend</div>
+  <div class="nav-item" onclick="switchTab('blockers',this)">Blockers & Future Data</div>
+</div>
+
+<!-- ═══ CONTENT ═══ -->
+<div class="content">
+
+<!-- ─────────────────────────────────────────
+     TAB 1 — FLEET OVERVIEW
+───────────────────────────────────────── -->
+<div id="tab-overview" class="tab-panel active">
+
+  <!-- KPI cards -->
+  <div class="sec">
+    <div class="g4">
+      <div class="card">
+        <div class="c-label">Fleet Size</div>
+        <div class="c-val">15</div>
+        <div class="c-sub">Sandvik D25KS drill rigs &nbsp;·&nbsp; FY2027 rebuild program</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Active Rebuilds</div>
+        <div class="c-val green">4</div>
+        <div class="c-sub">DK004 &nbsp;·&nbsp; DK007 &nbsp;·&nbsp; DK013 &nbsp;·&nbsp; DK014</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Fleet Budget Used</div>
+        <div class="c-val amber">R10.4M</div>
+        <div class="c-sub">of R90M total (11.5%) &nbsp;·&nbsp; R79.6M remaining</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Next Deployment</div>
+        <div class="c-val" style="font-size:17px;color:#27AE60;margin-top:4px">DK013 &rarr; ~Jun 18</div>
+        <div class="c-sub">6 days remaining &nbsp;·&nbsp; 92% complete &nbsp;·&nbsp; Mota-Engil Surface Drilling</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deployment Gantt -->
+  <div class="sec">
+    <div class="sec-title">Deployment Timeline — Active Rigs (Apr – Aug 2026)</div>
+    <div class="card">
+      <div class="gantt-wrap">
+
+        <!-- Scale row -->
+        <div class="gantt-scale-row">
+          <span class="gantt-tick" style="left:0%">Apr</span>
+          <span class="gantt-tick" style="left:22.1%">May</span>
+          <span class="gantt-tick" style="left:44.9%">Jun</span>
+          <span class="gantt-tick" style="left:66.9%">Jul</span>
+          <span class="gantt-tick" style="left:89.7%">Aug</span>
+        </div>
+
+        <!-- Today line: Jun 12 = day 72 of Apr1–Aug15 (136 days) = 52.9%.
+             Bar area starts at left:56px.  Line sits at 52.9% of bar area. -->
+        <div id="gantt-today" style="position:relative">
+
+          <!-- DK013: started Apr 8 (5.1%), today at 52.9%, ends Jun 18 (57.4%) -->
+          <div class="gantt-row">
+            <div class="gantt-lbl">DK013</div>
+            <div class="gantt-area" id="ga013">
+              <div class="gantt-bar gb-past"  style="left:5.1%;width:47.8%">Apr 8 – Jun 12</div>
+              <div class="gantt-bar gb-remain" style="left:52.9%;width:4.5%">&rarr; Jun 18</div>
+            </div>
+          </div>
+
+          <!-- DK007: started Apr 13 (8.8%), ends Jun 23 (61%) -->
+          <div class="gantt-row">
+            <div class="gantt-lbl">DK007</div>
+            <div class="gantt-area">
+              <div class="gantt-bar gb-past"   style="left:8.8%;width:44.1%">Apr 13 – Jun 12</div>
+              <div class="gantt-bar gb-remain"  style="left:52.9%;width:8.1%">&rarr; Jun 23</div>
+            </div>
+          </div>
+
+          <!-- DK014: started Apr 30 (21.3%), ends Jul 10 (73.5%) -->
+          <div class="gantt-row">
+            <div class="gantt-lbl">DK014</div>
+            <div class="gantt-area">
+              <div class="gantt-bar gb-past"   style="left:21.3%;width:31.6%">Apr 30 – Jun 12</div>
+              <div class="gantt-bar gb-remain"  style="left:52.9%;width:20.6%">&rarr; Jul 10</div>
+            </div>
+          </div>
+
+          <!-- DK004: started May 10 (28.7%), ends Jul 20 (80.9%) — data flag -->
+          <div class="gantt-row">
+            <div class="gantt-lbl">DK004</div>
+            <div class="gantt-area">
+              <div class="gantt-bar gb-past"        style="left:28.7%;width:24.2%">May 10 – Jun 12</div>
+              <div class="gantt-bar gb-remain-warn" style="left:52.9%;width:28%">&rarr; ~Jul 20 &nbsp;&#9888;</div>
+            </div>
+          </div>
+
+          <!-- Overlay today line across all rows -->
+          <div style="position:absolute;top:-8px;bottom:0;left:calc(56px + 52.9% * (100% - 56px) / 100%);width:2px;background:#E74C3C;z-index:5;pointer-events:none">
+            <div style="position:absolute;top:-15px;left:4px;font-size:8px;color:#E74C3C;font-weight:700;white-space:nowrap">&#9660; Today Jun 12</div>
+          </div>
+
+        </div>
+
+        <div class="gantt-legend">
+          <span><span class="gl-dot" style="background:#27AE60"></span> Completed</span>
+          <span><span class="gl-dot" style="background:#3498DB"></span> Remaining (on track)</span>
+          <span><span class="gl-dot" style="background:#E8A838"></span> Remaining (data flag)</span>
+          <span><span class="gl-dot" style="background:#E74C3C;width:2px;border-radius:0"></span> Today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fleet status table -->
+  <div class="sec">
+    <div class="sec-title">Full Fleet Status — All 15 Units</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Rig</th>
+            <th>Status</th>
+            <th style="min-width:160px">Progress (641h total)</th>
+            <th>Hours Used</th>
+            <th>Days Rem.</th>
+            <th>Est. Completion</th>
+            <th>Contract</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DK004</strong></td>
+            <td><span class="badge b-amber">Active &#9888;</span></td>
+            <td>
+              <div class="flex-between" style="font-size:11px;margin-bottom:4px"><span class="amber"><strong>46%</strong></span><span class="text-muted">293 / 641h</span></div>
+              <div class="pb"><div class="pb-fill f-amber" style="width:46%"></div></div>
+            </td>
+            <td>293h &nbsp;·&nbsp; 33 days</td>
+            <td>38</td>
+            <td>~Jul 20</td>
+            <td><span class="badge b-grey">TBD</span></td>
+            <td style="font-size:10px;color:#A87000" class="goto-link" onclick="goTo('blockers','b-dk004')">&#9888; Budget data under review &rarr;</td>
+          </tr>
+          <tr>
+            <td><strong>DK007</strong></td>
+            <td><span class="badge b-green">Active</span></td>
+            <td>
+              <div class="flex-between" style="font-size:11px;margin-bottom:4px"><span class="green"><strong>85%</strong></span><span class="text-muted">536 / 641h</span></div>
+              <div class="pb"><div class="pb-fill f-green" style="width:85%"></div></div>
+            </td>
+            <td>536h &nbsp;·&nbsp; 60 days</td>
+            <td>11</td>
+            <td>~Jun 23</td>
+            <td><span class="badge b-grey">TBD</span></td>
+            <td style="font-size:10px;color:#C0392B" class="goto-link" onclick="goTo('blockers','b-dk007-parts')">&#128308; Parts backlog — propshaft, pumps &rarr;</td>
+          </tr>
+          <tr>
+            <td><strong>DK013</strong></td>
+            <td><span class="badge b-green">Active</span></td>
+            <td>
+              <div class="flex-between" style="font-size:11px;margin-bottom:4px"><span class="green"><strong>92%</strong></span><span class="text-muted">589 / 641h</span></div>
+              <div class="pb"><div class="pb-fill f-green" style="width:92%"></div></div>
+            </td>
+            <td>589h &nbsp;·&nbsp; 65 days</td>
+            <td>6</td>
+            <td>~Jun 18</td>
+            <td><span class="badge b-green">Mota-Engil</span></td>
+            <td style="font-size:10px;color:#1A7A42">&#10003; Mota-Engil Surface Drilling</td>
+          </tr>
+          <tr>
+            <td><strong>DK014</strong></td>
+            <td><span class="badge b-green">Active</span></td>
+            <td>
+              <div class="flex-between" style="font-size:11px;margin-bottom:4px"><span class="amber"><strong>61%</strong></span><span class="text-muted">387 / 641h</span></div>
+              <div class="pb"><div class="pb-fill f-amber" style="width:61%"></div></div>
+            </td>
+            <td>387h &nbsp;·&nbsp; 43 days</td>
+            <td>28</td>
+            <td>~Jul 10</td>
+            <td><span class="badge b-grey">TBD</span></td>
+            <td style="font-size:10px" class="text-muted">—</td>
+          </tr>
+          <tr style="background:#F8FAFD">
+            <td><strong>DK003</strong></td>
+            <td><span class="badge b-grey">Planned</span></td>
+            <td><div class="pb"><div class="pb-fill f-navy" style="width:0%"></div></div></td>
+            <td class="text-muted">—</td><td class="text-muted">—</td><td class="text-muted">TBD</td>
+            <td><span class="badge b-grey">TBD</span></td>
+            <td style="font-size:10px" class="text-muted">Awaiting schedule</td>
+          </tr>
+          <tr style="background:#F8FAFD">
+            <td><strong>DK005</strong></td>
+            <td><span class="badge b-grey">Planned</span></td>
+            <td><div class="pb"><div class="pb-fill f-navy" style="width:0%"></div></div></td>
+            <td class="text-muted">—</td><td class="text-muted">—</td><td class="text-muted">TBD</td>
+            <td><span class="badge b-grey">TBD</span></td>
+            <td style="font-size:10px" class="text-muted">Awaiting schedule</td>
+          </tr>
+          <tr>
+            <td colspan="8" style="text-align:center;color:#9AABBD;font-size:11px;font-style:italic;padding:14px;background:#F8FAFD">
+              DK006, DK008, DK009, DK010, DK011, DK012, DK015, DK016, DK017 — 9 additional rigs planned &nbsp;·&nbsp; Rebuild sequence to be confirmed
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /tab-overview -->
+
+
+<!-- ─────────────────────────────────────────
+     TAB 2 — REBUILD PROGRESS
+───────────────────────────────────────── -->
+<div id="tab-progress" class="tab-panel">
+
+  <!-- Active rig cards -->
+  <div class="sec">
+    <div class="sec-title">Active Rebuilds — Phase Breakdown</div>
+    <div class="g2">
+
+      <!-- DK013 -->
+      <div class="rig-card r-active">
+        <div class="rig-hdr">
+          <div>
+            <div class="rig-id">DK013</div>
+            <div class="rig-meta">589 / 641h used &nbsp;·&nbsp; 65 days elapsed &nbsp;·&nbsp; 6 days remaining</div>
+            <span class="rig-tag tag-deploy">&#9654; Deploy ~Jun 18, 2026</span>
+            <span class="rig-tag tag-contract">Mota-Engil Surface Drilling</span>
+          </div>
+          <div class="rig-pct green">92%</div>
+        </div>
+        <div class="pb mt8"><div class="pb-fill f-green" style="width:92%"></div></div>
+        <div class="phases">
+          <div class="phase-lbls">
+            <div class="phase-lbl">Strip &amp; Assess</div>
+            <div class="phase-lbl">Blast &amp; Paint</div>
+            <div class="phase-lbl">Chassis Assy</div>
+            <div class="phase-lbl">Cab Assy</div>
+            <div class="phase-lbl">Mast Assy</div>
+            <div class="phase-lbl">Commission</div>
+          </div>
+          <div class="phase-bars-row">
+            <div class="phase-b"><div class="phase-pf ph0" style="width:91.9%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph1" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph2" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph3" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph4" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph5" style="width:64.6%"></div></div>
+          </div>
+          <div class="phase-pcts">
+            <div class="phase-pct">91.9%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">64.6%</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:11px" class="text-muted">Budget: <strong style="color:#0B1F3A">R5.32M spent</strong> &nbsp;·&nbsp; R675K remaining of R6M</div>
+      </div>
+
+      <!-- DK007 -->
+      <div class="rig-card r-active">
+        <div class="rig-hdr">
+          <div>
+            <div class="rig-id">DK007</div>
+            <div class="rig-meta">536 / 641h used &nbsp;·&nbsp; 60 days elapsed &nbsp;·&nbsp; 11 days remaining</div>
+            <span class="rig-tag tag-deploy">&#9654; Deploy ~Jun 23, 2026</span>
+            <span class="rig-tag tag-backlog goto-tag" onclick="goTo('blockers','b-dk007-parts')">&#128308; Parts Backlog &rarr; See Blockers</span>
+          </div>
+          <div class="rig-pct green">85%</div>
+        </div>
+        <div class="pb mt8"><div class="pb-fill f-green" style="width:85%"></div></div>
+        <div class="phases">
+          <div class="phase-lbls">
+            <div class="phase-lbl">Strip &amp; Assess</div>
+            <div class="phase-lbl">Blast &amp; Paint</div>
+            <div class="phase-lbl">Chassis Assy</div>
+            <div class="phase-lbl">Cab Assy</div>
+            <div class="phase-lbl">Mast Assy</div>
+            <div class="phase-lbl">Commission</div>
+          </div>
+          <div class="phase-bars-row">
+            <div class="phase-b"><div class="phase-pf ph0" style="width:83.7%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph1" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph2" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph3" style="width:97.4%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph4" style="width:97.8%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph5" style="width:34.5%"></div></div>
+          </div>
+          <div class="phase-pcts">
+            <div class="phase-pct">83.7%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">97.4%</div>
+            <div class="phase-pct">97.8%</div>
+            <div class="phase-pct">34.5%</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:11px" class="text-muted">Budget: <strong style="color:#0B1F3A">R4.31M spent</strong> &nbsp;·&nbsp; R1.69M remaining of R6M</div>
+      </div>
+
+      <!-- DK014 -->
+      <div class="rig-card r-active">
+        <div class="rig-hdr">
+          <div>
+            <div class="rig-id">DK014</div>
+            <div class="rig-meta">387 / 641h used &nbsp;·&nbsp; 43 days elapsed &nbsp;·&nbsp; 28 days remaining</div>
+            <span class="rig-tag tag-deploy">&#9654; Deploy ~Jul 10, 2026</span>
+          </div>
+          <div class="rig-pct amber">61%</div>
+        </div>
+        <div class="pb mt8"><div class="pb-fill f-amber" style="width:61%"></div></div>
+        <div class="phases">
+          <div class="phase-lbls">
+            <div class="phase-lbl">Strip &amp; Assess</div>
+            <div class="phase-lbl">Blast &amp; Paint</div>
+            <div class="phase-lbl">Chassis Assy</div>
+            <div class="phase-lbl">Cab Assy</div>
+            <div class="phase-lbl">Mast Assy</div>
+            <div class="phase-lbl">Commission</div>
+          </div>
+          <div class="phase-bars-row">
+            <div class="phase-b"><div class="phase-pf ph0" style="width:60.4%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph1" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph2" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph3" style="width:29.4%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph4" style="width:83.8%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph5" style="width:28.5%"></div></div>
+          </div>
+          <div class="phase-pcts">
+            <div class="phase-pct">60.4%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">29.4%</div>
+            <div class="phase-pct">83.8%</div>
+            <div class="phase-pct">28.5%</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:11px" class="text-muted">Budget: <strong style="color:#0B1F3A">R225K spent</strong> &nbsp;·&nbsp; R5.77M remaining of R6M</div>
+      </div>
+
+      <!-- DK004 -->
+      <div class="rig-card r-warn">
+        <div class="rig-hdr">
+          <div>
+            <div class="rig-id">DK004</div>
+            <div class="rig-meta">293 / 641h used &nbsp;·&nbsp; 33 days elapsed &nbsp;·&nbsp; 38 days remaining</div>
+            <span class="rig-tag tag-warn">&#9654; Deploy ~Jul 20, 2026</span>
+            <span class="rig-tag tag-warn goto-tag" onclick="goTo('blockers','b-dk004')">&#9888; Budget data under review &rarr;</span>
+          </div>
+          <div class="rig-pct amber">46%</div>
+        </div>
+        <div class="pb mt8"><div class="pb-fill f-amber" style="width:46%"></div></div>
+        <div class="phases">
+          <div class="phase-lbls">
+            <div class="phase-lbl">Strip &amp; Assess</div>
+            <div class="phase-lbl">Blast &amp; Paint</div>
+            <div class="phase-lbl">Chassis Assy</div>
+            <div class="phase-lbl">Cab Assy</div>
+            <div class="phase-lbl">Mast Assy</div>
+            <div class="phase-lbl">Commission</div>
+          </div>
+          <div class="phase-bars-row">
+            <div class="phase-b"><div class="phase-pf ph0" style="width:45.7%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph1" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph2" style="width:100%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph3" style="width:23%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph4" style="width:41.8%"></div></div>
+            <div class="phase-b"><div class="phase-pf ph5" style="width:0%"></div></div>
+          </div>
+          <div class="phase-pcts">
+            <div class="phase-pct">45.7%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">100%</div>
+            <div class="phase-pct">23%</div>
+            <div class="phase-pct">41.8%</div>
+            <div class="phase-pct">—</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:11px" class="text-muted">Budget: <strong style="color:#A87000">&#9888; Data under review</strong> &nbsp;·&nbsp; Team confirmed data entry error &nbsp;·&nbsp; ~R525K spent</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase legend -->
+  <div class="sec">
+    <div class="card" style="padding:14px 22px">
+      <div class="c-label" style="margin-bottom:10px">Phase Legend — Rebuild Process (641 hours per rig, team of 3)</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#7986CB"></div><span style="font-size:12px;color:#0B1F3A">Strip &amp; Assess</span></div>
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#42A5F5"></div><span style="font-size:12px;color:#0B1F3A">Blast &amp; Paint</span></div>
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#26A69A"></div><span style="font-size:12px;color:#0B1F3A">Chassis Assembly</span></div>
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#66BB6A"></div><span style="font-size:12px;color:#0B1F3A">Cab Assembly</span></div>
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#FFA726"></div><span style="font-size:12px;color:#0B1F3A">Mast Assembly</span></div>
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:13px;height:13px;border-radius:2px;background:#EF5350"></div><span style="font-size:12px;color:#0B1F3A">Commissioning</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Planned rigs -->
+  <div class="sec">
+    <div class="sec-title">Planned Rigs — 11 units awaiting rebuild schedule</div>
+    <div class="g-auto">
+      <div class="planned-card"><div class="planned-id">DK003</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK005</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK006</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK008</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK009</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK010</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK011</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK012</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK015</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK016</div><div class="planned-lbl">Planned</div></div>
+      <div class="planned-card"><div class="planned-id">DK017</div><div class="planned-lbl">Planned</div></div>
+    </div>
+    <div style="font-size:11px;color:#9AABBD;margin-top:10px;padding:0 4px">
+      Budget R6M per rig &nbsp;·&nbsp; Labour ~R550K per rig (443h, team of 3, R1,241.54/hr) &nbsp;·&nbsp; Financed by investor / loan under FY2027 contracts
+    </div>
+  </div>
+
+</div><!-- /tab-progress -->
+
+
+<!-- ─────────────────────────────────────────
+     TAB 3 — BUDGET & SPEND
+───────────────────────────────────────── -->
+<div id="tab-budget" class="tab-panel">
+
+  <!-- Summary cards -->
+  <div class="sec">
+    <div class="g4">
+      <div class="card">
+        <div class="c-label">Fleet Budget</div>
+        <div class="c-val">R90M</div>
+        <div class="c-sub">15 rigs × R6M &nbsp;·&nbsp; investor / loan financed</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Total Spent</div>
+        <div class="c-val amber">R10.38M</div>
+        <div class="c-sub">11.5% of fleet budget &nbsp;·&nbsp; 4 active rigs</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Remaining</div>
+        <div class="c-val green">R79.62M</div>
+        <div class="c-sub">11 rigs not yet started + active rig tail</div>
+      </div>
+      <div class="card">
+        <div class="c-label">Labour Rate</div>
+        <div class="c-val" style="font-size:18px;margin-top:4px">R1,241.54/hr</div>
+        <div class="c-sub">443h per rig &nbsp;·&nbsp; ~R550K total labour per rig &nbsp;·&nbsp; team of 3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget bars per active rig -->
+  <div class="sec">
+    <div class="sec-title">Budget Utilisation — Active Rigs</div>
+    <div class="card">
+
+      <!-- DK013 -->
+      <div class="bb-row">
+        <div class="bb-hdr">
+          <div class="bb-id">DK013 <span class="badge b-green" style="margin-left:6px">92%</span></div>
+          <div class="bb-meta">R5.32M spent &nbsp;·&nbsp; R675K remaining &nbsp;·&nbsp; R6M budget</div>
+        </div>
+        <div class="pb"><div class="pb-fill f-green" style="width:88.7%"></div></div>
+        <div style="font-size:10px;color:#9AABBD;margin-top:4px">88.7% of rig budget used &nbsp;·&nbsp; Deploys ~Jun 18</div>
+      </div>
+
+      <!-- DK007 -->
+      <div class="bb-row">
+        <div class="bb-hdr">
+          <div class="bb-id">DK007 <span class="badge b-green" style="margin-left:6px">85%</span> <span class="badge b-red goto-tag" style="margin-left:4px" onclick="goTo('blockers','b-dk007-parts')">Parts Backlog &rarr;</span></div>
+          <div class="bb-meta">R4.31M spent &nbsp;·&nbsp; R1.69M remaining &nbsp;·&nbsp; R6M budget</div>
+        </div>
+        <div class="pb"><div class="pb-fill f-blue" style="width:71.8%"></div></div>
+        <div style="font-size:10px;color:#9AABBD;margin-top:4px">71.8% of rig budget used &nbsp;·&nbsp; Deploys ~Jun 23 (parts backlog risk)</div>
+      </div>
+
+      <!-- DK004 -->
+      <div class="bb-row">
+        <div class="bb-hdr">
+          <div class="bb-id">DK004 <span class="badge b-amber" style="margin-left:6px">46% &#9888;</span></div>
+          <div class="bb-meta">~R525K spent (data under review) &nbsp;·&nbsp; R6M budget</div>
+        </div>
+        <div class="pb"><div class="pb-fill f-amber" style="width:8.75%;"></div></div>
+        <div style="font-size:10px;color:#A87000;margin-top:4px" class="goto-link" onclick="goTo('blockers','b-dk004')">&#9888; Budget figure flagged — system reported over-budget but team confirmed data entry error &rarr;</div>
+      </div>
+
+      <!-- DK014 -->
+      <div class="bb-row">
+        <div class="bb-hdr">
+          <div class="bb-id">DK014 <span class="badge b-green" style="margin-left:6px">61%</span></div>
+          <div class="bb-meta">R225K spent &nbsp;·&nbsp; R5.77M remaining &nbsp;·&nbsp; R6M budget</div>
+        </div>
+        <div class="pb"><div class="pb-fill f-green" style="width:3.75%"></div></div>
+        <div style="font-size:10px;color:#9AABBD;margin-top:4px">3.75% of rig budget used &nbsp;·&nbsp; Labour hours at 61% but parts spend low — may reflect phased invoicing</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DK007 parts procurement -->
+  <div class="sec">
+    <div class="sec-title">DK007 — Parts Procurement Snapshot (as of Jun 12, 2026)</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>REQ #</th>
+            <th>Status</th>
+            <th>Amount</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Parts &amp; components (completed POs)</td>
+            <td>Various</td>
+            <td><span class="badge b-green">69% Complete</span></td>
+            <td><strong>R1,532,693</strong></td>
+            <td style="font-size:10px" class="text-muted">69% of POs finalised</td>
+          </tr>
+          <tr>
+            <td>Labour to date</td>
+            <td>—</td>
+            <td><span class="badge b-blue">Tracked</span></td>
+            <td><strong>R313,500</strong></td>
+            <td style="font-size:10px" class="text-muted">Manual timesheets</td>
+          </tr>
+          <tr style="background:#FEF6F6">
+            <td><strong>Propshaft</strong></td>
+            <td>REQ3896</td>
+            <td><span class="badge b-red">Backlog</span></td>
+            <td>R10,862</td>
+            <td style="font-size:10px;color:#C0392B">On order — not received</td>
+          </tr>
+          <tr style="background:#FEF6F6">
+            <td><strong>Fire Suppression System</strong></td>
+            <td>—</td>
+            <td><span class="badge b-red">Backlog</span></td>
+            <td>R300,253</td>
+            <td style="font-size:10px;color:#C0392B">On order — not received</td>
+          </tr>
+          <tr style="background:#FEF6F6">
+            <td><strong>Grease System</strong></td>
+            <td>—</td>
+            <td><span class="badge b-red">Backlog</span></td>
+            <td>R107,525</td>
+            <td style="font-size:10px;color:#C0392B">On order — not received</td>
+          </tr>
+          <tr style="background:#FEF6F6">
+            <td><strong>Aux Pump T7 / Main Pumps</strong></td>
+            <td>—</td>
+            <td><span class="badge b-red">Backlog</span></td>
+            <td>TBD</td>
+            <td style="font-size:10px;color:#C0392B">Supplier lead time critical</td>
+          </tr>
+          <tr style="background:#EAF7EE">
+            <td colspan="3"><strong>Total required to complete DK007</strong></td>
+            <td><strong>R1,846,193</strong></td>
+            <td style="font-size:10px" class="text-muted">Parts + Labour estimate</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="parts-note">
+        Parts flow: Quotes &rarr; REQs &rarr; POs &rarr; Invoices &nbsp;·&nbsp; MD sign-off required &nbsp;·&nbsp; <span class="goto-link" style="color:#C0392B" onclick="goTo('blockers','b-sars')">&#9888; SARS freeze may block supplier invoice processing &rarr;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Future data placeholders for Budget tab -->
+  <div class="sec">
+    <div class="sec-title">Future Data — Pending Integration</div>
+    <div class="g3">
+
+      <div class="placeholder">
+        <div class="ph-icon">&#128104;&#8205;&#128295;</div>
+        <div class="ph-title">Labour Cost Tracking</div>
+        <div class="ph-desc">Per rig, per shift cost not yet integrated. Currently tracked on manual timesheets.</div>
+        <ul class="ph-list">
+          <li>Rate: R1,241.54/hr per person</li>
+          <li>Team of 3 per rig</li>
+          <li>443h total per rig = ~R550K labour</li>
+          <li>195 productive hrs/person/month</li>
+          <li>Source: Eric's rebuild tracker (localStorage)</li>
+        </ul>
+      </div>
+
+      <div class="placeholder">
+        <div class="ph-icon">&#9981;</div>
+        <div class="ph-title">Fuel Tracking</div>
+        <div class="ph-desc">Per shift / per operator / per plant. Daily reconciliation by admin. Some sites use electronic tags (litres + hours).</div>
+        <ul class="ph-list">
+          <li>Unit: litres per shift per machine</li>
+          <li>Source: site daily admin reconciliation</li>
+          <li>Some sites: electronic tag system</li>
+          <li>File: fuel_tracking_YYYYMMDD.xlsx</li>
+        </ul>
+      </div>
+
+      <div class="placeholder">
+        <div class="ph-icon">&#128200;</div>
+        <div class="ph-title">Overheads &amp; Subcontractors</div>
+        <div class="ph-desc">Management fees + workshop rental recovered per project. Not yet split per rig in current reporting.</div>
+        <ul class="ph-list">
+          <li>Management fees (per project)</li>
+          <li>Workshop rental allocation</li>
+          <li>Source: SmartBuilder Contract Costs</li>
+          <li>File: contract_costs_YYYYMM.xlsx</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /tab-budget -->
+
+
+<!-- ─────────────────────────────────────────
+     TAB 4 — BLOCKERS & FUTURE DATA
+───────────────────────────────────────── -->
+<div id="tab-blockers" class="tab-panel">
+
+  <!-- Active blockers -->
+  <div class="sec">
+    <div class="sec-title">Active Blockers</div>
+
+    <div class="risk-card risk-crit" id="b-sars">
+      <div class="risk-title red">&#128308; SARS Account Freeze — CRITICAL</div>
+      <div class="risk-desc">
+        Tax compliance account is blocked. Invoice processing may be prevented, which directly threatens the ability to receive supplier parts for active rebuilds. DK007 is most exposed — 3 critical items on backlog with supplier invoices pending.
+      </div>
+      <div class="risk-action red">ACTION: MD to resolve SARS immediately. Until resolved, negotiate supplier credit extension. Do not allow rebuild to stall on parts.</div>
+    </div>
+
+    <div class="risk-card risk-high" id="b-dk007" style="margin-top:12px">
+      <div class="risk-title amber">&#9888; DK007 Parts Backlog — HIGH</div>
+      <div class="risk-desc">
+        3 critical items not yet received: <strong>Propshaft</strong> (REQ3896, R10,862), <strong>Fire Suppression System</strong> (R300,253), <strong>Grease System</strong> (R107,525). Additionally Aux Pump T7 and Main Pumps on backlog. Machine is 85% complete and due to deploy ~Jun 23 — 11 days away. Backlog threatens commissioning completion.
+      </div>
+      <div class="risk-action amber">ACTION: Chase all outstanding POs daily. Confirm supplier ETA for each item. Flag to site manager if any item ETAs extend past Jun 20.</div>
+    </div>
+
+    <div class="risk-card risk-high" id="b-contracts" style="margin-top:12px">
+      <div class="risk-title amber">&#9888; Contracts Not Confirmed — DK004, DK007, DK014</div>
+      <div class="risk-desc">
+        Only DK013 has a confirmed contract. DK004 (Jul 20), DK007 (Jun 23), DK014 (Jul 10) are completing rebuild with no confirmed contract destination. If contracts are cancelled or delayed, rebuilt rigs generate no revenue while rebuild loan payments continue.
+      </div>
+      <div class="risk-action amber">ACTION: MD to confirm contract status for each rig before deployment. Target: all 4 confirmed by Jun 20.</div>
+    </div>
+
+    <div class="risk-card risk-high" id="b-dk004" style="margin-top:12px">
+      <div class="risk-title amber">&#9888; DK004 Budget Data — Requires Verification</div>
+      <div class="risk-desc">
+        System shows DK004 as over-budget (R6,615,677 funds required vs R6M budget, -10.3% efficiency). Team confirmed this is a data entry error. Budget figure not yet corrected in tracker. Until resolved, true spend is unknown.
+      </div>
+      <div class="risk-action amber">ACTION: Eric to correct DK004 data entry in rebuild tracker. Confirm actual spend figure.</div>
+    </div>
+  </div>
+
+  <!-- DK007 backlog detail -->
+  <div class="sec" id="b-dk007-parts">
+    <div class="sec-title">DK007 — Parts Backlog Detail</div>
+    <div class="backlog-item">
+      <div class="backlog-part">Propshaft</div>
+      <div class="backlog-detail">REQ3896 &nbsp;·&nbsp; R10,862 &nbsp;·&nbsp; On order, not received</div>
+    </div>
+    <div class="backlog-item">
+      <div class="backlog-part">Fire Suppression System</div>
+      <div class="backlog-detail">R300,253 &nbsp;·&nbsp; On order, not received</div>
+    </div>
+    <div class="backlog-item">
+      <div class="backlog-part">Grease System</div>
+      <div class="backlog-detail">R107,525 &nbsp;·&nbsp; On order, not received</div>
+    </div>
+    <div class="backlog-item">
+      <div class="backlog-part">Aux Pump T7</div>
+      <div class="backlog-detail">Amount TBD &nbsp;·&nbsp; Supplier lead time critical</div>
+    </div>
+    <div class="backlog-item">
+      <div class="backlog-part">Main Pumps</div>
+      <div class="backlog-detail">Amount TBD &nbsp;·&nbsp; Supplier lead time critical</div>
+    </div>
+  </div>
+
+  <!-- Future Data placeholders -->
+  <div class="sec">
+    <div class="sec-title">Future Data Modules — Pending Integration</div>
+    <div style="font-size:12px;color:#6B7FA8;margin-bottom:16px;padding:10px 14px;background:#FFF;border-radius:8px;border-left:3px solid #3498DB">
+      The sections below represent data Eric tracks but has not yet been connected to this dashboard. Each module is ready to be built once the data pipeline is agreed. Data source details from Eric's letter (Jun 2026).
+    </div>
+
+    <div class="g2">
+
+      <div class="placeholder">
+        <div class="ph-icon">&#128104;&#8205;&#128295;</div>
+        <div class="ph-title">Labour Cost Tracking — Per Rig</div>
+        <div class="ph-desc">Labour is tracked in Eric's HTML dashboard via localStorage (keys: <code>td_[rigID]</code>, <code>hrs</code>). Not yet exported to this dashboard.</div>
+        <ul class="ph-list">
+          <li>Rate: R1,241.54/hr &nbsp;·&nbsp; Loading: 75.7%</li>
+          <li>Team of 3 per rig &nbsp;·&nbsp; 443h per rig total</li>
+          <li>~195 productive hrs/person/month</li>
+          <li>Total labour per rig: ~R550K</li>
+          <li>Source: Eric's tracker &rarr; localStorage export</li>
+          <li>Future file: labour_costs_YYYYMM.xlsx</li>
+        </ul>
+      </div>
+
+      <div class="placeholder">
+        <div class="ph-icon">&#9981;</div>
+        <div class="ph-title">Fuel Tracking — Per Shift / Per Operator</div>
+        <div class="ph-desc">Fuel tracked per shift per operator per plant. Daily admin reconciliation. Some sites use electronic fuel tags (litres + hours).</div>
+        <ul class="ph-list">
+          <li>Unit: litres per shift per machine</li>
+          <li>Frequency: daily reconciliation by site admin</li>
+          <li>Electronic tag sites: litres + machine hours linked</li>
+          <li>Manual sites: operator declaration</li>
+          <li>Future file: fuel_YYYYMMDD.xlsx</li>
+          <li>Metrics needed: L/shift, L/hour, cost per rig</li>
+        </ul>
+      </div>
+
+      <div class="placeholder">
+        <div class="ph-icon">&#128295;</div>
+        <div class="ph-title">Maintenance Register — OEM PM Schedule</div>
+        <div class="ph-desc">Planned maintenance follows OEM intervals. Tracked in a standalone system. Site responsible, workshop oversight. Not yet integrated.</div>
+        <ul class="ph-list">
+          <li>OEM intervals: 7,500 / 10,000 / 15,000 km</li>
+          <li>Responsibility: site team &rarr; workshop sign-off</li>
+          <li>Standalone system (not SmartBuilder)</li>
+          <li>Future: export PM schedule to dashboard</li>
+          <li>Metrics needed: next PM date, compliance %, cost per PM</li>
+        </ul>
+      </div>
+
+      <div class="placeholder">
+        <div class="ph-icon">&#127970;</div>
+        <div class="ph-title">Overheads &amp; Subcontractors — Per Project</div>
+        <div class="ph-desc">Management fees and workshop rental are recovered per project. Currently visible in SmartBuilder Contract Costs but not split per rig.</div>
+        <ul class="ph-list">
+          <li>Management fees (recovered per contract)</li>
+          <li>Workshop rental allocation per project</li>
+          <li>Subcontractor costs (if any per rig)</li>
+          <li>Source: SmartBuilder &rarr; Detail Contract Costs</li>
+          <li>File needed: contract_costs_YYYYMM.xlsx</li>
+          <li>Filter: separate contract/sub-contract per DK unit</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Data pipeline note -->
+  <div class="sec">
+    <div class="card" style="background:#F0F5FF;border:1px solid #BDD0F0">
+      <div class="c-label" style="color:#2471A3">Data Pipeline — Current State</div>
+      <div class="mt8" style="font-size:12px;color:#1A3A5C;line-height:1.7">
+        <strong>Eric's dashboard</strong> (eric0103360.github.io) is the source of truth for rebuild progress.
+        It runs as a self-contained HTML file with data stored in <code>localStorage</code>
+        (<code>td_[rigID]</code> for time data, <code>ev_[rigID]</code> for events, <code>emsv4</code> for config, <code>hrs</code> for hours).
+        <br><br>
+        <strong>This dashboard</strong> uses a manual snapshot (PDF export, 12 Jun 2026).
+        To automate the connection, Eric would need to export localStorage data to JSON/Excel on a schedule.
+        <br><br>
+        <strong>Next step:</strong> Agree data export format with Eric — weekly CSV or JSON export from his tracker into shared folder,
+        then this dashboard reads the file automatically.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-blockers -->
+
+</div><!-- /content -->
+
+<script>
+(function(){
+  if(sessionStorage.getItem('ems_auth')==='1'){
+    document.getElementById('auth-overlay').style.display='none';
+  }
+})();
+
+function doLogin(){
+  var u=document.getElementById('auth-user').value.trim().toLowerCase();
+  var p=document.getElementById('auth-pass').value.trim();
+  if(u==='viewer'&&p==='2026'){
+    sessionStorage.setItem('ems_auth','1');
+    var ov=document.getElementById('auth-overlay');
+    ov.style.transition='opacity .35s';
+    ov.style.opacity='0';
+    setTimeout(function(){ov.style.display='none';},380);
+  } else {
+    document.getElementById('auth-err').style.display='block';
+    document.getElementById('auth-pass').value='';
+    document.getElementById('auth-pass').focus();
+  }
+}
+
+document.addEventListener('keydown',function(e){
+  var ov=document.getElementById('auth-overlay');
+  if(e.key==='Enter'&&ov&&ov.style.display!=='none'){doLogin();}
+});
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+function goTo(tabId, anchorId) {
+  var order = {overview:0, progress:1, budget:2, blockers:3};
+  switchTab(tabId, document.querySelectorAll('.nav-item')[order[tabId]]);
+  if (anchorId) {
+    setTimeout(function(){
+      var el = document.getElementById(anchorId);
+      if (!el) return;
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      el.classList.add('hl');
+      setTimeout(function(){ el.classList.remove('hl'); }, 1500);
+    }, 60);
+  }
+}
+</script>
+
+</body>
+</html>

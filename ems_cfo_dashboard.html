@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EMS Mining — CFO Dashboard</title>
+<style>
+:root {
+  --blue: #0F6DB5; --blue-dk: #0A4F86; --blue-lt: #EBF4FD;
+  --yellow: #F5C400; --navy: #1A2E42; --dark2: #2D3E52;
+  --gray: #6B7A8D; --gray-lt: #D5DFE8; --bg: #F5F2EA;
+  --white: #FFFFFF; --green: #2E7D32; --green-lt: #E8F5E9;
+  --red: #C62828; --red-lt: #FFEBEE; --orange: #E65100; --amber: #F57C00;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--navy); font-size:13px; }
+
+.header { background:var(--navy); padding:0 28px; display:flex; align-items:stretch; border-bottom:3px solid var(--blue); height:56px; }
+.hlogo  { display:flex; align-items:center; gap:12px; padding-right:28px; border-right:1px solid #2D3E52; }
+.logo-mark { width:32px; height:32px; background:var(--blue); clip-path:polygon(50% 0%,0% 100%,100% 100%); }
+.logo-text { color:#fff; font-size:17px; font-weight:800; letter-spacing:2px; }
+.logo-sub  { color:var(--yellow); font-size:8px; letter-spacing:3px; text-transform:uppercase; margin-top:2px; }
+.hcenter { display:flex; align-items:center; padding:0 28px; flex:1; }
+.dash-title { color:#fff; font-size:14px; font-weight:600; }
+.dash-sub   { color:var(--gray); font-size:11px; margin-top:1px; }
+.hright { display:flex; align-items:center; gap:14px; padding-left:20px; border-left:1px solid #2D3E52; }
+.chip { background:var(--yellow); color:var(--navy); padding:4px 10px; border-radius:3px; font-size:10px; font-weight:800; letter-spacing:1px; }
+.htext { color:var(--gray); font-size:10px; text-align:right; line-height:1.5; }
+
+.nav { background:var(--dark2); padding:0 28px; display:flex; border-bottom:1px solid #3a4a5a; }
+.nav-item { color:var(--gray); padding:10px 16px; font-size:11px; font-weight:600; letter-spacing:0.5px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; text-transform:uppercase; }
+.nav-item:hover { color:#aabcc8; }
+.nav-item.active { color:var(--yellow); border-bottom-color:var(--yellow); }
+
+.main { padding:16px 28px; }
+
+/* FILTER */
+.filter-bar { background:var(--white); border:1px solid var(--gray-lt); border-radius:8px; padding:10px 18px; display:flex; align-items:center; gap:12px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.05); flex-wrap:wrap; }
+.ftag { background:var(--blue); color:#fff; padding:3px 9px; border-radius:3px; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; flex-shrink:0; }
+.flbl { font-size:11px; color:var(--gray); font-weight:600; }
+input[type=date] { border:1.5px solid var(--gray-lt); border-radius:6px; padding:6px 10px; font-size:12px; color:var(--navy); background:var(--bg); cursor:pointer; outline:none; font-family:inherit; transition:border-color 0.2s; }
+input[type=date]:focus { border-color:var(--blue); }
+.fdivider { width:1px; height:26px; background:var(--gray-lt); flex-shrink:0; }
+.fnote { font-size:11px; color:var(--gray); }
+.fnote strong { color:var(--navy); }
+.fshortcuts { display:flex; gap:6px; }
+.fshort { background:var(--bg); border:1px solid var(--gray-lt); border-radius:4px; padding:3px 8px; font-size:10px; font-weight:600; color:var(--navy); cursor:pointer; white-space:nowrap; }
+.fshort:hover { background:var(--blue-lt); border-color:var(--blue); color:var(--blue); }
+.btn-apply { background:var(--yellow); color:var(--navy); border:none; border-radius:6px; padding:7px 18px; font-size:11px; font-weight:800; cursor:pointer; margin-left:auto; text-transform:uppercase; flex-shrink:0; }
+.btn-apply:hover { background:#C9A200; }
+
+/* CARDS */
+.card { background:var(--white); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); overflow:hidden; }
+.card-head { padding:12px 16px; border-bottom:1px solid var(--gray-lt); display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.card-head-left .ct { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+.card-head-left .cs { font-size:10px; color:var(--gray); margin-top:2px; }
+.card-chip { background:var(--blue); color:#fff; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:800; white-space:nowrap; }
+.card-body { padding:16px; }
+
+/* ANNUAL P&L TABLE */
+.annual-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+.fy-col { border-radius:6px; padding:12px 14px; border:1px solid var(--gray-lt); background:var(--bg); }
+.fy-col.current { background:var(--blue-lt); border-color:#C0D8F0; }
+.fy-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:8px; }
+.fy-col.current .fy-label { color:var(--blue); }
+.fy-rev { font-size:22px; font-weight:800; color:var(--navy); margin-bottom:2px; }
+.fy-ebitda { font-size:12px; font-weight:700; margin-bottom:8px; }
+.fy-ebitda.pos { color:var(--green); }
+.fy-ebitda.neg { color:var(--red); }
+.fy-bar { height:5px; border-radius:3px; background:var(--blue); margin-bottom:6px; }
+.fy-detail { font-size:10px; color:var(--gray); line-height:1.6; }
+.fy-badge { display:inline-block; padding:2px 6px; border-radius:3px; font-size:9px; font-weight:700; margin-top:4px; }
+.fy-badge.g { background:var(--green-lt); color:var(--green); }
+.fy-badge.r { background:var(--red-lt); color:var(--red); }
+
+/* KPI ROW */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
+.kpi { background:var(--white); border-radius:8px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05); position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.kpi.rev::before  { background:var(--blue); }
+.kpi.cost::before { background:var(--orange); }
+.kpi.net::before  { background:var(--amber); }
+.kpi.sars::before { background:var(--red); }
+.kpi-period { font-size:9px; color:var(--blue); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+.kpi-lbl { font-size:10px; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+.kpi-val { font-size:24px; font-weight:800; line-height:1; margin-bottom:4px; }
+.kpi.rev  .kpi-val { color:var(--blue); }
+.kpi.cost .kpi-val { color:var(--orange); }
+.kpi.sars .kpi-val { color:var(--red); font-size:20px; }
+.kpi-meta { font-size:10px; color:var(--gray); line-height:1.4; }
+.kpi-badge { display:inline-block; margin-top:5px; padding:2px 7px; border-radius:20px; font-size:10px; font-weight:700; }
+.badge-r { background:#FFEBEE; color:var(--red); }
+.badge-g { background:#E8F5E9; color:var(--green); }
+.badge-b { background:var(--blue-lt); color:var(--blue); }
+.badge-o { background:#FFF3E0; color:var(--amber); }
+
+/* CHART */
+.chart-wrap { overflow-x:auto; padding-bottom:4px; }
+.chart-months { display:flex; align-items:flex-end; gap:3px; height:100px; background:#F8F6F0; border-radius:6px; padding:6px 6px 0; min-width:max-content; }
+.month-col { display:flex; flex-direction:column; align-items:center; cursor:pointer; border-radius:3px; transition:background 0.15s; position:relative; padding:0 1px; }
+.month-col.selected { background:rgba(15,109,181,0.10); }
+.month-col.selected .month-lbl { color:var(--blue); font-weight:700; }
+.month-col.fy-boundary { border-left:1px dashed #B0BEC5; margin-left:2px; padding-left:3px; }
+.bars { display:flex; align-items:flex-end; gap:1px; width:100%; justify-content:center; height:84px; }
+.bar-rev  { width:7px; background:var(--blue); border-radius:2px 2px 0 0; min-height:1px; }
+.bar-cost { width:7px; background:#E57373; border-radius:2px 2px 0 0; min-height:1px; opacity:0.85; }
+.bar-overflow { position:absolute; top:1px; font-size:7px; color:var(--red); font-weight:800; white-space:nowrap; }
+.month-lbl { font-size:7px; color:var(--gray); text-align:center; padding:2px 0 3px; white-space:nowrap; }
+.quarter-lbl { font-size:8px; color:var(--gray); text-align:center; padding:2px 0 3px; white-space:nowrap; }
+.chart-legend { display:flex; gap:16px; font-size:10px; color:var(--gray); margin-top:6px; padding-left:4px; flex-wrap:wrap; }
+
+/* MAIN LAYOUT */
+.two-col-main { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; margin-bottom:14px; }
+.bottom-row   { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+/* EXPENSE BARS */
+.sec-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:10px; }
+.exp-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+.exp-lbl { font-size:11px; color:var(--navy); width:150px; flex-shrink:0; font-weight:600; }
+.exp-track { flex:1; background:var(--gray-lt); border-radius:3px; height:19px; overflow:hidden; }
+.exp-fill { height:100%; border-radius:3px; display:flex; align-items:center; padding-left:6px; transition:width 0.5s cubic-bezier(.4,0,.2,1); }
+.exp-pct { font-size:9px; font-weight:700; }
+.exp-amt { font-size:11px; font-weight:700; width:60px; text-align:right; flex-shrink:0; }
+
+/* BALANCE PANEL */
+.balance-panel { display:flex; flex-direction:column; gap:10px; }
+.bal-block { border-radius:6px; padding:12px 14px; }
+.bal-block.ap   { background:var(--red-lt); border:1px solid #FFCDD2; }
+.bal-block.ar   { background:#E8F5E9; border:1px solid #C8E6C9; }
+.bal-block.sars { background:#FFF3E0; border:1px solid #FFE0B2; }
+.bal-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:4px; }
+.bal-val { font-size:22px; font-weight:800; line-height:1; margin-bottom:3px; }
+.bal-block.ap   .bal-val { color:var(--red); }
+.bal-block.ar   .bal-val { color:var(--green); }
+.bal-block.sars .bal-val { color:var(--orange); }
+.bal-meta { font-size:10px; color:var(--gray); line-height:1.5; }
+.bal-badge { display:inline-block; padding:2px 7px; border-radius:3px; font-size:9px; font-weight:700; margin-top:4px; }
+.bbr { background:#FFCDD2; color:var(--red); }
+.bbg { background:#C8E6C9; color:var(--green); }
+.bbo { background:#FFE0B2; color:var(--orange); }
+.age-mini { display:flex; gap:3px; margin-top:8px; height:5px; border-radius:3px; overflow:hidden; }
+.age-seg { height:100%; }
+
+/* LIST */
+.list-row { display:flex; align-items:center; padding:5px 7px; border-bottom:1px solid #EEF2F6; }
+.list-row:last-child { border-bottom:none; }
+.list-row.a90 { background:#FFF0F0; border-left:3px solid var(--red); padding-left:5px; }
+.list-row.a60 { background:#FFF8F0; border-left:3px solid var(--orange); padding-left:5px; }
+.dot { width:6px; height:6px; border-radius:50%; margin-right:7px; flex-shrink:0; }
+.list-name { flex:1; font-size:11px; color:var(--navy); }
+.list-row.a90 .list-name { font-weight:700; color:var(--red); }
+.list-amt { font-size:11px; font-weight:700; }
+.list-age { font-size:10px; color:var(--gray); margin-left:6px; }
+.abadge { font-size:9px; font-weight:800; padding:1px 5px; border-radius:3px; text-transform:uppercase; margin-left:5px; flex-shrink:0; }
+.abr { background:#FFCDD2; color:var(--red); }
+.abo { background:#FFE0B2; color:var(--orange); }
+
+/* P&L TABLE */
+.btable { width:100%; border-collapse:collapse; }
+.btable th { font-size:9px; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:1px; padding:7px 8px; text-align:right; border-bottom:2px solid var(--gray-lt); }
+.btable th:first-child { text-align:left; }
+.btable td { font-size:11px; padding:7px 8px; border-bottom:1px solid #EEF2F6; text-align:right; }
+.btable td:first-child { text-align:left; font-weight:600; }
+.btable tr.total td { font-weight:700; background:var(--bg); border-top:2px solid var(--gray-lt); }
+.pos { color:var(--green); font-weight:700; }
+.neg { color:var(--red); font-weight:700; }
+.notice { margin-top:10px; padding:8px 12px; background:#FFF8E1; border-radius:5px; border-left:3px solid var(--yellow); font-size:10px; color:#7D5A00; line-height:1.5; }
+.footer { text-align:center; padding:12px 28px; font-size:10px; color:var(--gray); border-top:1px solid var(--gray-lt); margin-top:16px; }
+
+/* ── Auth overlay ── */
+#auth-overlay{position:fixed;inset:0;background:#1A2E42;z-index:9999;display:flex;align-items:center;justify-content:center}
+.auth-box{background:#FFF;border-radius:14px;padding:38px 44px;width:320px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.auth-logo{font-size:10px;color:#6B7A8D;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.auth-title{font-size:18px;font-weight:800;color:#1A2E42;margin-bottom:6px}
+.auth-divider{width:40px;height:3px;background:#F5C400;border-radius:2px;margin:0 auto 20px}
+.auth-field{width:100%;border:1.5px solid #D5DFE8;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:12px;outline:none;color:#1A2E42;transition:border-color .2s;box-sizing:border-box}
+.auth-field:focus{border-color:#F5C400}
+.auth-btn{width:100%;background:#F5C400;color:#1A2E42;border:none;border-radius:7px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;transition:background .2s}
+.auth-btn:hover{background:#D4A020}
+.auth-err{color:#C62828;font-size:11px;margin-top:10px;display:none}
+</style>
+</head>
+<body>
+
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">EMS Mining</div>
+    <div class="auth-title">CFO Dashboard</div>
+    <div class="auth-divider"></div>
+    <input class="auth-field" id="auth-user" type="text" placeholder="Username" autocomplete="username">
+    <input class="auth-field" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="auth-btn" onclick="doLogin()">Login</button>
+    <div class="auth-err" id="auth-err">Incorrect username or password</div>
+  </div>
+</div>
+
+
+<div class="header">
+  <div class="hlogo">
+    <div class="logo-mark"></div>
+    <div><div class="logo-text">EMS MINING</div><div class="logo-sub">Engineered Mining Solutions</div></div>
+  </div>
+  <div class="hcenter">
+    <div><div class="dash-title">CFO Dashboard — FY2023–FY2026</div><div class="dash-sub">Revenue · Costs · Creditors · Debtors · 4-Year Trend</div></div>
+  </div>
+  <div class="hright">
+    <div class="htext">Last updated<br><strong style="color:#ccc">12 Jun 2026</strong></div>
+    <div class="chip">ALL YEARS</div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-item active" onclick="switchTab('overview',this)">CFO Overview</div>
+  <div class="nav-item" onclick="switchTab('expenses',this)">Expense Detail</div>
+  <div class="nav-item" onclick="switchTab('creditors',this)">Creditors</div>
+  <div class="nav-item" onclick="switchTab('budget',this)">Budget FY2027</div>
+</div>
+
+<div class="main">
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <div class="ftag">Period</div>
+    <span class="flbl">From</span>
+    <input type="date" id="dateFrom" value="2025-07-01" min="2022-03-01" max="2026-06-30">
+    <span class="flbl">To</span>
+    <input type="date" id="dateTo"   value="2026-06-30" min="2022-03-01" max="2026-06-30">
+    <div class="fdivider"></div>
+    <div class="fshortcuts">
+      <div class="fshort" onclick="setFY(2023)">FY2023</div>
+      <div class="fshort" onclick="setFY(2024)">FY2024</div>
+      <div class="fshort" onclick="setFY(2025)">FY2025</div>
+      <div class="fshort" onclick="setFY(2026)">FY2026</div>
+      <div class="fshort" onclick="setAll()">All Years</div>
+    </div>
+    <div class="fdivider"></div>
+    <div class="fnote">Updates <strong>Revenue · Costs · Chart · Expenses</strong> for selected period</div>
+    <button class="btn-apply" onclick="applyFilter()">Apply</button>
+  </div>
+
+  <div id="tab-overview">
+
+  <!-- ANNUAL P&L OVERVIEW -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-head">
+      <div class="card-head-left">
+        <div class="ct">Multi-Year Revenue &amp; EBITDA — FY2023 to FY2026</div>
+        <div class="cs">Source: SmartBuilder Transaction Listings (all years) · Old fiscal year: March–February · New: July–June · Bars scaled to FY2023 revenue</div>
+      </div>
+    </div>
+    <div class="card-body" style="padding:14px 16px;">
+      <div class="annual-grid">
+
+        <div class="fy-col">
+          <div class="fy-label">FY2023 · Mar'22 – Feb'23</div>
+          <div class="fy-rev">R 253M</div>
+          <div class="fy-ebitda pos">EBITDA +R 21M</div>
+          <div class="fy-bar" style="width:100%"></div>
+          <div class="fy-detail">
+            Cash costs R 232M<br>Depreciation R 5M<br>Net approx <strong>+R 16M</strong>
+          </div>
+          <div class="fy-badge g">Profitable</div>
+        </div>
+
+        <div class="fy-col">
+          <div class="fy-label">FY2024 · Mar'23 – Feb'24</div>
+          <div class="fy-rev">R 195M</div>
+          <div class="fy-ebitda pos">EBITDA +R 16M</div>
+          <div class="fy-bar" style="width:77%"></div>
+          <div class="fy-detail">
+            Cash costs R 179M<br>Depreciation R 15M<br>Net approx <strong>+R 1M</strong>
+          </div>
+          <div class="fy-badge g">Near breakeven</div>
+        </div>
+
+        <div class="fy-col">
+          <div class="fy-label">FY2025 · Mar'24 – Jun'25</div>
+          <div class="fy-rev">R 53M</div>
+          <div class="fy-ebitda neg">EBITDA –R 4M</div>
+          <div class="fy-bar" style="width:21%;background:var(--amber)"></div>
+          <div class="fy-detail">
+            Cash costs R 56M<br>Depreciation R 37M<br>Net approx <strong style="color:var(--red)">–R 41M</strong>
+          </div>
+          <div class="fy-badge r">First loss year</div>
+        </div>
+
+        <div class="fy-col current">
+          <div class="fy-label">FY2026 · Jul'25 – Jun'26</div>
+          <div class="fy-rev">R 14M</div>
+          <div class="fy-ebitda neg">EBITDA –R 10M</div>
+          <div class="fy-bar" style="width:5%;background:var(--red)"></div>
+          <div class="fy-detail">
+            Cash costs R 24M<br>Depreciation R 13M<br>Net approx <strong style="color:var(--red)">–R 23M</strong>
+          </div>
+          <div class="fy-badge r">Revenue collapsed</div>
+        </div>
+
+      </div>
+
+      <div style="background:var(--bg);border-radius:6px;padding:8px 14px;font-size:11px;color:var(--gray);line-height:1.7;">
+        <strong style="color:var(--navy)">What happened:</strong>
+        EMS Mining was profitable in FY2023–2024 on R195–253M/year revenue. Revenue began collapsing in FY2025 as contracts ended and were not replaced.
+        By Nov 2025 (FY2026) revenue reached zero. FY2025 also had R37M depreciation on drill rigs that were no longer generating income.
+        <span style="color:var(--red);font-weight:700"> Combined 2-year loss: ~R64M.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi rev">
+      <div class="kpi-period" id="kpiPeriodLbl">FY2026 Jul–Jun</div>
+      <div class="kpi-lbl">Revenue</div>
+      <div class="kpi-val" id="kpiRev">R 14M</div>
+      <div class="kpi-meta">Selected period actual<br>from Transaction Listings</div>
+      <div class="kpi-badge badge-b" id="kpiRevBadge">—</div>
+    </div>
+    <div class="kpi cost">
+      <div class="kpi-period" id="kpiPeriodLbl2">FY2026 Jul–Jun</div>
+      <div class="kpi-lbl">Cash Costs (excl. depreciation)</div>
+      <div class="kpi-val" id="kpiCost">R 24M</div>
+      <div class="kpi-meta">Labour + Site + Overheads</div>
+      <div class="kpi-badge badge-r" id="kpiCostBadge">—</div>
+    </div>
+    <div class="kpi net">
+      <div class="kpi-period" id="kpiPeriodLbl3">FY2026 Jul–Jun</div>
+      <div class="kpi-lbl">EBITDA (Rev – Cash Costs)</div>
+      <div class="kpi-val" id="kpiNet" style="font-size:20px;color:var(--red)">– R 10M</div>
+      <div class="kpi-meta" id="kpiNetMeta">Cash shortfall for period</div>
+      <div class="kpi-badge" id="kpiNetBadge" style="background:var(--red-lt);color:var(--red)">—</div>
+    </div>
+    <div class="kpi sars">
+      <div class="kpi-lbl">Avg Monthly Burn</div>
+      <div class="kpi-val" id="kpiBurn">R 2M</div>
+      <div class="kpi-meta">Avg cash cost/month<br>selected period</div>
+      <div class="kpi-badge badge-o">Since Dec'25: ~R1.7M/mo</div>
+    </div>
+  </div>
+
+  <!-- CHART + BALANCE -->
+  <div class="two-col-main">
+
+    <!-- MONTHLY CHART -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Monthly Revenue vs Cash Costs — Selected Period</div>
+          <div class="cs" id="chartSubLabel">Blue = Revenue · Red = Cash costs (excl. depreciation) · Dashed lines = fiscal year boundaries · ⚠ = large adjustment months</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:12px 14px 10px;">
+        <div class="chart-wrap">
+          <div class="chart-months" id="chart"></div>
+        </div>
+        <div class="chart-legend">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--blue);vertical-align:middle;margin-right:3px"></span>Revenue</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#E57373;vertical-align:middle;margin-right:3px"></span>Cash Costs</span>
+          <span>| dashed line = FY boundary</span>
+          <span style="color:var(--red)">⚠ = year-end adjustment month (one-time)</span>
+        </div>
+        <div class="notice" style="margin-top:8px;" id="chartNote">Showing FY2026 (Jul 2025 – Jun 2026). Use shortcuts above to switch years.</div>
+      </div>
+    </div>
+
+    <!-- BALANCE PANEL -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Balance Snapshot</div>
+          <div class="cs">AP: 31 May 2026 · AR: 30 Jun 2026 · SARS: from GL</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:14px;">
+        <div class="balance-panel">
+          <div class="bal-block ar">
+            <div class="bal-lbl">AR — Clients owe us</div>
+            <div class="bal-val">R 12.5M</div>
+            <div class="bal-meta">TAU Mining R5.2M · Black Mountain R3.8M (overdue) · Take-On AR R4.5M</div>
+            <div class="age-mini">
+              <div class="age-seg" style="flex:56;background:var(--green)"></div>
+              <div class="age-seg" style="flex:8;background:var(--yellow)"></div>
+              <div class="age-seg" style="flex:1;background:var(--orange)"></div>
+              <div class="age-seg" style="flex:37;background:var(--red)"></div>
+            </div>
+            <div style="font-size:9px;color:var(--gray);margin-top:3px;">Current 56% · 30d 8% · 60d 1% · &gt;90d 37%</div>
+            <div class="bal-badge bbg">Debtors Age Analysis · Jun 2026</div>
+          </div>
+          <div class="bal-block ap">
+            <div class="bal-lbl">AP — We owe suppliers</div>
+            <div class="bal-val">R 24.4M</div>
+            <div class="bal-meta">LEGAL R15M · 30d overdue R9.1M · Rentals R4.9M · 92% overdue &gt;90 days</div>
+            <div class="age-mini">
+              <div class="age-seg" style="flex:6;background:var(--blue)"></div>
+              <div class="age-seg" style="flex:2;background:var(--yellow)"></div>
+              <div class="age-seg" style="flex:2;background:var(--orange)"></div>
+              <div class="age-seg" style="flex:92;background:var(--red)"></div>
+            </div>
+            <div style="font-size:9px;color:var(--gray);margin-top:3px;">Current 6% · 30d 1% · 60d 1% · &gt;90d 92%</div>
+            <div class="bal-badge bbr">Creditors Age Analysis · May 2026</div>
+          </div>
+          <div class="bal-block sars">
+            <div class="bal-lbl">SARS — Tax Arrears (South African Revenue Service = ЮАР налоговая)</div>
+            <div class="bal-val">R 64.5M</div>
+            <div class="bal-meta">PAYE R40.4M (удержан из зарплат, не перечислен в SARS)<br>
+              VAT arrears R24.1M · Can freeze accounts without court order</div>
+            <div class="bal-badge bbo">Highest priority risk · Not in AP figure above</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPENSES + P&L -->
+  <div class="bottom-row">
+
+    <!-- EXPENSES -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Expenses by Category</div>
+          <div class="cs" id="expPeriodLabel">Selected period · Source: SmartBuilder Transaction Listings</div>
+        </div>
+        <div class="card-chip" id="expTotalChip">R — Total</div>
+      </div>
+      <div class="card-body">
+        <div class="sec-lbl">Cash costs · Bars relative to largest category</div>
+        <div class="exp-row">
+          <div class="exp-lbl">Labour &amp; Salaries</div>
+          <div class="exp-track"><div class="exp-fill" id="barLabour" style="width:50%;background:var(--navy)"><span class="exp-pct" style="color:#fff">—</span></div></div>
+          <div class="exp-amt" id="amtLabour">—</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-lbl">Site &amp; Contract Costs</div>
+          <div class="exp-track"><div class="exp-fill" id="barSite" style="width:40%;background:var(--blue)"><span class="exp-pct" style="color:#fff">—</span></div></div>
+          <div class="exp-amt" id="amtSite">—</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-lbl">Depreciation</div>
+          <div class="exp-track"><div class="exp-fill" id="barDepr" style="width:30%;background:#B0BEC5"><span class="exp-pct" style="color:var(--navy)">—</span></div></div>
+          <div class="exp-amt" id="amtDepr">—</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-lbl">Overheads</div>
+          <div class="exp-track"><div class="exp-fill" id="barOverh" style="width:15%;background:#90A4AE"><span class="exp-pct" style="color:#fff">—</span></div></div>
+          <div class="exp-amt" id="amtOverh">—</div>
+        </div>
+        <div class="notice" id="expNote" style="margin-top:10px;">Select a period to see expense breakdown.</div>
+
+        <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--gray-lt);">
+          <div class="sec-lbl" style="margin-bottom:8px;">AR — Debtors by Balance (Jun 2026 snapshot)</div>
+          <div class="list-row a90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">Black Mountain Mining (Pty) Ltd</div>
+            <div class="list-amt">R 3,777,468</div>
+            <div class="abadge abr">OVERDUE</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">TAU Mining Contractors (Pty) Ltd</div>
+            <div class="list-amt">R 5,203,124</div>
+            <div class="list-age">Current</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">Take On Accounts Receivable</div>
+            <div class="list-amt">R 4,475,545</div>
+            <div class="list-age">Current</div>
+          </div>
+          <div class="list-row a90">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">Kopano Ke Matla JV</div>
+            <div class="list-amt">R 246,407</div>
+            <div class="abadge abr">&gt;90d</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--gray)"></div>
+            <div class="list-name">Drill Tec (Pty) Ltd — credit balance</div>
+            <div class="list-amt" style="color:var(--green)">–R 1,306,796</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P&L + AP -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="ct">P&amp;L — 4-Year Summary</div>
+            <div class="cs">Approximate — based on GL categorisation · Excl. interest &amp; non-captured items</div>
+          </div>
+        </div>
+        <div class="card-body" style="padding:14px;">
+          <table class="btable">
+            <thead>
+              <tr>
+                <th style="text-align:left">Line</th>
+                <th>FY2023</th>
+                <th>FY2024</th>
+                <th>FY2025</th>
+                <th>FY2026</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Revenue</td><td>R 253M</td><td>R 195M</td><td>R 53M</td><td>R 14M</td></tr>
+              <tr><td>Cash Costs</td><td>R 232M</td><td>R 179M</td><td>R 56M</td><td>R 24M</td></tr>
+              <tr><td>EBITDA</td><td class="pos">+R 21M</td><td class="pos">+R 16M</td><td class="neg">–R 4M</td><td class="neg">–R 10M</td></tr>
+              <tr><td>Depreciation</td><td>R 5M</td><td>R 15M</td><td>R 37M</td><td>R 13M</td></tr>
+              <tr class="total"><td>Net (approx)</td><td class="pos">+R 16M</td><td class="pos">+R 1M</td><td class="neg">–R 41M</td><td class="neg">–R 23M</td></tr>
+            </tbody>
+          </table>
+          <div class="notice">
+            <strong>FY2023–2024</strong> were profitable. Revenue collapse began mid-FY2025 as contracts ended. By FY2026 revenue was 5% of FY2023 peak.
+            FY2025 depreciation R37M on idle equipment accelerated the net loss.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="ct">AP — Top Creditor Categories</div>
+            <div class="cs">Creditors Age Analysis · May 2026 · Total R24.4M</div>
+          </div>
+          <div class="card-chip" style="background:var(--red)">R 24.4M</div>
+        </div>
+        <div class="card-body" style="padding:14px;">
+          <div class="list-row a90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">LEGAL (Tswelopele R5.4M, Sandvik R4.8M + 6 others)</div>
+            <div class="list-amt">R 15.0M</div>
+            <div class="abadge abr">LEGAL</div>
+          </div>
+          <div class="list-row a90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">30-Day terms — overdue &gt;90d</div>
+            <div class="list-amt">R 9.1M</div>
+            <div class="abadge abr">&gt;90d</div>
+          </div>
+          <div class="list-row a60">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">7th Rentals — Equipment (Bubesi R3.9M)</div>
+            <div class="list-amt">R 4.9M</div>
+            <div class="abadge abo">RENTAL</div>
+          </div>
+          <div class="list-row a60">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">DOP — Due on Presentation</div>
+            <div class="list-amt">R 4.3M</div>
+            <div class="abadge abo">DOP</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--blue)"></div>
+            <div class="list-name">60-Day terms (Mincon Holdings)</div>
+            <div class="list-amt">R 2.1M</div>
+            <div class="list-age">60d</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">Take-On AP (contra / offset)</div>
+            <div class="list-amt" style="color:var(--green)">–R 13.0M</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STRATEGIC CONCLUSIONS -->
+  <div style="background:var(--navy);border-radius:10px;padding:20px 24px;margin-bottom:0;margin-top:14px;color:#fff">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;border-bottom:1px solid #2D3E52;padding-bottom:12px">
+      <div style="width:4px;height:28px;background:var(--yellow);border-radius:2px;flex-shrink:0"></div>
+      <div>
+        <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--yellow)">Strategic Conclusions — CFO Summary</div>
+        <div style="font-size:10px;color:#6B7A8D;margin-top:1px">Prepared June 2026 · Based on SmartBuilder actuals FY2023–FY2026 + Budget Model</div>
+      </div>
+    </div>
+
+    <!-- Narrative -->
+    <div style="font-size:11px;line-height:1.8;color:#B0C4D8;margin-bottom:18px;max-width:900px">
+      EMS Mining was a <strong style="color:#fff">profitable business through FY2024</strong> (R195M+ revenue, positive EBITDA).
+      Revenue collapsed as mining contracts ended without replacement — from R253M (FY2023) to <strong style="color:var(--yellow)">zero by November 2025</strong>.
+      The defining event was not the loss of contracts alone: <strong style="color:#FF8A80">PAYE and VAT were not remitted to SARS for years</strong> as cash was diverted to operations,
+      creating a R64.5M statutory liability that SARS can enforce by account freeze — without a court order.
+      This is the gating factor for all recovery scenarios.
+      The business model is <strong style="color:#80CBC4">not fundamentally broken</strong>: the budget shows R59.9M revenue and positive EBITDA from October 2026 on signed contracts.
+      But contracts alone do not save the company if SARS intercepts collections.
+    </div>
+
+    <!-- Priority matrix -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+
+      <div style="background:#3A1A1A;border-radius:8px;padding:14px;border-left:4px solid #EF5350">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:#EF5350;text-transform:uppercase;margin-bottom:8px">🔴 Critical — Do First</div>
+        <div style="font-size:11px;line-height:1.7;color:#FFCDD2">
+          <strong>1. SARS Section 167 agreement</strong><br>
+          Prerequisite to everything. Without a payment arrangement, any AR collection (R12.5M) can be immediately attached.
+          All new contract revenue is at risk.<br><br>
+          <strong>2. Confirm FY2027 contracts</strong><br>
+          Budget assumes 5 contracts start Aug 2026. These must be <em>signed</em>, not pipeline.
+          Delay of 1 month = –R5.7M revenue, extended cash burn.
+        </div>
+      </div>
+
+      <div style="background:#2A2010;border-radius:8px;padding:14px;border-left:4px solid #FFB300">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:#FFB300;text-transform:uppercase;margin-bottom:8px">🟡 High — Do After SARS Deal</div>
+        <div style="font-size:11px;line-height:1.7;color:#FFE082">
+          <strong>3. Collect AR R12.5M</strong><br>
+          Mota-Engil, Black Mountain and others owe money for work already done.
+          Must be collected only after Section 167 is in place — otherwise SARS attaches it.<br><br>
+          <strong>4. Resolve legal AP (R15.0M)</strong><br>
+          Tswelopele R5.4M + Sandvik R4.8M are in legal proceedings.
+          Unresolved — these creditors can obtain judgment and attach assets (including rigs needed for new contracts).
+        </div>
+      </div>
+
+      <div style="background:#0D2010;border-radius:8px;padding:14px;border-left:4px solid #66BB6A">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:#66BB6A;text-transform:uppercase;margin-bottom:8px">🟢 Possible — Execute FY2027</div>
+        <div style="font-size:11px;line-height:1.7;color:#A5D6A7">
+          <strong>5. Mobilise equipment Aug 2026</strong><br>
+          Drill rigs currently idle + depreciating. Budget contracts require mobilisation by Aug 2026.
+          Check which rigs are operationally fit and which are under asset finance liens.<br><br>
+          <strong>6. EBITDA breakeven: October 2026</strong><br>
+          From Oct '26 onwards, R5.7M/month revenue exceeds cash costs.
+          Company generates positive operating cash flow for first time since FY2024.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Survival math -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      <div style="background:#1A2E42;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:9px;color:#6B7A8D;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Monthly Burn</div>
+        <div style="font-size:20px;font-weight:800;color:#EF5350">R 1.7M</div>
+        <div style="font-size:10px;color:#6B7A8D;margin-top:2px">HO overhead + skeleton staff<br>zero revenue since Nov '25</div>
+      </div>
+      <div style="background:#1A2E42;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:9px;color:#6B7A8D;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bridge Needed</div>
+        <div style="font-size:20px;font-weight:800;color:#FFB300">R 3.4M</div>
+        <div style="font-size:10px;color:#6B7A8D;margin-top:2px">Aug–Sep 2026 before<br>EBITDA turns positive</div>
+      </div>
+      <div style="background:#1A2E42;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:9px;color:#6B7A8D;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">AR Recoverable</div>
+        <div style="font-size:20px;font-weight:800;color:#66BB6A">R 12.5M</div>
+        <div style="font-size:10px;color:#6B7A8D;margin-top:2px">Enough for bridge + SARS<br>instalment IF protected</div>
+      </div>
+      <div style="background:#1A2E42;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:9px;color:#6B7A8D;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">EBITDA Positive</div>
+        <div style="font-size:20px;font-weight:800;color:#66BB6A">Oct '26</div>
+        <div style="font-size:10px;color:#6B7A8D;margin-top:2px">IF contracts start Aug '26<br>+R0.3M/month from Oct</div>
+      </div>
+    </div>
+
+  </div>
+
+  </div><!-- /tab-overview -->
+
+  <!-- ═══════════════ EXPENSE DETAIL TAB ═══════════════ -->
+  <div id="tab-expenses" style="display:none">
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Cost Structure — Annual Comparison FY2023–FY2026</div>
+          <div class="cs">Computed from SmartBuilder GL · FY2025 = transition year 16 months · Outlier months included (may inflate/deflate totals)</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:14px 16px">
+        <table class="btable">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>FY2023 Mar–Feb</th>
+              <th>FY2024 Mar–Feb</th>
+              <th>FY2025 Mar–Jun (16m)</th>
+              <th>FY2026 Jul–Jun</th>
+            </tr>
+          </thead>
+          <tbody id="expDetailBody"></tbody>
+        </table>
+        <div class="notice" style="margin-top:10px">FY2025 includes large year-end adjustment months (marked ⚠ on CFO Overview chart) — totals may be distorted by one-time write-offs and SARS provisions.</div>
+      </div>
+    </div>
+
+    <div class="two-col-main" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><div class="card-head-left"><div class="ct">Labour &amp; Site Costs — What's Included</div></div></div>
+        <div class="card-body" style="padding:14px 16px;font-size:11px;line-height:1.9;color:var(--navy)">
+          <p><strong style="color:var(--blue)">Labour (GL 200xxx, 500000):</strong><br>
+          Salaries and wages — site crews (drillers, machine operators) and Head Office staff (management, finance, admin).
+          PAYE deducted from payroll and supposed to be remitted to SARS monthly.
+          In FY2026 with zero site activity, labour = skeleton HO cost only (~R1–1.8M/month).</p>
+          <br>
+          <p><strong style="color:var(--orange)">Site Costs (GL 100xxx):</strong><br>
+          Direct operating expenses at the mine: rock tools &amp; drill bits (GL 100400), repairs &amp; maintenance (GL 100150),
+          fuel, consumables, subcontracted services. These scale with production volume —
+          when revenue dropped to zero, site costs dropped too. Negative values in some months = supplier credits/reversals.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-left"><div class="ct">Overheads &amp; Depreciation — What's Included</div></div></div>
+        <div class="card-body" style="padding:14px 16px;font-size:11px;line-height:1.9;color:var(--navy)">
+          <p><strong style="color:var(--amber)">Overheads (GL 400–499xxx, excl. 403xxx):</strong><br>
+          Head Office indirect costs: office rent, insurance, professional fees (legal, audit), bank charges, IT &amp; telecoms.
+          Budget: R1.97M/month fixed. <strong style="color:var(--red)">Sep–Oct 2024 spike to R18–20M</strong> = believed to be SARS provisions accrued at year-end.
+          This is the single biggest contributor to FY2025 losses.</p>
+          <br>
+          <p><strong style="color:var(--gray)">Depreciation (GL 403xxx):</strong><br>
+          Non-cash charge for wear of drill rigs and mining equipment. <strong>Does not consume cash.</strong>
+          FY2025: R37M depreciation on idle rigs. For cash management, use EBITDA (before depreciation), not Net Profit.
+          Book loss of –R41M in FY2025 was a cash loss of only –R4M (EBITDA).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-left"><div class="ct">Key Cost Observations</div></div></div>
+      <div class="card-body" style="padding:14px 16px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:11px">
+          <div style="background:var(--red-lt);border-radius:6px;padding:12px;border-left:3px solid var(--red)">
+            <div style="font-weight:800;color:var(--red);margin-bottom:5px">SARS — the defining event</div>
+            Sep–Oct 2024 overhead spike (R18M + R20M) = SARS tax provisions booked at transition year-end.
+            PAYE arrears accumulated over years of cash stress. SARS can freeze accounts without court order — explains why recovery stalled despite some new revenue Jul–Nov 2024.
+          </div>
+          <div style="background:#FFF3E0;border-radius:6px;padding:12px;border-left:3px solid var(--amber)">
+            <div style="font-weight:800;color:var(--amber);margin-bottom:5px">Labour: the sticky cost</div>
+            In FY2026 with zero revenue, labour still R1.3–1.8M/month. These are HO staff costs —
+            direct site labour drops to zero when sites close, but management/admin remain.
+            Minimum cost floor to keep company alive: ~R1M/month.
+          </div>
+          <div style="background:var(--blue-lt);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:800;color:var(--blue);margin-bottom:5px">Cash loss vs. book loss</div>
+            Net loss FY2025 = –R41M. Cash loss (EBITDA) = –R4M. Gap = R37M non-cash depreciation on idle rigs.
+            For liquidity decisions, EBITDA is the right metric. Rigs depreciating without income = destroyed value, not cash.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-expenses -->
+
+  <!-- ═══════════════ CREDITORS TAB ═══════════════ -->
+  <div id="tab-creditors" style="display:none">
+
+    <div class="kpi-row" style="margin-bottom:14px">
+      <div class="kpi sars">
+        <div class="kpi-lbl">Total AP (Creditors)</div>
+        <div class="kpi-val" style="color:var(--red)">R 24.4M</div>
+        <div class="kpi-meta">As at 31 May 2026<br>SmartBuilder Creditors Age Analysis</div>
+        <div class="kpi-badge badge-r">91.9% overdue &gt;90d</div>
+      </div>
+      <div class="kpi sars">
+        <div class="kpi-lbl">SARS Tax Arrears</div>
+        <div class="kpi-val" style="color:var(--red)">R 64.5M</div>
+        <div class="kpi-meta">PAYE R40.4M + VAT R24.1M<br>Statutory — can freeze accounts</div>
+        <div class="kpi-badge badge-r">Critical Priority</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">AR — Clients owe us</div>
+        <div class="kpi-val" style="color:var(--green)">R 12.5M</div>
+        <div class="kpi-meta">As at 30 Jun 2026<br>Debtors Age Analysis</div>
+        <div class="kpi-badge badge-g">Potential cash recovery</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Net Position (AR – AP)</div>
+        <div class="kpi-val" style="color:var(--red);font-size:20px">– R 11.9M</div>
+        <div class="kpi-meta">AP exceeds AR · excl. SARS<br>Negative working capital</div>
+        <div class="kpi-badge badge-r">AP + SARS = R88.9M gross</div>
+      </div>
+    </div>
+
+    <div class="two-col-main" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="ct">AP Aging — 31 May 2026</div>
+            <div class="cs">Source: SmartBuilder Creditors Age Analysis (PDF) · Net balance R24.4M after Take-On contra –R13.0M</div>
+          </div>
+          <div class="card-chip" style="background:var(--red)">91.9% &gt;90 days</div>
+        </div>
+        <div class="card-body" style="padding:14px 16px">
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-bottom:4px">
+              <span>Current</span><span>30 days</span><span>60 days</span><span>&gt;90 days</span>
+            </div>
+            <div style="display:flex;height:20px;border-radius:4px;overflow:hidden;gap:1px">
+              <div style="background:var(--green);width:5.5%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">5.5%</div>
+              <div style="background:var(--amber);width:1.3%"></div>
+              <div style="background:var(--orange);width:1.3%"></div>
+              <div style="background:var(--red);width:91.9%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:800">91.9% — R 22.4M overdue</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:4px;font-weight:700">
+              <span style="color:var(--green)">R 1.3M</span>
+              <span style="color:var(--amber)">R 309K</span>
+              <span style="color:var(--orange)">R 323K</span>
+              <span style="color:var(--red)">R 22.4M</span>
+            </div>
+          </div>
+          <table class="btable">
+            <thead><tr><th>Creditor / Category</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Legal creditors (Tswelopele R5.4M, Sandvik R4.8M + 6 others)</td><td style="color:var(--red);font-weight:700">Legal action</td><td class="neg">R 15.0M</td><td><span class="abadge abr">LEGAL</span></td></tr>
+              <tr><td>30-day terms — overdue &gt;90 days</td><td>Trade</td><td class="neg">R 9.1M</td><td><span class="abadge abr">&gt;90d</span></td></tr>
+              <tr><td>7th Rentals / Equipment (Bubesi R3.9M)</td><td>Rental</td><td class="neg">R 4.9M</td><td><span class="abadge abo">Rental</span></td></tr>
+              <tr><td>DOP — Due on Presentation</td><td>Trade</td><td class="neg">R 4.3M</td><td><span class="abadge abo">DOP</span></td></tr>
+              <tr><td>60-day terms (Mincon Holdings)</td><td>Trade</td><td>R 2.1M</td><td style="color:var(--navy)">60d</td></tr>
+              <tr><td>Current (within terms)</td><td>Trade</td><td>R 1.3M</td><td style="color:var(--green);font-weight:700">Current</td></tr>
+              <tr><td>Take-On AP (contra / opening balance offset)</td><td>Contra</td><td class="pos">–R 13.0M</td><td>Offset</td></tr>
+              <tr class="total"><td>NET AP BALANCE</td><td></td><td class="neg">R 24.4M</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-left">
+              <div class="ct">SARS Tax Arrears — R 64.5M</div>
+              <div class="cs">Statutory debt · No court order needed to freeze accounts · Section 167 payment plan is the only protection</div>
+            </div>
+          </div>
+          <div class="card-body" style="padding:14px 16px">
+            <div style="display:flex;gap:12px;margin-bottom:12px">
+              <div style="flex:1;background:var(--red-lt);border-radius:6px;padding:12px;border-left:3px solid var(--red)">
+                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:4px">PAYE Arrears</div>
+                <div style="font-size:22px;font-weight:800;color:var(--red)">R 40.4M</div>
+                <div style="font-size:10px;color:var(--gray);margin-top:4px">Employee income tax withheld from salaries but not remitted to SARS. Accumulated over multiple years as cash was diverted to operations.</div>
+              </div>
+              <div style="flex:1;background:#FFF3E0;border-radius:6px;padding:12px;border-left:3px solid var(--orange)">
+                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--orange);margin-bottom:4px">VAT Arrears</div>
+                <div style="font-size:22px;font-weight:800;color:var(--orange)">R 24.1M</div>
+                <div style="font-size:10px;color:var(--gray);margin-top:4px">Output VAT collected from clients not paid to SARS. Compounds with penalties and interest monthly.</div>
+              </div>
+            </div>
+            <div class="notice" style="background:#FFEBEE;border-color:var(--red)">
+              <strong style="color:var(--red)">Critical:</strong> Any AR collection (R12.5M owed by clients) is at risk of immediate attachment by SARS.
+              A <strong>Section 167 Instalment Agreement</strong> must be in place before AR is collected — otherwise SARS can intercept it.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-head-left"><div class="ct">Total Obligations — Gross Exposure</div></div></div>
+          <div class="card-body" style="padding:0">
+            <table class="btable">
+              <thead><tr><th>Obligation</th><th>Amount</th><th>Priority</th></tr></thead>
+              <tbody>
+                <tr><td>SARS PAYE</td><td class="neg">R 40.4M</td><td><span class="abadge abr">STATUTORY</span></td></tr>
+                <tr><td>SARS VAT</td><td class="neg">R 24.1M</td><td><span class="abadge abr">STATUTORY</span></td></tr>
+                <tr><td>AP — Legal creditors</td><td class="neg">R 15.0M</td><td><span class="abadge abr">LEGAL</span></td></tr>
+                <tr><td>AP — Trade overdue &gt;90d</td><td class="neg">R 9.1M</td><td><span class="abadge abo">HIGH</span></td></tr>
+                <tr><td>AP — Rentals &amp; DOP</td><td class="neg">R 9.2M</td><td><span class="abadge abo">HIGH</span></td></tr>
+                <tr><td>AP — Within terms</td><td class="neg">R 3.4M</td><td style="color:var(--green);font-weight:700">Current</td></tr>
+                <tr><td>AP Take-On contra</td><td class="pos">–R 13.0M</td><td>Offset</td></tr>
+                <tr class="total"><td>GROSS OBLIGATIONS</td><td class="neg">R 88.2M</td><td></td></tr>
+                <tr class="total"><td>Less: AR recoverable</td><td class="pos">–R 12.5M</td><td></td></tr>
+                <tr class="total"><td>NET EXPOSURE</td><td class="neg">R 75.7M</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-creditors -->
+
+  <!-- ═══════════════ BUDGET FY2027 TAB ═══════════════ -->
+  <div id="tab-budget" style="display:none">
+
+    <div class="kpi-row" style="margin-bottom:14px">
+      <div class="kpi rev">
+        <div class="kpi-lbl">Budget Revenue FY2027</div>
+        <div class="kpi-val">R 59.9M</div>
+        <div class="kpi-meta">Aug 2026 – Jun 2027 · 11 months<br>Ramp: R3.3M → R5.9M/month</div>
+        <div class="kpi-badge badge-b">vs R 14M actual FY2026</div>
+      </div>
+      <div class="kpi net">
+        <div class="kpi-lbl">Budget EBITDA FY2027</div>
+        <div class="kpi-val" id="kpiBudgetEbitda" style="color:var(--green);font-size:20px">+ R 1.2M</div>
+        <div class="kpi-meta">First cash-positive year since FY2024<br>Breakeven: October 2026</div>
+        <div class="kpi-badge badge-g">EBITDA turns Oct '26</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Budget Net (after depreciation)</div>
+        <div class="kpi-val" style="color:var(--red);font-size:20px">– R 3.9M</div>
+        <div class="kpi-meta">Depr R471K/month non-cash<br>Book loss ≠ cash loss</div>
+        <div class="kpi-badge badge-r">Depr R5.2M annual</div>
+      </div>
+      <div class="kpi cost">
+        <div class="kpi-lbl">Fixed Overheads Budget</div>
+        <div class="kpi-val" style="font-size:20px">R 1.97M</div>
+        <div class="kpi-meta">Per month · Fixed regardless of revenue<br>Must cover from day one</div>
+        <div class="kpi-badge badge-o">R 21.7M annual</div>
+      </div>
+    </div>
+
+    <div class="two-col-main" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="ct">Budget Revenue Ramp — FY2027 (Aug 2026 – Jun 2027)</div>
+            <div class="cs">Blue = Revenue · Red = Total costs (COS + OH) · Oct '26 = first EBITDA-positive month</div>
+          </div>
+        </div>
+        <div class="card-body" style="padding:12px 14px 10px">
+          <div class="chart-wrap">
+            <div class="chart-months" id="budgetChart"></div>
+          </div>
+          <div class="chart-legend" style="margin-top:6px">
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--blue);vertical-align:middle;margin-right:3px"></span>Budget Revenue</span>
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#E57373;vertical-align:middle;margin-right:3px"></span>Budget Costs (COS + Overheads)</span>
+          </div>
+          <div class="notice" style="margin-top:8px">Oct 2026 = breakeven month. Budget assumes all contracts start Aug 2026. Each 1-month delay = ~–R5.7M annual revenue loss.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left"><div class="ct">Monthly Budget P&amp;L — FY2027</div></div>
+          <div class="card-chip">R 59.9M Annual</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <table class="btable">
+            <thead><tr><th>Month</th><th>Revenue</th><th>Gross Profit</th><th>EBITDA</th><th>Net Profit</th></tr></thead>
+            <tbody>
+              <tr><td>Aug '26</td><td>R 3.3M</td><td>R 0.5M</td><td class="neg">– R 1.4M</td><td class="neg">– R 1.9M</td></tr>
+              <tr><td>Sep '26</td><td>R 4.6M</td><td>R 1.5M</td><td class="neg">– R 0.5M</td><td class="neg">– R 1.0M</td></tr>
+              <tr style="background:#E8F5E9"><td><strong>Oct '26 ✓</strong></td><td><strong>R 5.7M</strong></td><td><strong>R 2.3M</strong></td><td class="pos"><strong>+ R 0.3M</strong></td><td class="neg">– R 0.1M</td></tr>
+              <tr><td>Nov '26</td><td>R 5.9M</td><td>R 2.4M</td><td class="pos">+ R 0.4M</td><td class="neg">≈ 0</td></tr>
+              <tr><td>Dec '26</td><td>R 5.7M</td><td>R 2.3M</td><td class="pos">+ R 0.3M</td><td class="neg">– R 0.1M</td></tr>
+              <tr><td>Jan '27</td><td>R 5.9M</td><td>R 2.4M</td><td class="pos">+ R 0.4M</td><td class="neg">≈ 0</td></tr>
+              <tr><td>Feb '27</td><td>R 5.9M</td><td>R 2.4M</td><td class="pos">+ R 0.4M</td><td class="neg">≈ 0</td></tr>
+              <tr><td>Mar '27</td><td>R 5.4M</td><td>R 2.0M</td><td class="pos">+ R 0.1M</td><td class="neg">– R 0.4M</td></tr>
+              <tr><td>Apr '27</td><td>R 5.9M</td><td>R 2.4M</td><td class="pos">+ R 0.4M</td><td class="neg">– R 0.1M</td></tr>
+              <tr><td>May '27</td><td>R 5.7M</td><td>R 2.3M</td><td class="pos">+ R 0.3M</td><td class="neg">– R 0.2M</td></tr>
+              <tr><td>Jun '27</td><td>R 5.9M</td><td>R 2.4M</td><td class="pos">+ R 0.4M</td><td class="neg">– R 0.1M</td></tr>
+              <tr class="total"><td><strong>FY2027 Total</strong></td><td><strong>R 59.9M</strong></td><td><strong>R 22.9M</strong></td><td class="pos"><strong>+ R 1.2M</strong></td><td class="neg"><strong>– R 3.9M</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Budget Contracts &amp; Risks</div>
+          <div class="cs">Revenue based on contracts modelled in budget file · Verify contract status and start dates before relying on projections</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:14px 16px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:11px;margin-bottom:12px">
+          <div style="background:var(--bg);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px">Mota-Engil</div>
+            Production Drilling + Technical Blasting<br><span style="color:var(--gray)">Largest revenue contributor in model</span>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px">Black Mountain</div>
+            Waste Removal · Northern Cape<br><span style="color:var(--gray)">Zinc/lead mine site</span>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px">Bushveld</div>
+            Mining Services · Vanadium<br><span style="color:var(--gray)">Mokopane area</span>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px">Tharisa</div>
+            Mining Services · PGM/Chrome<br><span style="color:var(--gray)">North West Province</span>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:12px;border-left:3px solid var(--blue)">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:4px">MacQuarie</div>
+            New contract · FY2027<br><span style="color:var(--gray)">Added to budget model</span>
+          </div>
+          <div style="background:var(--red-lt);border-radius:6px;padding:12px;border-left:3px solid var(--red)">
+            <div style="font-weight:800;color:var(--red);margin-bottom:4px">⚠ Budget Risks</div>
+            1. SARS freeze = operations stop before contracts start<br>
+            2. Contract delay of 1 month = –R5.7M revenue<br>
+            3. AR collection intercepted by SARS if no Section 167
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-budget -->
+
+</div>
+
+<div class="footer">
+  EMS Mining · CFO Dashboard · FY2023–FY2026 · ZAR · Confidential &nbsp;|&nbsp;
+  Sources: SmartBuilder Transaction Listings (FY2023–FY2026) · Debtors Age Analysis Jun 2026 · Creditors Age Analysis May 2026 · Exported: 12 Jun 2026
+</div>
+
+<script>
+(function(){
+  if(sessionStorage.getItem('ems_auth')==='1'){
+    document.getElementById('auth-overlay').style.display='none';
+  }
+})();
+
+function doLogin(){
+  var u=document.getElementById('auth-user').value.trim().toLowerCase();
+  var p=document.getElementById('auth-pass').value.trim();
+  if(u==='viewer'&&p==='2026'){
+    sessionStorage.setItem('ems_auth','1');
+    var ov=document.getElementById('auth-overlay');
+    ov.style.transition='opacity .35s';
+    ov.style.opacity='0';
+    setTimeout(function(){ov.style.display='none';},380);
+  } else {
+    document.getElementById('auth-err').style.display='block';
+    document.getElementById('auth-pass').value='';
+    document.getElementById('auth-pass').focus();
+  }
+}
+
+document.addEventListener('keydown',function(e){
+  var ov=document.getElementById('auth-overlay');
+  if(e.key==='Enter'&&ov&&ov.style.display!=='none'){doLogin();}
+});
+
+// ─── All monthly data (52 months, Mar 2022 – Jun 2026) ───
+// Outlier months flagged: FY year-end adjustment entries
+const OUTLIER = new Set(['2023-02','2024-06','2024-09','2024-10','2024-12','2025-01','2025-02','2025-06']);
+
+const MD = {
+  '2022-03':{r:15869415,c:9895096,d:1518722,lab:3607932,site:5220642,ovh:1066522},
+  '2022-04':{r:16935438,c:14799656,d:349097,lab:4360617,site:9370023,ovh:1069016},
+  '2022-05':{r:21468384,c:13131556,d:1518533,lab:4806012,site:7421327,ovh:904217},
+  '2022-06':{r:22061052,c:18031397,d:1654580,lab:4804186,site:11749907,ovh:1477304},
+  '2022-07':{r:22009222,c:16711322,d:1668438,lab:5283898,site:9962400,ovh:1465024},
+  '2022-08':{r:27165681,c:16255026,d:1913504,lab:5920472,site:9355619,ovh:978935},
+  '2022-09':{r:21686977,c:17986341,d:2135466,lab:6108354,site:9994489,ovh:1883498},
+  '2022-10':{r:23687405,c:19372574,d:2079521,lab:6368613,site:11541149,ovh:1462812},
+  '2022-11':{r:21501645,c:16086553,d:1966314,lab:6229586,site:8491034,ovh:1365933},
+  '2022-12':{r:21841830,c:16318946,d:1966314,lab:6391519,site:8316901,ovh:1610526},
+  '2023-01':{r:21455922,c:15874108,d:1936426,lab:6517862,site:7756013,ovh:1600233},
+  '2023-02':{r:17489415,c:57318712,d:-13423871,lab:7517515,site:15379609,ovh:34421588}, // FY-end adj
+  '2023-03':{r:17148456,c:13749837,d:129684,lab:5857549,site:5460371,ovh:2431917},
+  '2023-04':{r:17727778,c:14991151,d:129684,lab:6260633,site:7629872,ovh:1100646},
+  '2023-05':{r:20884143,c:19939210,d:129684,lab:6111476,site:12190826,ovh:1636908},
+  '2023-06':{r:17669222,c:15767512,d:129684,lab:5887963,site:9245615,ovh:633934},
+  '2023-07':{r:18981750,c:18684477,d:920762,lab:5759785,site:9991370,ovh:2933322},
+  '2023-08':{r:16778413,c:18466116,d:361275,lab:5760232,site:10900884,ovh:1805000},
+  '2023-09':{r:14792029,c:18414558,d:270272,lab:5284792,site:9922142,ovh:3207624},
+  '2023-10':{r:15614608,c:18018426,d:246763,lab:5480929,site:8919488,ovh:3618009},
+  '2023-11':{r:13299377,c:15867172,d:262058,lab:5044967,site:9051000,ovh:1771205},
+  '2023-12':{r:14013071,c:7708191,d:4256119,lab:5095913,site:1135783,ovh:1476495},
+  '2024-01':{r:14548859,c:10716592,d:4286119,lab:4730567,site:2181718,ovh:3804307},
+  '2024-02':{r:13226591,c:6861240,d:4286119,lab:5024023,site:1063666,ovh:773551},
+  '2024-03':{r:0,c:199107,d:0,lab:0,site:6120,ovh:192987},
+  '2024-04':{r:0,c:109931,d:0,lab:0,site:-5251,ovh:115182},
+  '2024-05':{r:0,c:204764,d:0,lab:0,site:3369,ovh:201395},
+  '2024-06':{r:40855382,c:-34310675,d:-2799465,lab:-32172840,site:-10560425,ovh:8422590}, // FY-end adj
+  '2024-07':{r:11022461,c:7764134,d:3314517,lab:5230564,site:1230237,ovh:1303333},
+  '2024-08':{r:6794392,c:6968442,d:3314517,lab:4404899,site:1022157,ovh:1541386},
+  '2024-09':{r:-5665932,c:23587157,d:3314517,lab:3910023,site:821798,ovh:18855336}, // FY-end adj
+  '2024-10':{r:-7047422,c:26045687,d:3314517,lab:4016901,site:2017693,ovh:20011093}, // FY-end adj
+  '2024-11':{r:7040785,c:7082855,d:3314517,lab:3645567,site:890451,ovh:2546837},
+  '2024-12':{r:-10281173,c:-7720206,d:3314517,lab:4146295,site:1715402,ovh:-13581903}, // FY-end adj
+  '2025-01':{r:-6644304,c:8237222,d:3314517,lab:3940535,site:14491318,ovh:-10194631}, // FY-end adj
+  '2025-02':{r:-5682775,c:6965104,d:3314517,lab:4121446,site:10832947,ovh:-7989289}, // FY-end adj
+  '2025-03':{r:7978523,c:4942660,d:2223162,lab:3707287,site:1657345,ovh:-421972},
+  '2025-04':{r:7156276,c:8481742,d:4405871,lab:3935899,site:2461115,ovh:2084728},
+  '2025-05':{r:6458881,c:8915383,d:7669430,lab:4291882,site:3009674,ovh:1613827},
+  '2025-06':{r:-7213218,c:-11068943,d:-1089445,lab:3610845,site:-32850409,ovh:18170621}, // FY-end adj
+  '2025-07':{r:4245389,c:3813578,d:3312543,lab:3104296,site:400122,ovh:309160},
+  '2025-08':{r:5794880,c:1234070,d:3312543,lab:2335210,site:-172285,ovh:-928855},
+  '2025-09':{r:2489150,c:2508239,d:8756837,lab:1522744,site:692869,ovh:292626},
+  '2025-10':{r:1270920,c:3893169,d:-2131752,lab:1314608,site:1785435,ovh:793126},
+  '2025-11':{r:0,c:1759728,d:0,lab:1299994,site:57686,ovh:402048},
+  '2025-12':{r:0,c:2835438,d:0,lab:2523460,site:130515,ovh:181463},
+  '2026-01':{r:0,c:2673180,d:0,lab:1837717,site:625389,ovh:210074},
+  '2026-02':{r:0,c:1224245,d:0,lab:1028366,site:-45199,ovh:241078},
+  '2026-03':{r:0,c:1110023,d:0,lab:904490,site:22486,ovh:183047},
+  '2026-04':{r:0,c:1303538,d:0,lab:738546,site:317574,ovh:247418},
+  '2026-05':{r:0,c:1311359,d:0,lab:837218,site:313704,ovh:160437},
+  '2026-06':{r:0,c:-95360,d:0,lab:0,site:-137683,ovh:42323},
+};
+
+// FY boundary months (first month of each new FY)
+const FY_STARTS = new Set(['2022-03','2023-03','2024-07','2025-07']);
+
+// Fiscal year date ranges for quick-set
+const FY_RANGES = {
+  2023: ['2022-03-01','2023-02-28'],
+  2024: ['2023-03-01','2024-02-29'],
+  2025: ['2024-03-01','2025-06-30'],
+  2026: ['2025-07-01','2026-06-30'],
+};
+
+function setFY(fy) {
+  const [f,t] = FY_RANGES[fy];
+  document.getElementById('dateFrom').value = f;
+  document.getElementById('dateTo').value   = t;
+  applyFilter();
+}
+function setAll() {
+  document.getElementById('dateFrom').value = '2022-03-01';
+  document.getElementById('dateTo').value   = '2026-06-30';
+  applyFilter();
+}
+
+function ymFromDate(s) {
+  // s = 'YYYY-MM-DD', return 'YYYY-MM'
+  return s.slice(0,7);
+}
+
+function getMonthsInRange(fromYM, toYM) {
+  return Object.keys(MD).filter(ym => ym >= fromYM && ym <= toYM).sort();
+}
+
+function sumMonths(months) {
+  const r = {rev:0,cash:0,depr:0,lab:0,site:0,ovh:0};
+  for (const ym of months) {
+    const m = MD[ym];
+    r.rev  += m.r;
+    r.cash += m.c;
+    r.depr += m.d;
+    r.lab  += m.lab;
+    r.site += m.site;
+    r.ovh  += m.ovh;
+  }
+  return r;
+}
+
+function fmtM(v,dec=1) {
+  if (Math.abs(v) >= 1e6)  return (v<0?'–':'') + 'R ' + (Math.abs(v)/1e6).toFixed(dec) + 'M';
+  if (Math.abs(v) >= 1000) return (v<0?'–':'') + 'R ' + Math.round(Math.abs(v)/1000) + 'K';
+  return 'R 0';
+}
+
+function setBar(id, val, maxVal) {
+  const el = document.getElementById(id); if(!el) return;
+  const pct = maxVal>0 ? Math.max(1,Math.min(99,Math.round((Math.max(0,val)/maxVal)*100))) : 1;
+  el.style.width = pct+'%';
+  const sp = el.querySelector('.exp-pct');
+  if (sp) sp.textContent = pct >= 10 ? pct+'%' : '';
+}
+
+// ─── Build chart ───
+const CHART_CAP = 25e6;  // cap bars at R25M for display
+const CHART_H   = 84;
+
+function px(v) { return Math.max(1, Math.min(CHART_H, Math.round((Math.max(0,v)/CHART_CAP)*CHART_H))); }
+
+function buildChart(months) {
+  const chart = document.getElementById('chart');
+  chart.innerHTML = '';
+
+  for (const ym of months) {
+    const m = MD[ym];
+    const isOutlier = OUTLIER.has(ym);
+    const isBoundary = FY_STARTS.has(ym);
+    const revH  = px(m.r);
+    const costH = px(Math.max(0, m.c));
+
+    const col = document.createElement('div');
+    col.className = 'month-col selected' + (isBoundary ? ' fy-boundary' : '');
+
+    // month label: show year only on Jan and boundary months
+    const [y, mo] = ym.split('-').map(Number);
+    const moNames = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const lbl = (mo === 1 || isBoundary) ? moNames[mo]+'\''+String(y).slice(2) : moNames[mo];
+
+    col.innerHTML =
+      '<div class="bars">' +
+        '<div class="bar-rev"  style="height:'+revH+'px"></div>' +
+        '<div class="bar-cost" style="height:'+costH+'px'+(isOutlier?';opacity:0.4':'')+'"></div>' +
+      '</div>' +
+      (isOutlier ? '<div class="bar-overflow">⚠</div>' : '') +
+      '<div class="month-lbl">' + lbl + '</div>';
+
+    chart.appendChild(col);
+  }
+}
+
+// ─── Apply filter ───
+function applyFilter() {
+  const fromStr = document.getElementById('dateFrom').value;
+  const toStr   = document.getElementById('dateTo').value;
+  if (!fromStr || !toStr) return;
+
+  const fromYM = ymFromDate(fromStr);
+  const toYM   = ymFromDate(toStr);
+
+  const months = getMonthsInRange(fromYM, toYM);
+  if (!months.length) return;
+
+  const s = sumMonths(months);
+  const nM = months.length;
+  const ebitda = s.rev - s.cash;
+  const avgBurn = nM > 0 ? s.cash / nM : 0;
+
+  // Period label
+  const [fy, fm] = months[0].split('-').map(Number);
+  const [ty, tm] = months[months.length-1].split('-').map(Number);
+  const moN = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const periodLbl = moN[fm]+'\''+String(fy).slice(2)+' – '+moN[tm]+'\''+String(ty).slice(2);
+
+  // KPIs
+  ['kpiPeriodLbl','kpiPeriodLbl2','kpiPeriodLbl3'].forEach(id => {
+    document.getElementById(id).textContent = periodLbl;
+  });
+  document.getElementById('kpiRev').textContent  = fmtM(s.rev);
+  document.getElementById('kpiCost').textContent = fmtM(s.cash);
+
+  const netEl = document.getElementById('kpiNet');
+  netEl.textContent = (ebitda >= 0 ? '+' : '–') + ' R ' + (Math.abs(ebitda)/1e6).toFixed(1) + 'M';
+  netEl.style.color = ebitda >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('kpiNetMeta').textContent = ebitda >= 0 ? 'Cash-positive period' : 'Cash shortfall for period';
+  document.getElementById('kpiBurn').textContent = fmtM(avgBurn);
+
+  // Expense bars
+  const maxCat = Math.max(Math.abs(s.lab), Math.abs(s.site), Math.abs(s.depr), Math.abs(s.ovh), 1);
+  setBar('barLabour', s.lab,  maxCat);
+  setBar('barSite',   s.site, maxCat);
+  setBar('barDepr',   s.depr, maxCat);
+  setBar('barOverh',  s.ovh,  maxCat);
+  document.getElementById('amtLabour').textContent = fmtM(s.lab);
+  document.getElementById('amtSite').textContent   = fmtM(s.site);
+  document.getElementById('amtDepr').textContent   = fmtM(s.depr);
+  document.getElementById('amtOverh').textContent  = fmtM(s.ovh);
+
+  const totalAll = Math.max(0,s.lab) + Math.max(0,s.site) + Math.max(0,s.depr) + Math.max(0,s.ovh);
+  document.getElementById('expTotalChip').textContent = fmtM(totalAll) + ' Total';
+  document.getElementById('expPeriodLabel').textContent = periodLbl + ' · Source: SmartBuilder Transaction Listings';
+
+  const outlierMonths = months.filter(m => OUTLIER.has(m));
+  document.getElementById('expNote').textContent =
+    outlierMonths.length
+      ? '⚠ Period contains ' + outlierMonths.length + ' year-end adjustment month(s): ' + outlierMonths.join(', ') + '. Costs may be inflated by one-time write-offs.'
+      : 'All amounts from SmartBuilder GL transactions. Depreciation shown separately (non-cash).';
+
+  // Build chart
+  buildChart(months);
+
+  // Chart note
+  document.getElementById('chartNote').textContent =
+    'Showing ' + months.length + ' months (' + periodLbl + '). ⚠ marks year-end adjustment months — cost bars dimmed for those months.';
+}
+
+// ─── Tab switching ───
+function switchTab(name, el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  ['overview','expenses','creditors','budget'].forEach(t => {
+    const sec = document.getElementById('tab-'+t);
+    if (sec) sec.style.display = (t === name) ? '' : 'none';
+  });
+  if (name === 'expenses') buildExpenseDetail();
+  if (name === 'budget')   buildBudgetChart();
+}
+
+// ─── Expense Detail tab ───
+function buildExpenseDetail() {
+  const tbody = document.getElementById('expDetailBody');
+  if (!tbody || tbody.children.length > 0) return;
+
+  const FY_MONTH_RANGES = {
+    2023: ['2022-03','2023-02'],
+    2024: ['2023-03','2024-02'],
+    2025: ['2024-03','2025-06'],
+    2026: ['2025-07','2026-06'],
+  };
+  const fys = [2023,2024,2025,2026];
+  const data = {};
+  for (const fy of fys) {
+    const [f,t] = FY_MONTH_RANGES[fy];
+    data[fy] = sumMonths(getMonthsInRange(f,t));
+  }
+
+  const cats = [
+    ['Revenue',       d => d.rev,  '#0F6DB5'],
+    ['Labour',        d => d.lab,  '#E65100'],
+    ['Site Costs',    d => d.site, '#F57C00'],
+    ['Overheads',     d => d.ovh,  '#6B7A8D'],
+    ['Depreciation',  d => d.depr, '#9E9E9E'],
+  ];
+  for (const [name, fn, color] of cats) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+name+'</td>' + fys.map(fy => {
+      const v = fn(data[fy]);
+      return '<td style="color:'+color+';font-weight:700">'+fmtM(v,0)+'</td>';
+    }).join('');
+    tbody.appendChild(tr);
+  }
+  // Cash cost total
+  const tr2 = document.createElement('tr');
+  tr2.className = 'total';
+  tr2.innerHTML = '<td>Cash Costs (lab+site+ovh)</td>' + fys.map(fy => {
+    const v = data[fy].lab + data[fy].site + data[fy].ovh;
+    return '<td class="neg">'+fmtM(v,0)+'</td>';
+  }).join('');
+  tbody.appendChild(tr2);
+  // EBITDA
+  const tr3 = document.createElement('tr');
+  tr3.className = 'total';
+  tr3.innerHTML = '<td>EBITDA (Rev – Cash Costs)</td>' + fys.map(fy => {
+    const v = data[fy].rev - (data[fy].lab + data[fy].site + data[fy].ovh);
+    return '<td class="'+(v>=0?'pos':'neg')+'">'+(v>=0?'+':'')+fmtM(v,0)+'</td>';
+  }).join('');
+  tbody.appendChild(tr3);
+}
+
+// ─── Budget chart ───
+const BUDGET_MONTHS = [
+  {lbl:"Aug'26",rev:3318300,cost:4746686},
+  {lbl:"Sep'26",rev:4602450,cost:5094419},
+  {lbl:"Oct'26",rev:5720910,cost:5397279},
+  {lbl:"Nov'26",rev:5886600,cost:5442148},
+  {lbl:"Dec'26",rev:5720910,cost:5397279},
+  {lbl:"Jan'27",rev:5886600,cost:5442148},
+  {lbl:"Feb'27",rev:5886600,cost:5442148},
+  {lbl:"Mar'27",rev:5389530,cost:5337377},
+  {lbl:"Apr'27",rev:5886600,cost:5471981},
+  {lbl:"May'27",rev:5720910,cost:5427112},
+  {lbl:"Jun'27",rev:5886600,cost:5471981},
+];
+function buildBudgetChart() {
+  const chart = document.getElementById('budgetChart');
+  if (!chart || chart.children.length > 0) return;
+  const CAP = 8e6; const H = 84;
+  for (const m of BUDGET_MONTHS) {
+    const revH  = Math.max(1, Math.min(H, Math.round((m.rev/CAP)*H)));
+    const costH = Math.max(1, Math.min(H, Math.round((m.cost/CAP)*H)));
+    const ebitdaPos = m.rev >= m.cost;
+    const col = document.createElement('div');
+    col.className = 'month-col selected' + (ebitdaPos ? '' : '');
+    col.innerHTML =
+      '<div class="bars">' +
+        '<div class="bar-rev" style="height:'+revH+'px"></div>' +
+        '<div class="bar-cost" style="height:'+costH+'px"></div>' +
+      '</div>' +
+      (ebitdaPos ? '<div style="position:absolute;top:1px;font-size:8px;color:var(--green);font-weight:800">✓</div>' : '') +
+      '<div class="month-lbl">'+m.lbl+'</div>';
+    chart.appendChild(col);
+  }
+}
+
+// Init
+applyFilter();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EMS Mining — Financial Dashboard</title>
+<style>
+:root {
+  --blue: #0F6DB5;
+  --blue-dark: #0A4F86;
+  --blue-light: #EBF4FD;
+  --yellow: #F5C400;
+  --yellow-dark: #C9A200;
+  --navy: #1A2E42;
+  --dark: #243547;
+  --dark2: #2D3E52;
+  --gray: #6B7A8D;
+  --light-gray: #D5DFE8;
+  --bg: #F5F2EA;
+  --white: #FFFFFF;
+  --green: #2E7D32;
+  --red: #C62828;
+  --orange: #E65100;
+  --amber: #F57C00;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--navy); font-size:13px; }
+
+/* HEADER */
+.header { background:var(--navy); padding:0 32px; display:flex; align-items:stretch; border-bottom:3px solid var(--blue); height:60px; }
+.header-logo { display:flex; align-items:center; gap:14px; padding-right:32px; border-right:1px solid #2D3E52; }
+.logo-mark { width:36px; height:36px; background:var(--blue); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.logo-text { color:var(--white); font-size:18px; font-weight:800; letter-spacing:2px; }
+.logo-sub  { color:var(--yellow); font-size:9px; letter-spacing:3px; text-transform:uppercase; margin-top:2px; }
+.header-center { display:flex; align-items:center; padding:0 32px; flex:1; }
+.dash-title { color:var(--white); font-size:15px; font-weight:600; letter-spacing:0.5px; }
+.dash-sub { color:var(--gray); font-size:11px; margin-top:2px; }
+.header-right { display:flex; align-items:center; gap:16px; padding-left:24px; border-left:1px solid #2D3E52; }
+.period-chip { background:var(--yellow); color:var(--navy); padding:5px 12px; border-radius:3px; font-size:11px; font-weight:800; letter-spacing:1px; }
+.update-text { color:var(--gray); font-size:10px; text-align:right; line-height:1.5; }
+
+/* NAV */
+.nav { background:var(--dark2); padding:0 32px; display:flex; border-bottom:1px solid #3a4a5a; }
+.nav-item { color:var(--gray); padding:12px 18px; font-size:12px; font-weight:600; letter-spacing:0.5px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; text-transform:uppercase; }
+.nav-item:hover { color:#aabcc8; }
+.nav-item.active { color:var(--yellow); border-bottom-color:var(--yellow); }
+
+/* MAIN */
+.main { padding:20px 32px; }
+
+/* FILTER BAR */
+.filter-bar { background:var(--white); border:1px solid var(--light-gray); border-radius:8px; padding:12px 20px; display:flex; align-items:center; gap:12px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,.05); flex-wrap:wrap; }
+.filter-tag { background:var(--blue); color:var(--white); padding:4px 10px; border-radius:3px; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; flex-shrink:0; }
+.filter-label { font-size:12px; color:var(--gray); }
+.filter-label strong { color:var(--navy); }
+.filter-range { display:flex; align-items:center; gap:8px; }
+.filter-range-lbl { font-size:11px; color:var(--gray); font-weight:600; }
+input[type=date] { border:1.5px solid var(--light-gray); border-radius:6px; padding:7px 12px; font-size:13px; color:var(--navy); background:var(--bg); cursor:pointer; outline:none; transition:border-color 0.2s; font-family:inherit; }
+input[type=date]:focus { border-color:var(--blue); }
+.filter-divider { width:1px; height:28px; background:var(--light-gray); flex-shrink:0; }
+.btn-apply { background:var(--yellow); color:var(--navy); border:none; border-radius:6px; padding:8px 20px; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; margin-left:auto; transition:all 0.2s; text-transform:uppercase; flex-shrink:0; }
+.btn-apply:hover { background:var(--yellow-dark); }
+
+/* DATA BANNER */
+.data-banner {
+  background:var(--blue-light);
+  border:1px solid #C0D8F0;
+  border-radius:6px;
+  padding:8px 16px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  margin-bottom:18px;
+  font-size:11px;
+  color:#2A4A6A;
+  flex-wrap:wrap;
+}
+.data-banner-icon { font-size:14px; flex-shrink:0; }
+.data-item { display:flex; align-items:center; gap:5px; }
+.data-item-lbl { font-weight:700; color:#2A4A6A; }
+.data-sep { color:#C0D8F0; }
+
+/* KPI ROW */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+.kpi { background:var(--white); border-radius:8px; padding:18px 20px; box-shadow:0 1px 3px rgba(0,0,0,.05); position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.kpi.ap::before   { background:var(--red); }
+.kpi.ar::before   { background:var(--green); }
+.kpi.net::before  { background:var(--amber); }
+.kpi.sars::before { background:var(--red); }
+.kpi-lbl { font-size:10px; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+.kpi-val { font-size:28px; font-weight:800; line-height:1; margin-bottom:6px; }
+.kpi.ap   .kpi-val { color:var(--red); }
+.kpi.ar   .kpi-val { color:var(--green); }
+.kpi.net  .kpi-val { color:var(--amber); }
+.kpi.sars .kpi-val { color:var(--red); }
+.kpi-meta { font-size:11px; color:var(--gray); }
+.kpi-badge { display:inline-block; margin-top:6px; padding:3px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+.badge-r { background:#FFEBEE; color:var(--red); }
+.badge-g { background:#E8F5E9; color:var(--green); }
+.badge-o { background:#FFF3E0; color:var(--amber); }
+.badge-b { background:var(--blue-light); color:var(--blue); }
+
+/* 2-COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px; }
+
+/* CARD */
+.card { background:var(--white); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); overflow:hidden; }
+.card-head { padding:14px 18px; border-bottom:1px solid var(--light-gray); display:flex; align-items:center; justify-content:space-between; }
+.card-head-left .ct { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+.card-head-left .cs { font-size:10px; color:var(--gray); margin-top:2px; }
+.card-total { background:var(--blue); color:var(--white); padding:5px 12px; border-radius:4px; font-size:12px; font-weight:800; }
+.card-body { padding:18px; }
+
+/* AGE BARS */
+.section-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:10px; }
+.age-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.age-lbl { font-size:11px; color:var(--navy); width:58px; flex-shrink:0; font-weight:600; }
+.age-track { flex:1; background:var(--light-gray); border-radius:4px; height:22px; overflow:hidden; }
+.age-fill  { height:100%; border-radius:4px; display:flex; align-items:center; padding-left:7px; transition:width .6s cubic-bezier(.4,0,.2,1); }
+.age-pct   { font-size:10px; font-weight:700; }
+.age-amt   { font-size:11px; font-weight:700; width:74px; text-align:right; flex-shrink:0; }
+
+/* LIST */
+.list-head { border-top:1px solid var(--light-gray); padding-top:14px; margin-top:14px; }
+.list-section-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:8px; }
+.list-row { display:flex; align-items:center; padding:7px 8px; border-bottom:1px solid #EEF2F6; border-radius:4px; transition:background 0.15s; }
+.list-row:last-child { border-bottom:none; }
+.list-row.alert-90 { background:#FFF0F0; border-left:3px solid var(--red); border-bottom:1px solid #FFCDD2; padding-left:6px; }
+.list-row.alert-60 { background:#FFF8F0; border-left:3px solid var(--orange); border-bottom:1px solid #FFE0B2; padding-left:6px; }
+.alert-badge { font-size:9px; font-weight:800; padding:2px 6px; border-radius:3px; letter-spacing:0.5px; text-transform:uppercase; margin-left:6px; flex-shrink:0; }
+.alert-badge.b90 { background:#FFCDD2; color:var(--red); }
+.alert-badge.b60 { background:#FFE0B2; color:var(--orange); }
+.alert-badge.b30 { background:#FFF9C4; color:#827717; }
+.dot { width:7px; height:7px; border-radius:50%; margin-right:8px; flex-shrink:0; }
+.list-name { flex:1; font-size:12px; color:var(--navy); }
+.list-row.alert-90 .list-name { font-weight:700; color:var(--red); }
+.list-amt { font-size:12px; font-weight:700; }
+.list-age { font-size:10px; color:var(--gray); margin-left:8px; width:48px; text-align:right; }
+.list-pct { font-size:10px; color:var(--gray); margin-left:6px; width:36px; text-align:right; }
+
+/* AR SPLIT */
+.ar-split { display:flex; gap:0; margin:14px 0; border-radius:6px; overflow:hidden; border:1px solid var(--light-gray); }
+.ar-split-block { flex:1; padding:12px 14px; text-align:center; }
+.ar-split-block.overdue { background:#FFF0F0; border-right:1px solid var(--light-gray); }
+.ar-split-block.current { background:#F1FBF1; }
+.ar-split-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:4px; }
+.ar-split-amt { font-size:22px; font-weight:800; }
+.ar-split-block.overdue .ar-split-amt { color:var(--red); }
+.ar-split-block.current .ar-split-amt { color:var(--green); }
+.ar-split-sub { font-size:10px; color:var(--gray); margin-top:3px; }
+
+/* BOTTOM ROW */
+.bottom-row { display:grid; grid-template-columns:1.5fr 1fr; gap:16px; }
+
+/* EXPENSE GROUPS */
+.cat-group { margin-bottom:4px; }
+.cat-group-hdr { display:flex; align-items:center; gap:8px; padding:7px 8px; cursor:pointer; border-radius:6px; background:var(--bg); transition:background 0.15s; user-select:none; }
+.cat-group-hdr:hover { background:#EAE7DC; }
+.cat-arrow { font-size:9px; color:var(--gray); width:10px; flex-shrink:0; transition:transform 0.2s; }
+.cat-arrow.open { transform:rotate(90deg); }
+.cat-group-name { font-size:11px; font-weight:800; color:var(--navy); width:170px; flex-shrink:0; }
+.cat-track { flex:1; background:var(--light-gray); border-radius:3px; height:18px; overflow:hidden; }
+.cat-fill  { height:100%; border-radius:3px; transition:width 0.4s; }
+.cat-group-amt { font-size:12px; font-weight:800; width:80px; text-align:right; flex-shrink:0; }
+.cat-group-body { overflow:hidden; transition:max-height 0.3s ease; }
+.cat-group-body.collapsed { max-height:0; }
+.cat-group-body.expanded  { max-height:400px; }
+.cat-row { display:flex; align-items:center; gap:8px; padding:5px 8px 5px 22px; }
+.cat-lbl { font-size:11px; color:var(--gray); width:170px; flex-shrink:0; }
+.cat-amt { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; color:var(--gray); }
+
+/* BUDGET TABLE */
+.btable { width:100%; border-collapse:collapse; }
+.btable th { font-size:9px; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:1px; padding:8px 10px; text-align:right; border-bottom:2px solid var(--light-gray); }
+.btable th:first-child { text-align:left; }
+.btable td { font-size:12px; padding:9px 10px; border-bottom:1px solid #EEF2F6; text-align:right; }
+.btable td:first-child { text-align:left; font-weight:600; }
+.btable tr:last-child td { font-weight:700; background:var(--bg); border-top:2px solid var(--light-gray); }
+.pos { color:var(--green); font-weight:700; }
+.neg { color:var(--red); font-weight:700; }
+
+/* NOTICE */
+.notice { margin-top:12px; padding:10px 12px; background:#FFF8E1; border-radius:5px; border-left:3px solid var(--yellow); font-size:11px; color:#7D5A00; line-height:1.5; }
+
+/* FOOTER */
+.footer { text-align:center; padding:14px 32px; font-size:10px; color:var(--gray); border-top:1px solid var(--light-gray); margin-top:20px; letter-spacing:0.5px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-mark"></div>
+    <div>
+      <div class="logo-text">EMS MINING</div>
+      <div class="logo-sub">Engineered Mining Solutions</div>
+    </div>
+  </div>
+  <div class="header-center">
+    <div>
+      <div class="dash-title">Financial Dashboard</div>
+      <div class="dash-sub">Creditors · Debtors · Expenses · Budget</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="update-text">Last updated<br><strong style="color:#ccc">12 Jun 2026 · FY End</strong></div>
+    <div class="period-chip">FY2026 · Full Year</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-item active">Financial</div>
+  <div class="nav-item">Production &amp; Rebuild</div>
+  <div class="nav-item">Expenses Detail</div>
+  <div class="nav-item">Cash Flow</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-tag">Period</div>
+    <div class="filter-range">
+      <span class="filter-range-lbl">From</span>
+      <input type="date" id="dateFrom" value="2025-07-01">
+    </div>
+    <div class="filter-range">
+      <span class="filter-range-lbl">To</span>
+      <input type="date" id="dateTo" value="2026-06-30">
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-label">Filters <strong>Expenses</strong> by period &nbsp;·&nbsp; <strong>AR snapshot</strong> as of "To" date</div>
+    <div class="filter-divider"></div>
+    <div class="filter-label">Financial Year: <strong>FY2026</strong> &nbsp;<span style="color:#BDBDBD;font-size:10px">(Jul 2025 – Jun 2026)</span></div>
+    <button class="btn-apply" onclick="applyFilter()">Apply</button>
+  </div>
+
+  <!-- DATA BANNER -->
+  <div class="data-banner">
+    <div class="data-banner-icon">📋</div>
+    <div class="data-item"><span class="data-item-lbl">Transactions:</span> 01 Jul 2025 – 30 Jun 2026 (P1–P12 FY2026, Full Year)</div>
+    <div class="data-sep">|</div>
+    <div class="data-item"><span class="data-item-lbl">AR Snapshot:</span> 30 Jun 2026 · SmartBuilder Debtors Age Analysis (P2026/12)</div>
+    <div class="data-sep">|</div>
+    <div class="data-item"><span class="data-item-lbl">AP Snapshot:</span> 31 May 2026 · SmartBuilder Creditors Age Analysis</div>
+    <div class="data-sep">|</div>
+    <div class="data-item"><span class="data-item-lbl">Budget:</span> FY2026–2027 Excel model</div>
+    <div class="data-sep">|</div>
+    <div class="data-item"><span class="data-item-lbl">Exported:</span> 12 Jun 2026</div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi ap">
+      <div class="kpi-lbl">Total AP — We owe suppliers</div>
+      <div class="kpi-val">R 24.4M</div>
+      <div class="kpi-meta">Creditors Age Analysis · May 2026</div>
+      <div class="kpi-badge badge-r">R 22.4M overdue &gt;90 days</div>
+    </div>
+    <div class="kpi ar">
+      <div class="kpi-lbl">Total AR — Clients owe us</div>
+      <div class="kpi-val">R 12.5M</div>
+      <div class="kpi-meta">Owed to EMS Mining · 6 debtors</div>
+      <div class="kpi-badge badge-g">R 7.0M current</div>
+    </div>
+    <div class="kpi net">
+      <div class="kpi-lbl">Net Position AR – AP</div>
+      <div class="kpi-val" style="font-size:22px">– R 11.9M</div>
+      <div class="kpi-meta">AP exceeds AR — critical gap</div>
+      <div class="kpi-badge badge-r">Collect AR · clear AP urgently</div>
+    </div>
+    <div class="kpi sars">
+      <div class="kpi-lbl">SARS — Tax Arrears</div>
+      <div class="kpi-val" style="font-size:22px">R 64.5M</div>
+      <div class="kpi-meta">PAYE R40.4M + VAT R24.1M</div>
+      <div class="kpi-badge badge-r">Critical — separate from AP</div>
+    </div>
+  </div>
+
+  <!-- AP + AR -->
+  <div class="two-col">
+
+    <!-- CREDITORS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Accounts Payable — We Owe Suppliers</div>
+          <div class="cs">Source: SmartBuilder Creditors Age Analysis · Aged to 31 May 2026</div>
+        </div>
+        <div class="card-total">R 24.4M Total</div>
+      </div>
+      <div class="card-body">
+
+        <div class="section-lbl">AP Age Analysis — 31 May 2026</div>
+        <div class="age-row">
+          <div class="age-lbl">Current</div>
+          <div class="age-track"><div class="age-fill" style="width:5.5%;background:var(--blue)"><span class="age-pct" style="color:#fff;font-size:9px">5%</span></div></div>
+          <div class="age-amt">R 1.3M</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">30 Days</div>
+          <div class="age-track"><div class="age-fill" style="width:1.3%;background:var(--yellow)"><span class="age-pct" style="font-size:8px">&nbsp;</span></div></div>
+          <div class="age-amt">R 0.3M</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">60 Days</div>
+          <div class="age-track"><div class="age-fill" style="width:1.3%;background:var(--orange)"><span class="age-pct" style="font-size:8px">&nbsp;</span></div></div>
+          <div class="age-amt">R 0.3M</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">&gt;90 Days</div>
+          <div class="age-track"><div class="age-fill" style="width:91.9%;background:var(--red)"><span class="age-pct" style="color:#fff">92%</span></div></div>
+          <div class="age-amt">R 22.4M</div>
+        </div>
+
+        <div class="list-head">
+          <div class="list-section-lbl">Top Creditor Categories</div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">LEGAL — Handed to legal (Tswelopele R5.4M, Sandvik R4.8M + 6 others)</div>
+            <div class="list-amt">R 15.0M</div>
+            <div class="list-pct">62%</div>
+            <div class="alert-badge b90">LEGAL</div>
+          </div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">30-Day Terms — overdue &gt;90d (Komatsu, Meyerton Diesels, other)</div>
+            <div class="list-amt">R 9.1M</div>
+            <div class="list-pct">37%</div>
+            <div class="alert-badge b90">&gt;90d</div>
+          </div>
+          <div class="list-row alert-60">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">7th Rentals — Equipment (Bubesi Drilling R3.9M)</div>
+            <div class="list-amt">R 4.9M</div>
+            <div class="list-pct">20%</div>
+            <div class="alert-badge b60">RENTAL</div>
+          </div>
+          <div class="list-row alert-60">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">DOP — Due on Presentation</div>
+            <div class="list-amt">R 4.3M</div>
+            <div class="list-pct">17%</div>
+            <div class="alert-badge b60">DOP</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--blue)"></div>
+            <div class="list-name">60-Day Terms (Mincon Holdings)</div>
+            <div class="list-amt">R 2.1M</div>
+            <div class="list-pct">9%</div>
+            <div class="list-age">60d</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--gray)"></div>
+            <div class="list-name">ADV — Advance Payments received</div>
+            <div class="list-amt">R 2.0M</div>
+            <div class="list-pct">8%</div>
+            <div class="list-age">ADV</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">Take-On AP — Opening balance offset (contra)</div>
+            <div class="list-amt" style="color:var(--green)">–R 13.0M</div>
+            <div class="list-pct"></div>
+            <div class="list-age" style="color:var(--green)">Offset</div>
+          </div>
+        </div>
+
+        <div class="list-head">
+          <div class="list-section-lbl">Additional Obligations (SARS) — Not included in AP total above</div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">SARS — Payroll Creditors (PAYE arrears)</div>
+            <div class="list-amt">R 40.4M</div>
+            <div class="list-pct">—</div>
+            <div class="alert-badge b90">CRITICAL</div>
+          </div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">SARS — VAT Payable (arrears)</div>
+            <div class="list-amt">R 24.1M</div>
+            <div class="list-pct">—</div>
+            <div class="alert-badge b90">ARREARS</div>
+          </div>
+          <div class="list-row alert-60">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">SARS — VAT Current</div>
+            <div class="list-amt">R 7.4M</div>
+            <div class="list-pct">—</div>
+            <div class="alert-badge b60">Current</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DEBTORS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Accounts Receivable — Clients Owe Us</div>
+          <div class="cs" id="arSub">Snapshot: 30 Jun 2026 &nbsp;·&nbsp; Source: SmartBuilder Debtors Age Analysis (P2026/12)</div>
+        </div>
+        <div class="card-total">R 12.5M Total</div>
+      </div>
+      <div class="card-body">
+
+        <div class="section-lbl">Age Analysis — All Debtors · Jun 2026</div>
+        <div class="age-row">
+          <div class="age-lbl">Current</div>
+          <div class="age-track"><div class="age-fill" style="width:56%;background:var(--green)"><span class="age-pct" style="color:#fff">56%</span></div></div>
+          <div class="age-amt">R 7.0M</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">30 Days</div>
+          <div class="age-track"><div class="age-fill" style="width:8%;background:var(--yellow)"><span class="age-pct">8%</span></div></div>
+          <div class="age-amt">R 1.0M</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">60 Days</div>
+          <div class="age-track"><div class="age-fill" style="width:1%;background:var(--orange)"><span class="age-pct" style="color:#fff;font-size:8px">&nbsp;</span></div></div>
+          <div class="age-amt">R 82K</div>
+        </div>
+        <div class="age-row">
+          <div class="age-lbl">90+ Days</div>
+          <div class="age-track"><div class="age-fill" style="width:37%;background:var(--red)"><span class="age-pct" style="color:#fff">37%</span></div></div>
+          <div class="age-amt">R 4.7M</div>
+        </div>
+
+        <div class="ar-split">
+          <div class="ar-split-block overdue">
+            <div class="ar-split-lbl" id="arBeforeLbl">Overdue (&gt;90 Days)</div>
+            <div class="ar-split-amt" id="arBeforeAmt">R 4.7M</div>
+            <div class="ar-split-sub" id="arBeforeSub">Overdue — escalate collection</div>
+          </div>
+          <div class="ar-split-block current">
+            <div class="ar-split-lbl" id="arAfterLbl">Current &amp; Recent</div>
+            <div class="ar-split-amt" id="arAfterAmt">R 7.9M</div>
+            <div class="ar-split-sub">Within normal payment terms</div>
+          </div>
+        </div>
+
+        <div class="list-head">
+          <div class="list-section-lbl">Debtors by Outstanding Balance</div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">TAU Mining Contractors (Pty) Ltd</div>
+            <div class="list-amt">R 5,203,124</div>
+            <div class="list-pct">41%</div>
+            <div class="list-age">Current</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--green)"></div>
+            <div class="list-name">Take On Accounts Receivable</div>
+            <div class="list-amt">R 4,475,545</div>
+            <div class="list-pct">36%</div>
+            <div class="list-age">Current</div>
+          </div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--red)"></div>
+            <div class="list-name">Black Mountain Mining (Pty) Ltd</div>
+            <div class="list-amt">R 3,777,468</div>
+            <div class="list-pct">30%</div>
+            <div class="alert-badge b90">OVERDUE</div>
+          </div>
+          <div class="list-row alert-90">
+            <div class="dot" style="background:var(--orange)"></div>
+            <div class="list-name">Kopano Ke Matla Joint Venture</div>
+            <div class="list-amt">R 246,407</div>
+            <div class="list-pct">2%</div>
+            <div class="alert-badge b90">&gt;90d</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--amber)"></div>
+            <div class="list-name">Mota-Engil (Pty) Ltd</div>
+            <div class="list-amt">R 147,646</div>
+            <div class="list-pct">1%</div>
+            <div class="alert-badge b30">Mixed</div>
+          </div>
+          <div class="list-row">
+            <div class="dot" style="background:var(--gray)"></div>
+            <div class="list-name">Drill Tec (Pty) Ltd — credit balance</div>
+            <div class="list-amt" style="color:var(--green)">–R 1,306,796</div>
+            <div class="list-pct"></div>
+            <div class="list-age" style="color:var(--green)">Credit</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+
+    <!-- EXPENSES BY CATEGORY -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">Expenses by Category</div>
+          <div class="cs" id="expSubLabel">FY2026 Full Year · Jul 2025 – Jun 2026 · All Contracts · Source: SmartBuilder Transaction Listing (P1–P12) · Total: R 49.6M</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- GROUP 1: Labour & Salaries -->
+        <div class="cat-group">
+          <div class="cat-group-hdr" onclick="toggleGroup('g1')">
+            <div class="cat-arrow open" id="arr-g1">▶</div>
+            <div class="cat-group-name">Labour &amp; Salaries</div>
+            <div class="cat-track"><div class="cat-fill" style="width:100%;background:var(--navy)"></div></div>
+            <div class="cat-group-amt">R 17.5M</div>
+          </div>
+          <div class="cat-group-body expanded" id="g1">
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Direct Contract Salaries</div>
+              <div class="cat-track"><div class="cat-fill" style="width:61%;background:#2D4A6688"></div></div>
+              <div class="cat-amt">R 10.7M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Head Office Salaries</div>
+              <div class="cat-track"><div class="cat-fill" style="width:39%;background:#2D4A6688"></div></div>
+              <div class="cat-amt">R 6.8M</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 2: Site & Contract Costs -->
+        <div class="cat-group">
+          <div class="cat-group-hdr" onclick="toggleGroup('g2')">
+            <div class="cat-arrow open" id="arr-g2">▶</div>
+            <div class="cat-group-name">Site &amp; Contract Costs</div>
+            <div class="cat-track"><div class="cat-fill" style="width:85%;background:var(--blue)"></div></div>
+            <div class="cat-group-amt">R 14.8M</div>
+          </div>
+          <div class="cat-group-body expanded" id="g2">
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Stock Adjustments</div>
+              <div class="cat-track"><div class="cat-fill" style="width:59%;background:#0F6DB588"></div></div>
+              <div class="cat-amt">R 10.4M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Penalties — Time Related</div>
+              <div class="cat-track"><div class="cat-fill" style="width:10%;background:#0F6DB588"></div></div>
+              <div class="cat-amt">R 1.8M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Rent — Premises</div>
+              <div class="cat-track"><div class="cat-fill" style="width:9%;background:#0F6DB588"></div></div>
+              <div class="cat-amt">R 1.6M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Internal Plant Hire &amp; Other</div>
+              <div class="cat-track"><div class="cat-fill" style="width:6%;background:#0F6DB588"></div></div>
+              <div class="cat-amt">R 1.0M</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 3: Depreciation -->
+        <div class="cat-group">
+          <div class="cat-group-hdr" onclick="toggleGroup('g3')">
+            <div class="cat-arrow open" id="arr-g3">▶</div>
+            <div class="cat-group-name">Depreciation</div>
+            <div class="cat-track"><div class="cat-fill" style="width:76%;background:var(--gray)"></div></div>
+            <div class="cat-group-amt">R 13.2M</div>
+          </div>
+          <div class="cat-group-body expanded" id="g3">
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Drill Rigs</div>
+              <div class="cat-track"><div class="cat-fill" style="width:58%;background:#6B7A8D88"></div></div>
+              <div class="cat-amt">R 10.1M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Vehicles</div>
+              <div class="cat-track"><div class="cat-fill" style="width:17%;background:#6B7A8D88"></div></div>
+              <div class="cat-amt">R 2.9M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Furniture, Equipment &amp; IT</div>
+              <div class="cat-track"><div class="cat-fill" style="width:1%;background:#6B7A8D88"></div></div>
+              <div class="cat-amt">R 0.2M</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 4: Head Office Overheads -->
+        <div class="cat-group">
+          <div class="cat-group-hdr" onclick="toggleGroup('g4')">
+            <div class="cat-arrow" id="arr-g4">▶</div>
+            <div class="cat-group-name">Head Office Overheads</div>
+            <div class="cat-track"><div class="cat-fill" style="width:18%;background:#B0BEC5"></div></div>
+            <div class="cat-group-amt">R 3.2M</div>
+          </div>
+          <div class="cat-group-body collapsed" id="g4">
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Legal Fees</div>
+              <div class="cat-track"><div class="cat-fill" style="width:7%;background:#B0BEC5"></div></div>
+              <div class="cat-amt">R 1.2M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Motor Vehicle Expenses</div>
+              <div class="cat-track"><div class="cat-fill" style="width:4%;background:#B0BEC5"></div></div>
+              <div class="cat-amt">R 0.7M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Rent — Admin &amp; Other</div>
+              <div class="cat-track"><div class="cat-fill" style="width:5%;background:#B0BEC5"></div></div>
+              <div class="cat-amt">R 0.8M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Interest, Consulting, IT</div>
+              <div class="cat-track"><div class="cat-fill" style="width:3%;background:#B0BEC5"></div></div>
+              <div class="cat-amt">R 0.5M</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 5: Plant Repairs & Consumables -->
+        <div class="cat-group">
+          <div class="cat-group-hdr" onclick="toggleGroup('g5')">
+            <div class="cat-arrow" id="arr-g5">▶</div>
+            <div class="cat-group-name">Plant Repairs &amp; Consumables</div>
+            <div class="cat-track"><div class="cat-fill" style="width:5%;background:#CFD8DC;border:1px solid #B0BEC5"></div></div>
+            <div class="cat-group-amt">R 0.9M</div>
+          </div>
+          <div class="cat-group-body collapsed" id="g5">
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Plant &amp; Vehicle Repairs</div>
+              <div class="cat-track"><div class="cat-fill" style="width:4%;background:#CFD8DC;border:1px solid #B0BEC5"></div></div>
+              <div class="cat-amt">R 0.8M</div>
+            </div>
+            <div class="cat-row">
+              <div class="cat-lbl">↳ Spares, Consumables, Oils</div>
+              <div class="cat-track"><div class="cat-fill" style="width:1%;background:#CFD8DC;border:1px solid #B0BEC5"></div></div>
+              <div class="cat-amt">R 0.2M</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--light-gray);display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:var(--gray);">
+          <span style="font-weight:700;">▶ click to expand/collapse</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--navy);vertical-align:middle"></span> Labour</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--blue);vertical-align:middle"></span> Site Costs</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--gray);vertical-align:middle"></span> Depreciation</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#B0BEC5;vertical-align:middle"></span> Overheads</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#CFD8DC;border:1px solid #B0BEC5;vertical-align:middle"></span> Repairs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUDGET VS ACTUAL -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="ct">P&amp;L — FY2026 Actual vs FY2027 Budget</div>
+          <div class="cs">Source: SmartBuilder Transaction Listing (FY2026) + Excel Budget Model (FY2027)</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:16px">
+        <table class="btable">
+          <thead>
+            <tr>
+              <th style="text-align:left">Line Item</th>
+              <th>FY2026 Actual</th>
+              <th>FY2027 Budget</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Revenue</td>
+              <td>R 13.1M</td>
+              <td>R 63.2M</td>
+              <td class="pos">+383%</td>
+            </tr>
+            <tr>
+              <td>Total Costs (excl. depr.)</td>
+              <td>R 36.4M</td>
+              <td>R 46.6M</td>
+              <td class="neg">—</td>
+            </tr>
+            <tr>
+              <td>EBITDA</td>
+              <td class="neg">–R 23.3M</td>
+              <td class="pos">+R 16.6M</td>
+              <td class="pos">Turnaround</td>
+            </tr>
+            <tr>
+              <td>Depreciation</td>
+              <td>R 13.2M</td>
+              <td>R 10.4M</td>
+              <td class="pos">–21%</td>
+            </tr>
+            <tr>
+              <td>Net Profit / (Loss)</td>
+              <td class="neg">–R 36.5M</td>
+              <td class="neg">–R 7.9M</td>
+              <td class="pos">+78% better</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="notice">
+          <strong>FY2026 Actual:</strong> Transaction Listing P1–P12 (Jul 2025–Jun 2026). Revenue drop reflects contract completions — most revenue ceased after Nov 2025.<br>
+          <strong>FY2027 Budget:</strong> New contracts expected Aug 2026. Overheads: R1.97M/month + contract revenues.
+        </div>
+
+        <div style="margin-top:14px;">
+          <div class="section-lbl" style="margin-bottom:8px;">FY2026 Monthly Revenue (Jul–Jun) vs FY2027 Budget</div>
+          <div style="display:flex;align-items:flex-end;gap:4px;height:72px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--blue);border-radius:2px 2px 0 0" id="b1"></div>
+              <div style="font-size:8px;color:var(--gray)">Jul'25</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--blue);border-radius:2px 2px 0 0" id="b2"></div>
+              <div style="font-size:8px;color:var(--gray)">Aug</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--blue);border-radius:2px 2px 0 0" id="b3"></div>
+              <div style="font-size:8px;color:var(--gray)">Sep</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--blue);border-radius:2px 2px 0 0" id="b4"></div>
+              <div style="font-size:8px;color:var(--gray)">Oct</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--red);border-radius:2px 2px 0 0" id="b5"></div>
+              <div style="font-size:8px;color:var(--gray)">Nov</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--light-gray);border-radius:2px 2px 0 0" id="b6"></div>
+              <div style="font-size:8px;color:var(--gray)">Dec</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--light-gray);border-radius:2px 2px 0 0" id="b7"></div>
+              <div style="font-size:8px;color:var(--gray)">Jan'26</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--light-gray);border-radius:2px 2px 0 0" id="b8"></div>
+              <div style="font-size:8px;color:var(--gray)">Feb–Jun</div>
+            </div>
+            <div style="flex:1;border-left:1px dashed #aabbcc;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--green);border-radius:2px 2px 0 0;opacity:0.6" id="b9"></div>
+              <div style="font-size:8px;color:var(--green)">Aug'26▶</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--green);border-radius:2px 2px 0 0;opacity:0.6" id="b10"></div>
+              <div style="font-size:8px;color:var(--green)">Sep</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--green);border-radius:2px 2px 0 0;opacity:0.6" id="b11"></div>
+              <div style="font-size:8px;color:var(--green)">Oct</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;background:var(--green);border-radius:2px 2px 0 0;opacity:0.6" id="b12"></div>
+              <div style="font-size:8px;color:var(--green)">Nov</div>
+            </div>
+          </div>
+          <div style="font-size:9px;color:var(--gray);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;">
+            <span><span style="color:var(--blue)">■</span> FY2026 Actual</span>
+            <span><span style="color:var(--red)">■</span> Revenue ceased</span>
+            <span><span style="color:var(--green)">■</span> FY2027 Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  EMS Mining · Financial Dashboard · RIB SmartBuilder v25.1117 · ZAR · Confidential &nbsp;|&nbsp;
+  AR: Debtors Age Analysis P2026/12 · Expenses: Transaction Listing P1–P12 FY2026 · AP: Creditors Age Analysis (Aged to May 2026) &nbsp;|&nbsp; Exported: 12 Jun 2026
+</div>
+
+<script>
+// Revenue bar heights — FY2026 actual (Jul–Jan'26) + FY2027 budget (Aug–Nov'26)
+const actualRev = [4418490, 4899302, 2489450, 1270920, 4774, 0, 534303, 0];
+const budgetRev = [3318300, 4602450, 5720910, 5886600];
+const maxRev = Math.max(...actualRev, ...budgetRev);
+
+['b1','b2','b3','b4','b5','b6','b7','b8'].forEach((id,i) => {
+  const el = document.getElementById(id);
+  if (el) el.style.height = Math.max(1, Math.round((actualRev[i]/maxRev)*64))+'px';
+});
+['b9','b10','b11','b12'].forEach((id,i) => {
+  const el = document.getElementById(id);
+  if (el) el.style.height = Math.max(2, Math.round((budgetRev[i]/maxRev)*64))+'px';
+});
+
+// Expense group toggle
+function toggleGroup(id) {
+  const body = document.getElementById(id);
+  const arr  = document.getElementById('arr-'+id);
+  const open = body.classList.contains('expanded');
+  body.classList.toggle('expanded',  !open);
+  body.classList.toggle('collapsed',  open);
+  arr.classList.toggle('open', !open);
+}
+
+// AR date-driven model (real data — Debtors Age Analysis P2026/12)
+// "before" = overdue portion as of snapshot date, "after" = current/recent
+const arSeries = [
+  { ts: new Date('2025-07-01'), before: 4.65, after: 7.90 },
+  { ts: new Date('2025-10-31'), before: 4.65, after: 7.90 },
+  { ts: new Date('2026-01-31'), before: 4.73, after: 7.82 },
+  { ts: new Date('2026-03-31'), before: 4.73, after: 7.82 },
+  { ts: new Date('2026-05-31'), before: 5.76, after: 6.79 },
+  { ts: new Date('2026-06-30'), before: 12.55, after: 0.00 },
+];
+
+function lerp(series, d) {
+  if (d <= series[0].ts) return {...series[0]};
+  if (d >= series[series.length-1].ts) return {...series[series.length-1]};
+  for (let i = 0; i < series.length-1; i++) {
+    if (d >= series[i].ts && d <= series[i+1].ts) {
+      const t = (d - series[i].ts) / (series[i+1].ts - series[i].ts);
+      return {
+        before: series[i].before + t*(series[i+1].before - series[i].before),
+        after:  series[i].after  + t*(series[i+1].after  - series[i].after),
+      };
+    }
+  }
+}
+
+function fmt(v) { return 'R ' + v.toFixed(1) + 'M'; }
+
+function applyFilter() {
+  const toVal   = document.getElementById('dateTo').value;
+  const fromVal = document.getElementById('dateFrom').value;
+  if (!toVal) return;
+
+  const dTo = new Date(toVal + 'T00:00:00');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mon = months[dTo.getMonth()];
+  const yr2 = String(dTo.getFullYear()).slice(2);
+
+  // Update AR split labels and values
+  document.getElementById('arBeforeLbl').textContent = 'Overdue (pre-' + mon + ' \'' + yr2 + ')';
+  document.getElementById('arAfterLbl').textContent  = 'Current & Recent';
+
+  const ar = lerp(arSeries, dTo);
+  document.getElementById('arBeforeAmt').textContent = fmt(ar.before);
+  document.getElementById('arAfterAmt').textContent  = fmt(ar.after);
+
+  const pct = Math.round((ar.before / 12.55) * 100);
+  document.getElementById('arBeforeSub').textContent =
+    pct > 50 ? 'Most AR aging — escalate collection now' :
+    pct > 20 ? 'Overdue — escalate collection' : 'Minimal overdue — healthy';
+
+  // Update expense period label
+  if (fromVal) {
+    const dFrom = new Date(fromVal + 'T00:00:00');
+    const fLbl = dFrom.getDate() + ' ' + months[dFrom.getMonth()] + ' ' + dFrom.getFullYear();
+    const tLbl = dTo.getDate() + ' ' + months[dTo.getMonth()] + ' ' + dTo.getFullYear();
+    document.getElementById('expSubLabel').textContent =
+      'Period: ' + fLbl + ' – ' + tLbl + ' · Source: SmartBuilder Transaction Listing · Total: R 49.6M (FY2026 Full Year)';
+    document.getElementById('arSub').textContent =
+      'Snapshot: ' + tLbl + '  ·  Source: SmartBuilder Debtors Age Analysis (P2026/12)';
+  }
+}
+</script>
+
+</body>
+</html>
