@@ -265,7 +265,7 @@ function doLogin(){
   var u=document.getElementById('auth-user').value.trim();
   var p=document.getElementById('auth-pass').value.trim();
   if(u==='viewer'&&p==='2026'){
-    sessionStorage.setItem('sam_auth','1');
+    try{sessionStorage.setItem('sam_auth','1');}catch(e){}
     document.getElementById('auth-overlay').style.display='none';
     document.getElementById('main').style.display='block';
   }else{
@@ -276,10 +276,12 @@ document.addEventListener('keydown',function(e){
   var ov=document.getElementById('auth-overlay');
   if(e.key==='Enter'&&ov&&ov.style.display!=='none'){doLogin();}
 });
-if(sessionStorage.getItem('sam_auth')==='1'){
-  document.getElementById('auth-overlay').style.display='none';
-  document.getElementById('main').style.display='block';
-}
+try{
+  if(sessionStorage.getItem('sam_auth')==='1'){
+    document.getElementById('auth-overlay').style.display='none';
+    document.getElementById('main').style.display='block';
+  }
+}catch(e){}
 
 // ── Ledger data ──
 var LEDGER=[
