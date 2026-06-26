@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Minerals Group — Shareholder Dashboard</title>
+<style>
+:root{
+  --blue:#0F6DB5; --blue-dk:#0A4F86; --blue-lt:#EBF4FD;
+  --yellow:#F5C400; --navy:#1A2E42; --gray:#6B7A8D; --gray-lt:#D5DFE8;
+  --bg:#F5F2EA; --white:#FFFFFF; --green:#2E7D32; --green-lt:#E8F5E9;
+  --red:#C62828; --red-lt:#FFEBEE; --orange:#E65100; --amber:#F57C00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--navy);line-height:1.45}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+/* ── Auth overlay ── */
+#auth-overlay{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center}
+.auth-box{background:#FFF;border-radius:14px;padding:38px 44px;width:330px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.auth-logo{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.auth-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.auth-divider{width:40px;height:3px;background:var(--yellow);border-radius:2px;margin:0 auto 20px}
+.auth-field{width:100%;border:1.5px solid var(--gray-lt);border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:12px;outline:none;color:var(--navy)}
+.auth-field:focus{border-color:var(--yellow)}
+.auth-btn{width:100%;background:var(--yellow);color:var(--navy);border:none;border-radius:7px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px}
+.auth-btn:hover{background:#D4A020}
+.auth-err{color:var(--red);font-size:11px;margin-top:10px;display:none}
+/* ── Header ── */
+.hdr{border-bottom:3px solid var(--yellow);padding-bottom:16px;margin-bottom:22px}
+.hdr-top{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);font-weight:700}
+.hdr h1{font-size:26px;color:var(--navy);margin:4px 0 6px}
+.hdr .sub{font-size:13px;color:var(--gray);max-width:820px}
+.hdr .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--navy)}
+.hdr .meta b{color:var(--blue-dk)}
+.flow{display:inline-block;background:var(--blue-lt);color:var(--blue-dk);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;margin-top:10px}
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
+.kpi{background:#FFF;border-radius:12px;padding:16px 18px;box-shadow:0 2px 10px rgba(26,46,66,.06);border-left:4px solid var(--blue)}
+.kpi.preserved{border-left-color:var(--green)}
+.kpi.commit{border-left-color:var(--amber)}
+.kpi.overhead{border-left-color:var(--gray)}
+.kpi.cash{border-left-color:var(--yellow)}
+.kpi.recover{border-left-color:var(--blue-dk)}
+.kpi-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);font-weight:700}
+.kpi-val{font-size:25px;font-weight:800;color:var(--navy);margin:5px 0 3px}
+.kpi-meta{font-size:11px;color:var(--gray);line-height:1.35}
+/* ── Cards ── */
+.card{background:#FFF;border-radius:12px;box-shadow:0 2px 10px rgba(26,46,66,.06);margin-bottom:20px;overflow:hidden}
+.card-head{background:var(--navy);color:#FFF;padding:13px 20px;display:flex;justify-content:space-between;align-items:center}
+.card-head h2{font-size:14px;letter-spacing:.5px;text-transform:uppercase;font-weight:700}
+.card-head .chip{font-size:11px;background:rgba(245,196,0,.2);color:var(--yellow);padding:3px 9px;border-radius:5px;font-weight:600}
+.card-body{padding:18px 20px}
+/* ── Table ── */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--gray);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid var(--gray-lt)}
+td{padding:8px 10px;border-bottom:1px solid #EEF1F4}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:800;border-top:2px solid var(--navy);border-bottom:none;background:#FAFBFC}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.t-in{background:var(--green-lt);color:var(--green)}
+.t-out{background:var(--red-lt);color:var(--red)}
+.t-rec{background:var(--green-lt);color:var(--green)}
+.t-due{background:#FFF3E0;color:var(--orange)}
+.t-sch{background:#EEF1F4;color:var(--gray)}
+/* ── Bars ── */
+.bar-row{display:flex;align-items:center;gap:12px;margin:9px 0}
+.bar-lbl{width:200px;font-size:12px;font-weight:600;flex-shrink:0}
+.bar-track{flex:1;background:#EEF1F4;border-radius:6px;height:22px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#FFF;font-size:11px;font-weight:700;min-width:34px}
+.bar-amt{width:130px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;flex-shrink:0}
+/* ── Stacked ── */
+.stack{display:flex;height:38px;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.stack > div{display:flex;align-items:center;justify-content:center;color:#FFF;font-size:11px;font-weight:700}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+/* ── Progress ── */
+.prog{background:#EEF1F4;border-radius:8px;height:30px;overflow:hidden;position:relative;margin:6px 0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue-dk),var(--blue));display:flex;align-items:center;padding-left:12px;color:#FFF;font-weight:700;font-size:12px}
+.note{font-size:11.5px;color:var(--gray);margin-top:6px;line-height:1.4}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.foot{text-align:center;font-size:11px;color:var(--gray);margin-top:30px;padding-top:16px;border-top:1px solid var(--gray-lt)}
+@media(max-width:760px){.kpi-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.bar-lbl{width:120px}}
+</style>
+</head>
+<body>
+
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">SA Minerals Group</div>
+    <div class="auth-title">Shareholder Dashboard</div>
+    <div class="auth-divider"></div>
+    <input class="auth-field" id="auth-user" type="text" placeholder="Username" autocomplete="username">
+    <input class="auth-field" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="auth-btn" onclick="doLogin()">Enter</button>
+    <div class="auth-err" id="auth-err">Incorrect username or password</div>
+  </div>
+</div>
+
+<div class="wrap" id="main" style="display:none">
+
+  <div class="hdr">
+    <div class="hdr-top">Confidential · For Board / IC use only</div>
+    <h1>SA Minerals Group — Shareholder Dashboard</h1>
+    <div class="sub">Consolidated investor-capital deployment across two FNB accounts (Asset Co + Claim Co). Intercompany transfers are excluded from deployment KPIs — they net to zero in consolidation.</div>
+    <div class="flow">AdRu Tech Ltd → SA Minerals (Asset Co) → SA Minerals Capital (Claim Co) → EMS Mining</div>
+    <div class="meta">
+      <span><b>Period:</b> 18 May → 24 Jun 2026 (32 days)</span>
+      <span><b>Capital injected (Tranche 1):</b> R32,653,392 (USD 2.02m)</span>
+      <span><b>Generated:</b> 26 Jun 2026</span>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi recover"><div class="kpi-lbl">Capital Injected</div><div class="kpi-val">R32.65m</div><div class="kpi-meta">AdRu Tech Ltd (3 SWIFTs) + account activations</div></div>
+    <div class="kpi"><div class="kpi-lbl">Recoverable Assets</div><div class="kpi-val">R28.47m</div><div class="kpi-meta">4 claim acquisitions + EMS loan receivable</div></div>
+    <div class="kpi cash"><div class="kpi-lbl">Cash on Hand (Group)</div><div class="kpi-val">R3.99m</div><div class="kpi-meta">Asset Co R3.25m + Claim Co R0.73m</div></div>
+    <div class="kpi preserved"><div class="kpi-lbl">Capital Preserved</div><div class="kpi-val">99.4%</div><div class="kpi-meta">(Recoverable + Cash) ÷ Injected — only 0.6% non-strategic</div></div>
+    <div class="kpi commit"><div class="kpi-lbl">Outstanding Commitment</div><div class="kpi-val">R1.50m</div><div class="kpi-meta">Bubesi Tranche 2 — due 05 Jul 2026 (11 days)</div></div>
+    <div class="kpi overhead"><div class="kpi-lbl">Overhead (OpEx + Fees)</div><div class="kpi-val">R195.9k</div><div class="kpi-meta">0.60% of capital — advisory, travel, bank fees</div></div>
+  </div>
+
+  <!-- INVESTOR INFLOWS -->
+  <div class="card">
+    <div class="card-head"><h2>① Investor Inflows — how much capital came in</h2><span class="chip">R32.65m received</span></div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Date</th><th>Source</th><th>Type</th><th class="num">Amount (R)</th></tr></thead>
+        <tbody>
+          <tr><td>18 May 2026</td><td>Account activations (P. Khourie, reimbursable)</td><td><span class="tag t-in">Activation</span></td><td class="num">5,000</td></tr>
+          <tr><td>01 Jun 2026</td><td>AdRu Tech Ltd (Cyprus) — SWIFT 1</td><td><span class="tag t-in">Capital</span></td><td class="num">1,615,110</td></tr>
+          <tr><td>02 Jun 2026</td><td>AdRu Tech Ltd (Cyprus) — SWIFT 2 (main)</td><td><span class="tag t-in">Capital</span></td><td class="num">20,996,040</td></tr>
+          <tr><td>05 Jun 2026</td><td>AdRu Tech Ltd (Cyprus) — SWIFT 3</td><td><span class="tag t-in">Capital</span></td><td class="num">10,037,242</td></tr>
+          <tr class="total"><td colspan="3">Total external inflows — Tranche 1</td><td class="num">32,653,392</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CLN FACILITY -->
+  <div class="card">
+    <div class="card-head"><h2>② CLN Facility — plan vs actual (tranche schedule)</h2><span class="chip">29.4% drawn</span></div>
+    <div class="card-body">
+      <div class="prog"><div class="prog-fill" style="width:29.4%">USD 2.02m / R32.6m drawn</div></div>
+      <div class="note">Total facility <b>USD 6,875,000 / R110,962,500</b> (5 tranches @ ZAR/USD 16.14) · Drawn USD 2.02m · Outstanding to drawdown <b>USD 4.86m / R78.36m</b> over 7 future drawdowns.</div>
+      <table style="margin-top:14px">
+        <thead><tr><th>Tranche</th><th>Source</th><th class="num">USD</th><th class="num">ZAR</th><th>Target date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Tranche 1</td><td>AdRu USD Cyprus</td><td class="num">2,020,000</td><td class="num">32,602,800</td><td>01–05 Jun 2026</td><td><span class="tag t-rec">✓ Received</span></td></tr>
+          <tr><td>Tranche 1 remainder</td><td>AdRu USD Cyprus</td><td class="num">480,000</td><td class="num">7,747,200</td><td>30 Jun 2026</td><td><span class="tag t-due">◆ Due (6 days)</span></td></tr>
+          <tr><td>Tranche 2a</td><td>Crypto Mauritius</td><td class="num">687,500</td><td class="num">11,096,250</td><td>31 Jul 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr><td>Tranche 2b</td><td>Crypto Mauritius</td><td class="num">687,500</td><td class="num">11,096,250</td><td>31 Aug 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr><td>Tranche 3a</td><td>Crypto Mauritius</td><td class="num">500,000</td><td class="num">8,070,000</td><td>30 Sep 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr><td>Tranche 3b</td><td>Crypto Mauritius</td><td class="num">500,000</td><td class="num">8,070,000</td><td>31 Oct 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr><td>Tranche 4</td><td>Crypto Mauritius</td><td class="num">1,000,000</td><td class="num">16,140,000</td><td>30 Nov 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr><td>Tranche 5</td><td>Crypto Mauritius</td><td class="num">1,000,000</td><td class="num">16,140,000</td><td>31 Dec 2026</td><td><span class="tag t-sch">○ Scheduled</span></td></tr>
+          <tr class="total"><td colspan="2">Total CLN facility</td><td class="num">6,875,000</td><td class="num">110,962,500</td><td colspan="2"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WHERE IT WENT -->
+  <div class="card">
+    <div class="card-head"><h2>③ Where the capital went — by category</h2><span class="chip">R28.67m deployed</span></div>
+    <div class="card-body">
+      <div class="bar-row"><div class="bar-lbl">Claim acquisitions (×4)</div><div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--blue-dk)">62.4%</div></div><div class="bar-amt">R20,357,833</div></div>
+      <div class="bar-row"><div class="bar-lbl">Loan to EMS (Drawdown 01)</div><div class="bar-track"><div class="bar-fill" style="width:39.8%;background:var(--blue)">24.9%</div></div><div class="bar-amt">R8,114,083</div></div>
+      <div class="bar-row"><div class="bar-lbl">Cash retained on hand</div><div class="bar-track"><div class="bar-fill" style="width:19.6%;background:var(--yellow);color:var(--navy)">12.2%</div></div><div class="bar-amt">R3,985,575</div></div>
+      <div class="bar-row"><div class="bar-lbl">Operating expenses</div><div class="bar-track"><div class="bar-fill" style="width:3%;background:var(--amber)">0.6%</div></div><div class="bar-amt">R193,778</div></div>
+      <div class="bar-row"><div class="bar-lbl">Bank charges</div><div class="bar-track"><div class="bar-fill" style="width:2%;background:var(--gray)">0.0%</div></div><div class="bar-amt">R2,123</div></div>
+      <div class="note">Bars show share of total capital injected (R32.65m). Intercompany transfers (R24.20m across 5 movements) are excluded — they net to zero in consolidation.</div>
+    </div>
+  </div>
+
+  <!-- CAPITAL STATUS -->
+  <div class="card">
+    <div class="card-head"><h2>④ Capital status — recoverable vs spent vs cash</h2><span class="chip">99.4% preserved</span></div>
+    <div class="card-body">
+      <div class="stack">
+        <div style="width:87.2%;background:var(--blue-dk)">Recoverable 87.2%</div>
+        <div style="width:12.2%;background:var(--yellow);color:var(--navy)">Cash 12.2%</div>
+        <div style="width:0.6%;background:var(--red)"></div>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--blue-dk)"></i> Recoverable assets — R28,471,916 (87.2%)</span>
+        <span><i class="dot" style="background:var(--yellow)"></i> Cash on hand — R3,985,575 (12.2%)</span>
+        <span><i class="dot" style="background:var(--red)"></i> Overhead (spent) — R195,901 (0.6%)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- CASH POSITION -->
+    <div class="card">
+      <div class="card-head"><h2>⑤ Where the cash sits</h2></div>
+      <div class="card-body">
+        <table>
+          <thead><tr><th>Account</th><th class="num">Closing (R)</th><th class="num">% Group</th></tr></thead>
+          <tbody>
+            <tr><td>SA Minerals (Asset Co)<br><span class="note">FNB 63209738939</span></td><td class="num">3,253,991</td><td class="num">81.6%</td></tr>
+            <tr><td>SA Minerals Capital (Claim Co)<br><span class="note">FNB 63209745116</span></td><td class="num">731,584</td><td class="num">18.4%</td></tr>
+            <tr class="total"><td>Group total</td><td class="num">3,985,575</td><td class="num">100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- OUTSTANDING -->
+    <div class="card">
+      <div class="card-head"><h2>⑥ Forward commitments & owed</h2></div>
+      <div class="card-body">
+        <table>
+          <thead><tr><th>Item</th><th>Due</th><th class="num">Amount (R)</th></tr></thead>
+          <tbody>
+            <tr><td>Bubesi Tranche 2 — Sale of Claims</td><td><span class="tag t-due">05 Jul</span></td><td class="num">1,500,000</td></tr>
+            <tr><td>Reimburse P. Khourie (activations)</td><td>open</td><td class="num">5,000</td></tr>
+            <tr><td>Reimburse A. Bogdashin (hotel)</td><td>open</td><td class="num">6,684</td></tr>
+            <tr class="total"><td colspan="2">Total payable</td><td class="num">1,511,684</td></tr>
+          </tbody>
+        </table>
+        <div class="note">Claim Co buffer is R0.73m — a top-up transfer from Asset Co will be needed to settle Bubesi T2.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLAIM PORTFOLIO -->
+  <div class="card">
+    <div class="card-head"><h2>⑦ Claim portfolio & loan to EMS</h2><span class="chip">4 recoverable positions</span></div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Counterparty</th><th>Date</th><th class="num">Cost (R)</th><th class="num">Face value (R)</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>Investec Bank</td><td>04 Jun</td><td class="num">13,058,009</td><td class="num">13,058,009</td><td>Stage 1 secured claim — 9 Sandvik rigs</td></tr>
+          <tr><td>02</td><td>Bubesi Investments 46</td><td>11 Jun</td><td class="num">1,500,000<span class="note"> (T1)</span></td><td class="num">3,944,125</td><td>23.94% discount · T2 R1.5m due 05 Jul</td></tr>
+          <tr><td>03</td><td>Wilrock Properties</td><td>22 Jun</td><td class="num">845,375</td><td class="num">845,375</td><td>Accrued rent + services (landlord)</td></tr>
+          <tr><td>04</td><td>Sandvik Mining RSA</td><td>24 Jun</td><td class="num">4,954,449</td><td class="num">4,954,449</td><td>OEM of the drilling rigs</td></tr>
+          <tr><td>—</td><td>Loan to EMS — Drawdown 01</td><td>12 Jun</td><td class="num">8,114,083</td><td class="num">8,114,083</td><td>Loan receivable (terms TBC)</td></tr>
+          <tr class="total"><td colspan="3">Total recoverable</td><td class="num">28,471,916</td><td class="num">30,916,041</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FULL LEDGER -->
+  <div class="card">
+    <div class="card-head"><h2>⑧ Full transaction ledger</h2><span class="chip">33 transactions</span></div>
+    <div class="card-body" style="overflow-x:auto">
+      <table id="ledger">
+        <thead><tr><th>#</th><th>Date</th><th>Account</th><th>Dir</th><th>Category</th><th>Counterparty</th><th class="num">Inflow</th><th class="num">Outflow</th></tr></thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot">
+    SA Minerals Group · Shareholder Dashboard · Source: Shareholder Ledger v7 (FNB statements, Asset Co + Claim Co) · Generated 26 Jun 2026 · Confidential
+  </div>
+
+</div>
+
+<script>
+// ── Auth gate (client-side, same scheme as EMS dashboards) ──
+function doLogin(){
+  var u=document.getElementById('auth-user').value.trim();
+  var p=document.getElementById('auth-pass').value.trim();
+  if(u==='viewer'&&p==='2026'){
+    sessionStorage.setItem('sam_auth','1');
+    document.getElementById('auth-overlay').style.display='none';
+    document.getElementById('main').style.display='block';
+  }else{
+    document.getElementById('auth-err').style.display='block';
+  }
+}
+document.addEventListener('keydown',function(e){
+  var ov=document.getElementById('auth-overlay');
+  if(e.key==='Enter'&&ov&&ov.style.display!=='none'){doLogin();}
+});
+if(sessionStorage.getItem('sam_auth')==='1'){
+  document.getElementById('auth-overlay').style.display='none';
+  document.getElementById('main').style.display='block';
+}
+
+// ── Ledger data ──
+var LEDGER=[
+[1,"18 May","Asset Co","IN","Account Activation","Funded by Paul Khourie",2500,null],
+[2,"18 May","Claim Co","IN","Account Activation","Funded by Paul Khourie",2500,null],
+[3,"01 Jun","Asset Co","IN","Capital Injection","AdRu Tech Ltd (Cyprus)",1615110,null],
+[4,"02 Jun","Asset Co","IN","Capital Injection","AdRu Tech Ltd (Cyprus)",20996040,null],
+[5,"02 Jun","Asset Co","OUT","Bank Charges","FNB",null,450],
+[6,"02 Jun","Asset Co","OUT","OpEx — Travel","Reimbursement → Paul Khourie",null,11559.4],
+[7,"02 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,1000],
+[8,"02 Jun","Claim Co","IN","Intercompany","← Asset Co",1000,null],
+[9,"03 Jun","Asset Co","OUT","OpEx — Travel","AFRIQOM FZ LLC (UAE)",null,22988.56],
+[10,"03 Jun","Asset Co","OUT","Bank Charges","FNB",null,275],
+[11,"04 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,14000000],
+[12,"04 Jun","Asset Co","OUT","OpEx — Advisory","Collective Accounting",null,30005.8],
+[13,"04 Jun","Claim Co","IN","Intercompany","← Asset Co",14000000,null],
+[14,"04 Jun","Claim Co","OUT","Claim Acquisition","Investec Bank",null,13058009.24],
+[15,"05 Jun","Asset Co","IN","Capital Injection","AdRu Tech Ltd (Cyprus)",10037242,null],
+[16,"05 Jun","Asset Co","OUT","Bank Charges","FNB",null,450],
+[17,"09 Jun","Asset Co","OUT","OpEx — Travel","Strand Hotel, Swakopmund",null,20052.6],
+[18,"09 Jun","Asset Co","OUT","Bank Charges","FNB",null,40],
+[19,"09 Jun","Asset Co","OUT","Bank Charges","FNB / SWIFT correction",null,358.04],
+[20,"11 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,700000],
+[21,"11 Jun","Claim Co","IN","Intercompany","← Asset Co",700000,null],
+[22,"11 Jun","Claim Co","OUT","Claim Acquisition","Bubesi Investments 46",null,1500000],
+[23,"12 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,8500000],
+[24,"12 Jun","Claim Co","IN","Intercompany","← Asset Co",8500000,null],
+[25,"12 Jun","Claim Co","OUT","Loan to EMS","EMS Mining",null,8114083],
+[26,"18 Jun","Asset Co","OUT","OpEx — Advisory","Chris Wood (advisor)",null,109171.33],
+[27,"18 Jun","Asset Co","OUT","Bank Charges","FNB",null,550],
+[28,"22 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,1000000],
+[29,"22 Jun","Claim Co","IN","Intercompany","← Asset Co",1000000,null],
+[30,"22 Jun","Claim Co","OUT","Claim Acquisition","Wilrock Properties",null,845375.09],
+[31,"24 Jun","Asset Co","OUT","Intercompany","→ Claim Co",null,5000000],
+[32,"24 Jun","Claim Co","IN","Intercompany","← Asset Co",5000000,null],
+[33,"24 Jun","Claim Co","OUT","Claim Acquisition","Sandvik Mining RSA",null,4954449.02]
+];
+function fmt(n){return n==null?"":n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});}
+var tb=document.getElementById('ledger-body');
+LEDGER.forEach(function(r){
+  var tr=document.createElement('tr');
+  var dir=r[3]==='IN'?'<span class="tag t-in">IN</span>':'<span class="tag t-out">OUT</span>';
+  tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+dir+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td class="num">'+fmt(r[6])+'</td><td class="num">'+fmt(r[7])+'</td>';
+  tb.appendChild(tr);
+});
+</script>
+</body>
+</html>
