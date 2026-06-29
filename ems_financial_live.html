@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMS — Financial (live statements)</title>
+<style>
+:root{ --bg:#F5F2EA; --ink:#1A1A1A; --ink2:#555; --ink3:#8A8A82; --line:#D9D4C7;
+       --fill1:#1A1A1A; --fill2:#6B6B63; --fill3:#A8A399; --alert:#B00020; --card:#FCFAF4; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 70px}
+#ov{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:36px 40px;width:330px;text-align:center}
+.box .l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
+.box .t{font-size:17px;font-weight:700;margin:6px 0 18px}
+.f{width:100%;border:1px solid var(--line);background:#fff;border-radius:3px;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none}
+.f:focus{border-color:var(--ink)}
+.b{width:100%;background:var(--ink);color:var(--bg);border:none;border-radius:3px;padding:11px;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.err{color:var(--alert);font-size:11px;margin-top:8px;display:none}
+h1{font-size:25px;font-weight:700;letter-spacing:-.3px}
+.top{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
+.sub{font-size:13px;color:var(--ink2);margin-top:6px;max-width:780px}
+.hr{height:1px;background:var(--ink);border:none;margin:16px 0 22px}
+.meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+.k{background:var(--card);padding:15px 16px}
+.k .l{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
+.k .v{font-size:21px;font-weight:700;margin-top:5px}
+.k .m{font-size:10.5px;color:var(--ink2);margin-top:3px}
+.sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:34px 0 14px;font-weight:700}
+.sec span{float:right;font-size:9.5px;letter-spacing:.5px;color:var(--ink3);text-transform:none;font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);padding:7px 9px;border-bottom:1px solid var(--ink)}
+td{padding:7px 9px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
+.neg{color:var(--alert)}
+.brow{display:flex;align-items:center;gap:10px;margin:7px 0}
+.blab{width:215px;font-size:12px;flex-shrink:0}
+.btr{flex:1;background:#EAE5D8;height:16px;border-radius:1px;overflow:hidden}
+.bfl{height:100%;background:var(--fill1)}
+.bamt{width:120px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;flex-shrink:0}
+.note{font-size:11px;color:var(--ink2);margin-top:8px;line-height:1.45}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.cav{background:#EFE9DA;border-left:3px solid var(--ink2);padding:10px 12px;font-size:11.5px;color:var(--ink2);margin-top:10px;border-radius:0 3px 3px 0}
+.foot{font-size:10.5px;color:var(--ink3);margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.blab{width:135px}}
+</style>
+</head>
+<body>
+<div id="ov"><div class="box">
+  <div class="l">EMS Mining</div><div class="t">Financial — live</div>
+  <input class="f" id="u" placeholder="Username" autocomplete="username">
+  <input class="f" id="p" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="b" onclick="lo()">Enter</button>
+  <div class="err" id="e">Incorrect username or password</div>
+</div></div>
+
+<div class="wrap" id="main" style="display:none">
+  <div class="top">Confidential · For Board / IC use only</div>
+  <h1>EMS Mining — Financial (live statements)</h1>
+  <div class="sub">Operating-company view built from the live bank statements Григорий uploads (FNB, Bidvest, ABSA, Drill Tec), with the cost structure from SmartBuilder. EMS is the target operating company; Drill Tec is its trade-disbursement account.</div>
+  <div class="meta"><span>Banks: FNB · Bidvest · ABSA · Drill Tec</span><span>Generated: 29 Jun 2026</span></div>
+  <hr class="hr">
+
+  <div class="kgrid">
+    <div class="k"><div class="l">EMS cash on hand</div><div class="v">R2.32m</div><div class="m">4 accounts</div></div>
+    <div class="k"><div class="l">Loan received (Drawdown 01)</div><div class="v">R8.11m</div><div class="m">from Claim Co, 12 Jun</div></div>
+    <div class="k"><div class="l">Drill Tec balance</div><div class="v">R1.40m</div><div class="m">operating account, 24 Jun</div></div>
+    <div class="k"><div class="l">EMS FNB cheque</div><div class="v">R0</div><div class="m">overdraft cleared 12 Jun</div></div>
+  </div>
+
+  <div class="sec">EMS cash by bank account <span>latest available statement</span></div>
+  <table>
+    <thead><tr><th>Account</th><th>Bank</th><th>Role</th><th class="n">Balance (R)</th></tr></thead>
+    <tbody>
+      <tr><td>Drill Tec</td><td>FNB 62857146263</td><td>Trade / supplier disbursement</td><td class="n">1,399,293</td></tr>
+      <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + drawdown transit</td><td class="n">907,267</td></tr>
+      <tr><td>EMS Mining</td><td>ABSA 4117757136</td><td>Near-dormant (fees only)</td><td class="n">9,408</td></tr>
+      <tr><td>EMS Mining Cheque</td><td>FNB 62322467681</td><td>Was overdrawn → cleared</td><td class="n">0</td></tr>
+      <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">2,315,968</td></tr>
+    </tbody>
+  </table>
+
+  <div class="two">
+    <div>
+      <div class="sec">Operating outflows — Drill Tec <span>12 Jun batch</span></div>
+      <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
+      <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
+      <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
+      <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
+      <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
+      <div class="brow"><div class="blab">Reyco</div><div class="btr"><div class="bfl" style="width:30%"></div></div><div class="bamt">195,896</div></div>
+      <div class="brow"><div class="blab">Fluxmans Inc</div><div class="btr"><div class="bfl" style="width:23%"></div></div><div class="bamt">151,743</div></div>
+      <div class="note">Top payees from the 12 Jun disbursement run (suppliers, salaries, advisory). Drill Tec is where EMS settles trade creditors.</div>
+    </div>
+    <div>
+      <div class="sec">Client receipts — Bidvest <span>Feb–Jun 2026</span></div>
+      <div class="brow"><div class="blab">Mota-Engil (Apr)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
+      <div class="brow"><div class="blab">Mota-Engil (May)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
+      <div class="brow"><div class="blab">Mota-Engil (Mar)</div><div class="btr"><div class="bfl" style="width:69%"></div></div><div class="bamt">768,126</div></div>
+      <div class="brow"><div class="blab">Swift deposit (Feb)</div><div class="btr"><div class="bfl" style="width:99%"></div></div><div class="bamt">1,095,377</div></div>
+      <div class="brow"><div class="blab">Swift deposit (Mar)</div><div class="btr"><div class="bfl" style="width:48%"></div></div><div class="bamt">538,082</div></div>
+      <div class="note">Recurring revenue from Mota-Engil; receipts swept to Drill Tec / Investerra for operations and payroll.</div>
+    </div>
+  </div>
+
+  <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · relative magnitude</span></div>
+  <div class="brow"><div class="blab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div>
+  <div class="brow"><div class="blab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div>
+  <div class="brow"><div class="blab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div>
+  <div class="brow"><div class="blab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div>
+  <div class="brow"><div class="blab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div>
+  <div class="brow"><div class="blab">Cost of Sales</div><div class="btr"><div class="bfl" style="width:5%"></div></div><div class="bamt">R7.5m</div></div>
+  <div class="cav"><b>Accounting view, not cash.</b> These are cumulative general-ledger movements for FY2026 from the SmartBuilder export (historical snapshot, ~to Nov 2025). They show the <i>shape</i> of EMS's cost base — labour and rig maintenance dominate — not a single-period P&L. To turn this into live monthly P&L, Григорий exports a fresh Transaction Listing per the data-sources guide.</div>
+
+  <div class="sec">Revenue by contract — SmartBuilder <span>FY2026, net</span></div>
+  <table>
+    <thead><tr><th>Contract / client</th><th class="n">Net (R)</th></tr></thead>
+    <tbody>
+      <tr><td>VECOR Park</td><td class="n">16,824,967</td></tr>
+      <tr><td>Black Mountain — Waste Development</td><td class="n">10,944,015</td></tr>
+      <tr><td>Tau Mining — Gamsberg Zinc</td><td class="n">9,468,909</td></tr>
+      <tr><td>Mota-Engil — Blasting</td><td class="n">6,756,926</td></tr>
+      <tr><td>Black Mountain — Long Hole Drilling</td><td class="n">3,674,531</td></tr>
+      <tr><td>Mota-Engil — Drilling</td><td class="n">254,723</td></tr>
+    </tbody>
+  </table>
+
+  <div class="foot">Sources: live FNB / Bidvest / ABSA / Drill Tec statements (Григорий) · SmartBuilder Transaction Listing FY2026 (cost & contract structure). Bank balances per latest statements; SmartBuilder is a historical snapshot — refresh for live P&L. Bidvest account owner (EMS vs SCV) to be confirmed. Confidential.</div>
+</div>
+
+<script>
+function lo(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim();
+if(u==='viewer'&&p==='2026'){try{sessionStorage.setItem('sam_auth','1')}catch(e){}document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}
+else{document.getElementById('e').style.display='block';}}
+document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
+try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
+</script>
+</body>
+</html>
