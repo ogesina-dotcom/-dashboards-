@@ -253,12 +253,68 @@ def render(m, gen_date):
     return tmpl
 
 
+def build_pdf(m, path, gen_date):
+    """Чистый табличный PDF-отчёт инвест-слоя (reportlab) — для архива на Drive."""
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import mm
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    st = getSampleStyleSheet()
+    H = ParagraphStyle('H', parent=st['Title'], fontSize=15)
+    h2 = ParagraphStyle('h2', parent=st['Heading2'], fontSize=10, spaceBefore=10)
+    small = ParagraphStyle('s', parent=st['Normal'], fontSize=8, textColor=colors.grey)
+    doc = SimpleDocTemplate(path, pagesize=A4, topMargin=16*mm, bottomMargin=14*mm, leftMargin=14*mm, rightMargin=14*mm)
+    M = lambda n: f"R{n:,.0f}"
+    a = m["accounts"]
+    asset = next((v for k, v in a.items() if "Asset" in k), {"close": 0})
+    claim = next((v for k, v in a.items() if "Claim" in k), {"close": 0})
+    grid = colors.HexColor('#D9D4C7'); zebra = colors.HexColor('#FAF8F2')
+    el = [Paragraph("SA Minerals Group — Shareholder Dashboard", H),
+          Paragraph(f"Инвест-слой · сгенерировано {gen_date} · Confidential", small), Spacer(1, 8)]
+    kpi = [["Capital injected", M(m['injected'])], ["Recoverable assets", M(m['recoverable'])],
+           ["Cash on hand", M(m['cash'])], ["Capital preserved", f"{m['preserved']*100:.1f}%"],
+           ["Overhead", M(m['overhead'])], ["Transactions", str(len(m['txns']))]]
+    t = Table(kpi, colWidths=[60*mm, 50*mm])
+    t.setStyle(TableStyle([('FONTSIZE',(0,0),(-1,-1),9),('GRID',(0,0),(-1,-1),0.4,grid),
+        ('TEXTCOLOR',(0,0),(0,-1),colors.grey),('ALIGN',(1,0),(1,-1),'RIGHT'),
+        ('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4)]))
+    el += [t, Paragraph("Where the cash sits", h2)]
+    acc = [["Account","Closing (R)"],["SA Minerals (Asset Co)",M(asset['close'])],
+           ["SA Minerals Capital (Claim Co)",M(claim['close'])],
+           ["Group total", M(sum(v['close'] for v in a.values()))]]
+    ta = Table(acc, colWidths=[100*mm,40*mm])
+    ta.setStyle(TableStyle([('FONTSIZE',(0,0),(-1,-1),9),('LINEBELOW',(0,0),(-1,0),0.6,colors.black),
+        ('LINEABOVE',(0,-1),(-1,-1),0.6,colors.black),('ALIGN',(1,0),(1,-1),'RIGHT'),
+        ('FONTNAME',(0,-1),(-1,-1),'Helvetica-Bold')]))
+    el += [ta, Paragraph("Claim portfolio & loan to EMS", h2)]
+    cl = [["Counterparty","Date","Cost (R)"]]
+    for r in m['claim_rows']: cl.append([r['counterparty'][:36], r['date'], M(r['outflow'])])
+    for r in m['loan_rows']: cl.append(["Loan to EMS — Drawdown 01", r['date'], M(r['outflow'])])
+    tc = Table(cl, colWidths=[100*mm,25*mm,35*mm])
+    tc.setStyle(TableStyle([('FONTSIZE',(0,0),(-1,-1),8.5),('LINEBELOW',(0,0),(-1,0),0.6,colors.black),
+        ('ALIGN',(2,0),(2,-1),'RIGHT'),('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,zebra])]))
+    el += [tc, Paragraph(f"Transaction ledger ({len(m['txns'])})", h2)]
+    lg = [["#","Date","Account","Dir","Category","In","Out"]]
+    for r in m['txns']:
+        lg.append([str(r['num']), r['date'], r['account'][:9],
+                   'IN' if r['direction']=='INFLOW' else 'OUT', r['category'][:20],
+                   f"{r['inflow']:,.0f}" if r['inflow'] else "", f"{r['outflow']:,.0f}" if r['outflow'] else ""])
+    tl = Table(lg, colWidths=[8*mm,20*mm,17*mm,11*mm,52*mm,29*mm,29*mm], repeatRows=1)
+    tl.setStyle(TableStyle([('FONTSIZE',(0,0),(-1,-1),7),('LINEBELOW',(0,0),(-1,0),0.6,colors.black),
+        ('ALIGN',(5,0),(6,-1),'RIGHT'),('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,zebra])]))
+    el += [tl, Spacer(1,6), Paragraph(f"Auto-generated from raw FNB statements · {gen_date}", small)]
+    doc.build(el)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw", help="папка с сырыми выписками FNB Asset/Claim (.csv/.zip) — основной режим")
     ap.add_argument("--ledger", help="xlsx-ледж­ер Александра (резерв/сверка)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--report", help="файл со списком спорных операций (для бота)")
+    ap.add_argument("--metrics-out", help="CSV-снимок ключевых метрик (для архива на Drive)")
+    ap.add_argument("--pdf-out", help="чистый табличный PDF-отчёт инвест-слоя (для архива на Drive)")
     args = ap.parse_args()
     if args.raw:
         rows = load_raw(args.raw)
@@ -300,6 +356,20 @@ def main():
     if errs:
         print("SANITY FAILED — не публиковать:\n  " + "\n  ".join(errs), file=sys.stderr)
         sys.exit(1)
+    if args.metrics_out:
+        a = m["accounts"]
+        asset = next((v for k, v in a.items() if "Asset" in k), {"close": 0})
+        claim = next((v for k, v in a.items() if "Claim" in k), {"close": 0})
+        today = datetime.date.today().strftime("%Y-%m-%d")
+        with open(args.metrics_out, "w", encoding="utf-8") as cf:
+            cf.write("date,injected,claims,loan,recoverable,overhead,cash,preserved_pct,"
+                     "asset_close,claim_close,group_cash,n_txns\n")
+            cf.write(f'{today},{m["injected"]:.2f},{m["claims"]:.2f},{m["loan"]:.2f},'
+                     f'{m["recoverable"]:.2f},{m["overhead"]:.2f},{m["cash"]:.2f},'
+                     f'{m["preserved"]*100:.2f},{asset["close"]:.2f},{claim["close"]:.2f},'
+                     f'{sum(v["close"] for v in a.values()):.2f},{len(m["txns"])}\n')
+    if args.pdf_out:
+        build_pdf(m, args.pdf_out, datetime.date.today().strftime("%d %b %Y"))
     html = render(m, datetime.date.today().strftime("%d %b %Y"))
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
