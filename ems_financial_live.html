@@ -45,6 +45,22 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .cav{background:#EFE9DA;border-left:3px solid var(--ink2);padding:10px 12px;font-size:11.5px;color:var(--ink2);margin-top:10px;border-radius:0 3px 3px 0}
 .foot{font-size:10.5px;color:var(--ink3);margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
+/* ABSA history bar chart */
+.chart{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:1px solid var(--ink);padding-top:8px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.col .bar2{width:100%;background:var(--fill2);border-radius:1px 1px 0 0}
+.col.dead .bar2{background:var(--line)}
+.xlabels{display:flex;gap:6px;margin-top:4px}
+.xlabels div{flex:1;text-align:center;font-size:9px;color:var(--ink3)}
+/* drill-down */
+.dd{cursor:pointer;}
+.dd:hover .ddlab{text-decoration:underline}
+.ddlab::before{content:"▸ ";color:var(--ink3)}
+.dd.open .ddlab::before{content:"▾ "}
+.detail{display:none;margin:2px 0 10px 26px;padding-left:12px;border-left:2px solid var(--line)}
+.detail.open{display:block}
+.detail .drow{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink2);padding:3px 0}
+.detail .drow .dn{font-variant-numeric:tabular-nums}
 @media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.blab{width:135px}}
 </style>
 </head>
@@ -60,7 +76,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
   <div class="top">Confidential · For Board / IC use only</div>
   <h1>EMS Mining — Financial (live statements)</h1>
-  <div class="sub">Operating-company view built from the live bank statements Григорий uploads (FNB, Bidvest, ABSA, Drill Tec), with the cost structure from SmartBuilder. EMS is the target operating company; Drill Tec is its trade-disbursement account.</div>
+  <div class="sub">Operating-company view from the live bank statements Григорий uploads (FNB, Bidvest, ABSA, Drill Tec), with cost structure from SmartBuilder. EMS is the target operating company; Drill Tec is its trade-disbursement account.</div>
   <div class="meta"><span>Banks: FNB · Bidvest · ABSA · Drill Tec</span><span>Generated: 29 Jun 2026</span></div>
   <hr class="hr">
 
@@ -77,58 +93,99 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
     <tbody>
       <tr><td>Drill Tec</td><td>FNB 62857146263</td><td>Trade / supplier disbursement</td><td class="n">1,399,293</td></tr>
       <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + drawdown transit</td><td class="n">907,267</td></tr>
-      <tr><td>EMS Mining</td><td>ABSA 4117757136</td><td>Near-dormant (fees only)</td><td class="n">9,408</td></tr>
+      <tr><td>EMS Mining</td><td>ABSA 4117757136</td><td>2025 collections acc — now wound down</td><td class="n">9,408</td></tr>
       <tr><td>EMS Mining Cheque</td><td>FNB 62322467681</td><td>Was overdrawn → cleared</td><td class="n">0</td></tr>
       <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">2,315,968</td></tr>
     </tbody>
   </table>
 
+  <div class="sec">ABSA — operating account migration <span>monthly throughput (credits), Apr 2025 → May 2026</span></div>
+  <div class="chart">
+    <div class="col"><div class="bar2" style="height:1%"></div></div>
+    <div class="col"><div class="bar2" style="height:1%"></div></div>
+    <div class="col"><div class="bar2" style="height:52%"></div></div>
+    <div class="col"><div class="bar2" style="height:49%"></div></div>
+    <div class="col"><div class="bar2" style="height:76%"></div></div>
+    <div class="col"><div class="bar2" style="height:67%"></div></div>
+    <div class="col"><div class="bar2" style="height:100%"></div></div>
+    <div class="col"><div class="bar2" style="height:28%"></div></div>
+    <div class="col"><div class="bar2" style="height:11%"></div></div>
+    <div class="col"><div class="bar2" style="height:14%"></div></div>
+    <div class="col"><div class="bar2" style="height:16%"></div></div>
+    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
+    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
+    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
+  </div>
+  <div class="xlabels">
+    <div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div>
+  </div>
+  <div class="note">Peak <b>R7.2m</b> throughput in Oct 2025 (clients: Mota-Engil, Black Mountain, Acumen → swept to Drill Tec). Collections then migrated off ABSA; since <b>Mar 2026</b> only bank charges remain (grey bars), balance ~R9k. So ABSA history matters for context, but current cash lives in Drill Tec / Bidvest.</div>
+
   <div class="two">
     <div>
       <div class="sec">Operating outflows — Drill Tec <span>12 Jun batch</span></div>
       <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
-      <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
       <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
+      <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
       <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
       <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
       <div class="brow"><div class="blab">Reyco</div><div class="btr"><div class="bfl" style="width:30%"></div></div><div class="bamt">195,896</div></div>
-      <div class="brow"><div class="blab">Fluxmans Inc</div><div class="btr"><div class="bfl" style="width:23%"></div></div><div class="bamt">151,743</div></div>
-      <div class="note">Top payees from the 12 Jun disbursement run (suppliers, salaries, advisory). Drill Tec is where EMS settles trade creditors.</div>
+      <div class="note">Top payees from the 12 Jun disbursement run (suppliers, salaries, advisory).</div>
     </div>
     <div>
-      <div class="sec">Client receipts — Bidvest <span>Feb–Jun 2026</span></div>
-      <div class="brow"><div class="blab">Mota-Engil (Apr)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
-      <div class="brow"><div class="blab">Mota-Engil (May)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
-      <div class="brow"><div class="blab">Mota-Engil (Mar)</div><div class="btr"><div class="bfl" style="width:69%"></div></div><div class="bamt">768,126</div></div>
-      <div class="brow"><div class="blab">Swift deposit (Feb)</div><div class="btr"><div class="bfl" style="width:99%"></div></div><div class="bamt">1,095,377</div></div>
-      <div class="brow"><div class="blab">Swift deposit (Mar)</div><div class="btr"><div class="bfl" style="width:48%"></div></div><div class="bamt">538,082</div></div>
-      <div class="note">Recurring revenue from Mota-Engil; receipts swept to Drill Tec / Investerra for operations and payroll.</div>
+      <div class="sec">Client receipts — Mota-Engil <span>recurring</span></div>
+      <div class="brow"><div class="blab">via Bidvest (Apr–May)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
+      <div class="brow"><div class="blab">via ABSA (2025, monthly)</div><div class="btr"><div class="bfl" style="width:72%"></div></div><div class="bamt">~797,646</div></div>
+      <div class="brow"><div class="blab">Black Mountain (2025)</div><div class="btr"><div class="bfl" style="width:63%"></div></div><div class="bamt">700,483</div></div>
+      <div class="brow"><div class="blab">Acumen Grp (2025)</div><div class="btr"><div class="bfl" style="width:43%"></div></div><div class="bamt">479,167</div></div>
+      <div class="note">Mota-Engil is the recurring client; collections moved ABSA (2025) → Bidvest (2026).</div>
     </div>
   </div>
 
-  <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · relative magnitude</span></div>
-  <div class="brow"><div class="blab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div>
-  <div class="brow"><div class="blab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div>
-  <div class="brow"><div class="blab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div>
-  <div class="brow"><div class="blab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div>
-  <div class="brow"><div class="blab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div>
-  <div class="brow"><div class="blab">Cost of Sales</div><div class="btr"><div class="bfl" style="width:5%"></div></div><div class="bamt">R7.5m</div></div>
-  <div class="cav"><b>Accounting view, not cash.</b> These are cumulative general-ledger movements for FY2026 from the SmartBuilder export (historical snapshot, ~to Nov 2025). They show the <i>shape</i> of EMS's cost base — labour and rig maintenance dominate — not a single-period P&L. To turn this into live monthly P&L, Григорий exports a fresh Transaction Listing per the data-sources guide.</div>
+  <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · кликни категорию для детализации</span></div>
+  <div id="costs">
+    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div></div>
+    <div class="detail">
+      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R30.95m</span></div>
+      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R22.59m</span></div>
+      <div class="drow"><span>Mota-Engil</span><span class="dn">R17.81m</span></div>
+      <div class="drow"><span>Tharisa — Phase 2</span><span class="dn">R17.26m</span></div>
+      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R11.09m</span></div>
+      <div class="drow"><span>Black Mountain — Waste Dev</span><span class="dn">R8.54m</span></div>
+    </div>
+    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div></div>
+    <div class="detail">
+      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R41.21m</span></div>
+      <div class="drow"><span>Mota-Engil</span><span class="dn">R14.69m</span></div>
+      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R3.95m</span></div>
+      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R3.20m</span></div>
+    </div>
+    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div></div>
+    <div class="detail">
+      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R28.40m</span></div>
+      <div class="drow"><span>Mota-Engil</span><span class="dn">R16.24m</span></div>
+      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R8.26m</span></div>
+      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R2.73m</span></div>
+      <div class="drow"><span>Basil Read</span><span class="dn">R2.64m</span></div>
+    </div>
+    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div></div>
+    <div class="detail">
+      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R17.96m</span></div>
+      <div class="drow"><span>Mota-Engil</span><span class="dn">R1.69m</span></div>
+      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R0.66m</span></div>
+    </div>
+    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div></div>
+    <div class="detail">
+      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R8.54m</span></div>
+      <div class="drow"><span>Mota-Engil</span><span class="dn">R2.54m</span></div>
+      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R1.57m</span></div>
+      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R0.93m</span></div>
+    </div>
+    <div class="brow"><div class="blab" style="padding-left:14px">Cost of Sales</div><div class="btr"><div class="bfl" style="width:5%"></div></div><div class="bamt">R7.5m</div></div>
+  </div>
+  <div class="cav"><b>Accounting view, not cash.</b> Cumulative GL movements (SmartBuilder, FY2026, historical snapshot). Показывают форму затрат — труд и ремонт буровых доминируют — и какие контракты их генерируют (drill-down). <b>Tharisa Minerals</b> — крупнейший контракт по всем статьям. Для live-P&L Григорий выгружает свежий Transaction Listing.</div>
 
-  <div class="sec">Revenue by contract — SmartBuilder <span>FY2026, net</span></div>
-  <table>
-    <thead><tr><th>Contract / client</th><th class="n">Net (R)</th></tr></thead>
-    <tbody>
-      <tr><td>VECOR Park</td><td class="n">16,824,967</td></tr>
-      <tr><td>Black Mountain — Waste Development</td><td class="n">10,944,015</td></tr>
-      <tr><td>Tau Mining — Gamsberg Zinc</td><td class="n">9,468,909</td></tr>
-      <tr><td>Mota-Engil — Blasting</td><td class="n">6,756,926</td></tr>
-      <tr><td>Black Mountain — Long Hole Drilling</td><td class="n">3,674,531</td></tr>
-      <tr><td>Mota-Engil — Drilling</td><td class="n">254,723</td></tr>
-    </tbody>
-  </table>
-
-  <div class="foot">Sources: live FNB / Bidvest / ABSA / Drill Tec statements (Григорий) · SmartBuilder Transaction Listing FY2026 (cost & contract structure). Bank balances per latest statements; SmartBuilder is a historical snapshot — refresh for live P&L. Bidvest account owner (EMS vs SCV) to be confirmed. Confidential.</div>
+  <div class="foot">Sources: live FNB / Bidvest / ABSA / Drill Tec statements (Григорий) · SmartBuilder Transaction Listing FY2026 (cost & contract structure). Bank balances per latest statements; SmartBuilder — historical snapshot. Bidvest account owner (EMS vs SCV) to be confirmed. Confidential.</div>
 </div>
 
 <script>
@@ -137,6 +194,7 @@ if(u==='viewer'&&p==='2026'){try{sessionStorage.setItem('sam_auth','1')}catch(e)
 else{document.getElementById('e').style.display='block';}}
 document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
 try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
+function tg(el){el.classList.toggle('open');var d=el.nextElementSibling;if(d&&d.classList.contains('detail'))d.classList.toggle('open');}
 </script>
 </body>
 </html>
