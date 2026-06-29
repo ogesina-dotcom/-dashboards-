@@ -21,21 +21,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;backg
 h1{font-size:25px;font-weight:700;letter-spacing:-.3px}
 .top{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
 .sub{font-size:13px;color:var(--ink2);margin-top:6px;max-width:780px}
-.hr{height:1px;background:var(--ink);border:none;margin:16px 0 22px}
+.hr{height:1px;background:var(--ink);border:none;margin:16px 0 18px}
 .meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
-.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+/* tabs */
+.controls{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:8px;z-index:5}
+.tabrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tabrow .lbl{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-right:4px;width:54px}
+.tab{font-size:12px;border:1px solid var(--line);background:var(--card);color:var(--ink2);padding:5px 11px;border-radius:3px;cursor:pointer}
+.tab:hover{border-color:var(--ink2)}
+.tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:18px 0}
 .k{background:var(--card);padding:15px 16px}
 .k .l{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
 .k .v{font-size:21px;font-weight:700;margin-top:5px}
 .k .m{font-size:10.5px;color:var(--ink2);margin-top:3px}
-.sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:34px 0 14px;font-weight:700}
+.sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:28px 0 14px;font-weight:700}
 .sec span{float:right;font-size:9.5px;letter-spacing:.5px;color:var(--ink3);text-transform:none;font-weight:400}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{text-align:left;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);padding:7px 9px;border-bottom:1px solid var(--ink)}
 td{padding:7px 9px;border-bottom:1px solid var(--line)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
-.neg{color:var(--alert)}
 .brow{display:flex;align-items:center;gap:10px;margin:7px 0}
 .blab{width:215px;font-size:12px;flex-shrink:0}
 .btr{flex:1;background:#EAE5D8;height:16px;border-radius:1px;overflow:hidden}
@@ -45,22 +51,21 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .cav{background:#EFE9DA;border-left:3px solid var(--ink2);padding:10px 12px;font-size:11.5px;color:var(--ink2);margin-top:10px;border-radius:0 3px 3px 0}
 .foot{font-size:10.5px;color:var(--ink3);margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
-/* ABSA history bar chart */
 .chart{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:1px solid var(--ink);padding-top:8px}
 .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
 .col .bar2{width:100%;background:var(--fill2);border-radius:1px 1px 0 0}
 .col.dead .bar2{background:var(--line)}
 .xlabels{display:flex;gap:6px;margin-top:4px}
 .xlabels div{flex:1;text-align:center;font-size:9px;color:var(--ink3)}
-/* drill-down */
-.dd{cursor:pointer;}
+.dd{cursor:pointer}
 .dd:hover .ddlab{text-decoration:underline}
 .ddlab::before{content:"▸ ";color:var(--ink3)}
 .dd.open .ddlab::before{content:"▾ "}
 .detail{display:none;margin:2px 0 10px 26px;padding-left:12px;border-left:2px solid var(--line)}
 .detail.open{display:block}
 .detail .drow{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink2);padding:3px 0}
-.detail .drow .dn{font-variant-numeric:tabular-nums}
+.hide{display:none!important}
+.pill{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:10px;padding:1px 8px;color:var(--ink3);margin-bottom:6px}
 @media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.blab{width:135px}}
 </style>
 </head>
@@ -76,116 +81,160 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
   <div class="top">Confidential · For Board / IC use only</div>
   <h1>EMS Mining — Financial (live statements)</h1>
-  <div class="sub">Operating-company view from the live bank statements Григорий uploads (FNB, Bidvest, ABSA, Drill Tec), with cost structure from SmartBuilder. EMS is the target operating company; Drill Tec is its trade-disbursement account.</div>
+  <div class="sub">Operating-company view from the live bank statements Григорий uploads. Фильтруй по банку и по периоду «до / после входа инвестиций» (капитал зашёл 01–05 июня 2026).</div>
   <div class="meta"><span>Banks: FNB · Bidvest · ABSA · Drill Tec</span><span>Generated: 29 Jun 2026</span></div>
-  <hr class="hr">
 
-  <div class="kgrid">
-    <div class="k"><div class="l">EMS cash on hand</div><div class="v">R2.32m</div><div class="m">4 accounts</div></div>
-    <div class="k"><div class="l">Loan received (Drawdown 01)</div><div class="v">R8.11m</div><div class="m">from Claim Co, 12 Jun</div></div>
-    <div class="k"><div class="l">Drill Tec balance</div><div class="v">R1.40m</div><div class="m">operating account, 24 Jun</div></div>
-    <div class="k"><div class="l">EMS FNB cheque</div><div class="v">R0</div><div class="m">overdraft cleared 12 Jun</div></div>
-  </div>
-
-  <div class="sec">EMS cash by bank account <span>latest available statement</span></div>
-  <table>
-    <thead><tr><th>Account</th><th>Bank</th><th>Role</th><th class="n">Balance (R)</th></tr></thead>
-    <tbody>
-      <tr><td>Drill Tec</td><td>FNB 62857146263</td><td>Trade / supplier disbursement</td><td class="n">1,399,293</td></tr>
-      <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + drawdown transit</td><td class="n">907,267</td></tr>
-      <tr><td>EMS Mining</td><td>ABSA 4117757136</td><td>2025 collections acc — now wound down</td><td class="n">9,408</td></tr>
-      <tr><td>EMS Mining Cheque</td><td>FNB 62322467681</td><td>Was overdrawn → cleared</td><td class="n">0</td></tr>
-      <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">2,315,968</td></tr>
-    </tbody>
-  </table>
-
-  <div class="sec">ABSA — operating account migration <span>monthly throughput (credits), Apr 2025 → May 2026</span></div>
-  <div class="chart">
-    <div class="col"><div class="bar2" style="height:1%"></div></div>
-    <div class="col"><div class="bar2" style="height:1%"></div></div>
-    <div class="col"><div class="bar2" style="height:52%"></div></div>
-    <div class="col"><div class="bar2" style="height:49%"></div></div>
-    <div class="col"><div class="bar2" style="height:76%"></div></div>
-    <div class="col"><div class="bar2" style="height:67%"></div></div>
-    <div class="col"><div class="bar2" style="height:100%"></div></div>
-    <div class="col"><div class="bar2" style="height:28%"></div></div>
-    <div class="col"><div class="bar2" style="height:11%"></div></div>
-    <div class="col"><div class="bar2" style="height:14%"></div></div>
-    <div class="col"><div class="bar2" style="height:16%"></div></div>
-    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
-    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
-    <div class="col dead"><div class="bar2" style="height:2%"></div></div>
-  </div>
-  <div class="xlabels">
-    <div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div>
-  </div>
-  <div class="note">Peak <b>R7.2m</b> throughput in Oct 2025 (clients: Mota-Engil, Black Mountain, Acumen → swept to Drill Tec). Collections then migrated off ABSA; since <b>Mar 2026</b> only bank charges remain (grey bars), balance ~R9k. So ABSA history matters for context, but current cash lives in Drill Tec / Bidvest.</div>
-
-  <div class="two">
-    <div>
-      <div class="sec">Operating outflows — Drill Tec <span>12 Jun batch</span></div>
-      <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
-      <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
-      <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
-      <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
-      <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
-      <div class="brow"><div class="blab">Reyco</div><div class="btr"><div class="bfl" style="width:30%"></div></div><div class="bamt">195,896</div></div>
-      <div class="note">Top payees from the 12 Jun disbursement run (suppliers, salaries, advisory).</div>
+  <div class="controls">
+    <div class="tabrow"><span class="lbl">Банк</span>
+      <span class="tab active" data-bank="all" onclick="setBank(this)">Все</span>
+      <span class="tab" data-bank="drilltec" onclick="setBank(this)">Drill Tec</span>
+      <span class="tab" data-bank="bidvest" onclick="setBank(this)">Bidvest</span>
+      <span class="tab" data-bank="absa" onclick="setBank(this)">ABSA</span>
+      <span class="tab" data-bank="fnb" onclick="setBank(this)">FNB EMS</span>
     </div>
-    <div>
-      <div class="sec">Client receipts — Mota-Engil <span>recurring</span></div>
-      <div class="brow"><div class="blab">via Bidvest (Apr–May)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">1,111,863</div></div>
-      <div class="brow"><div class="blab">via ABSA (2025, monthly)</div><div class="btr"><div class="bfl" style="width:72%"></div></div><div class="bamt">~797,646</div></div>
-      <div class="brow"><div class="blab">Black Mountain (2025)</div><div class="btr"><div class="bfl" style="width:63%"></div></div><div class="bamt">700,483</div></div>
-      <div class="brow"><div class="blab">Acumen Grp (2025)</div><div class="btr"><div class="bfl" style="width:43%"></div></div><div class="bamt">479,167</div></div>
-      <div class="note">Mota-Engil is the recurring client; collections moved ABSA (2025) → Bidvest (2026).</div>
+    <div class="tabrow" style="margin-top:6px"><span class="lbl">Период</span>
+      <span class="tab active" data-period="all" onclick="setPeriod(this)">Весь период</span>
+      <span class="tab" data-period="before" onclick="setPeriod(this)">До инвестиций</span>
+      <span class="tab" data-period="after" onclick="setPeriod(this)">После инвестиций</span>
     </div>
   </div>
 
-  <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · кликни категорию для детализации</span></div>
-  <div id="costs">
-    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div></div>
-    <div class="detail">
-      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R30.95m</span></div>
-      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R22.59m</span></div>
-      <div class="drow"><span>Mota-Engil</span><span class="dn">R17.81m</span></div>
-      <div class="drow"><span>Tharisa — Phase 2</span><span class="dn">R17.26m</span></div>
-      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R11.09m</span></div>
-      <div class="drow"><span>Black Mountain — Waste Dev</span><span class="dn">R8.54m</span></div>
+  <!-- ===================== ALL BANKS ===================== -->
+  <div data-bank="all" data-period="any">
+    <div class="kgrid">
+      <div class="k"><div class="l">EMS cash on hand</div><div class="v">R2.32m</div><div class="m">4 accounts</div></div>
+      <div class="k"><div class="l">Loan received</div><div class="v">R8.11m</div><div class="m">Drawdown 01, 12 Jun</div></div>
+      <div class="k"><div class="l">Drill Tec balance</div><div class="v">R1.40m</div><div class="m">operating acc</div></div>
+      <div class="k"><div class="l">FNB cheque</div><div class="v">R0</div><div class="m">overdraft cleared</div></div>
     </div>
-    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div></div>
-    <div class="detail">
-      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R41.21m</span></div>
-      <div class="drow"><span>Mota-Engil</span><span class="dn">R14.69m</span></div>
-      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R3.95m</span></div>
-      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R3.20m</span></div>
-    </div>
-    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div></div>
-    <div class="detail">
-      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R28.40m</span></div>
-      <div class="drow"><span>Mota-Engil</span><span class="dn">R16.24m</span></div>
-      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R8.26m</span></div>
-      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R2.73m</span></div>
-      <div class="drow"><span>Basil Read</span><span class="dn">R2.64m</span></div>
-    </div>
-    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div></div>
-    <div class="detail">
-      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R17.96m</span></div>
-      <div class="drow"><span>Mota-Engil</span><span class="dn">R1.69m</span></div>
-      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R0.66m</span></div>
-    </div>
-    <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div></div>
-    <div class="detail">
-      <div class="drow"><span>Tharisa Minerals</span><span class="dn">R8.54m</span></div>
-      <div class="drow"><span>Mota-Engil</span><span class="dn">R2.54m</span></div>
-      <div class="drow"><span>Bushveld Vametco</span><span class="dn">R1.57m</span></div>
-      <div class="drow"><span>Tau Mining — Gamsberg Zinc</span><span class="dn">R0.93m</span></div>
-    </div>
-    <div class="brow"><div class="blab" style="padding-left:14px">Cost of Sales</div><div class="btr"><div class="bfl" style="width:5%"></div></div><div class="bamt">R7.5m</div></div>
+    <div class="sec">EMS cash by bank account <span>latest statement</span></div>
+    <table>
+      <thead><tr><th>Account</th><th>Bank</th><th>Role</th><th class="n">Balance (R)</th></tr></thead>
+      <tbody>
+        <tr><td>Drill Tec</td><td>FNB …146263</td><td>Trade / supplier disbursement</td><td class="n">1,399,293</td></tr>
+        <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + loan transit</td><td class="n">907,267</td></tr>
+        <tr><td>EMS Mining</td><td>ABSA …757136</td><td>2025 collections — wound down</td><td class="n">9,408</td></tr>
+        <tr><td>EMS Mining Cheque</td><td>FNB …467681</td><td>Was overdrawn → cleared</td><td class="n">0</td></tr>
+        <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">2,315,968</td></tr>
+      </tbody>
+    </table>
   </div>
-  <div class="cav"><b>Accounting view, not cash.</b> Cumulative GL movements (SmartBuilder, FY2026, historical snapshot). Показывают форму затрат — труд и ремонт буровых доминируют — и какие контракты их генерируют (drill-down). <b>Tharisa Minerals</b> — крупнейший контракт по всем статьям. Для live-P&L Григорий выгружает свежий Transaction Listing.</div>
+  <!-- All: before/after group summary -->
+  <div data-bank="all" data-period="before">
+    <div class="sec">До инвестиций — EMS на самофинансировании <span>2025 → май 2026</span></div>
+    <div class="note">EMS жил на выручке клиентов: поступления от <b>Mota-Engil, Black Mountain, Acumen</b> приходили на <b>ABSA</b> (оборот до R7.2m/мес) и сразу уходили на операции через Drill Tec. Внешнего капитала не было; FNB-счёт уходил в овердрафт (−R2.2m).</div>
+  </div>
+  <div data-bank="all" data-period="after">
+    <div class="sec">После инвестиций — приход капитала <span>июнь 2026</span></div>
+    <div class="note">12 июня EMS получил <b>заём R8,114,083</b> (Drawdown 01 от Claim Co) на Bidvest → <b>R5.0m на Drill Tec</b> (операции) и <b>R2.2m на FNB</b> (погасил овердрафт до R0). Сборы клиентов сместились с ABSA на Bidvest.</div>
+  </div>
+  <!-- All: group GL sections -->
+  <div data-bank="all" data-period="any">
+    <div class="sec">Cost structure — SmartBuilder GL <span>уровень группы · клик = детализация</span></div>
+    <div id="costs">
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R30.95m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R22.59m</span></div><div class="drow"><span>Mota-Engil</span><span>R17.81m</span></div><div class="drow"><span>Tharisa Phase 2</span><span>R17.26m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R11.09m</span></div><div class="drow"><span>Black Mountain — Waste Dev</span><span>R8.54m</span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R41.21m</span></div><div class="drow"><span>Mota-Engil</span><span>R14.69m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R3.95m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R3.20m</span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R28.40m</span></div><div class="drow"><span>Mota-Engil</span><span>R16.24m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R8.26m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R2.73m</span></div><div class="drow"><span>Basil Read</span><span>R2.64m</span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R17.96m</span></div><div class="drow"><span>Mota-Engil</span><span>R1.69m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R0.66m</span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R8.54m</span></div><div class="drow"><span>Mota-Engil</span><span>R2.54m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R1.57m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R0.93m</span></div></div>
+      <div class="brow"><div class="blab" style="padding-left:14px">Cost of Sales</div><div class="btr"><div class="bfl" style="width:5%"></div></div><div class="bamt">R7.5m</div></div>
+    </div>
+    <div class="cav"><b>Accounting view, not cash.</b> Кумулятивные движения GL (SmartBuilder, FY2026, исторический срез) — по всей компании, не по одному банку. <b>Tharisa Minerals</b> — крупнейший контракт по всем статьям.</div>
+  </div>
 
-  <div class="foot">Sources: live FNB / Bidvest / ABSA / Drill Tec statements (Григорий) · SmartBuilder Transaction Listing FY2026 (cost & contract structure). Bank balances per latest statements; SmartBuilder — historical snapshot. Bidvest account owner (EMS vs SCV) to be confirmed. Confidential.</div>
+  <!-- ===================== DRILL TEC ===================== -->
+  <div data-bank="drilltec" data-period="any" class="hide">
+    <div class="pill">Drill Tec · FNB 62857146263 · trade-disbursement</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance (24 Jun)</div><div class="v">R1.40m</div><div class="m">operating account</div></div>
+      <div class="k"><div class="l">Получено от EMS (12 Jun)</div><div class="v">R5.00m</div><div class="m">из займа инвестора</div></div>
+      <div class="k"><div class="l">Роль</div><div class="v" style="font-size:14px">Поставщики</div><div class="m">+ зарплаты</div></div>
+      <div class="k"><div class="l">Период данных</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m">транзакции</div></div></div>
+  </div>
+  <div data-bank="drilltec" data-period="after" class="hide">
+    <div class="sec">Drill Tec · после инвестиций <span>12 Jun batch</span></div>
+    <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
+    <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
+    <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
+    <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
+    <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
+    <div class="brow"><div class="blab">Reyco</div><div class="btr"><div class="bfl" style="width:30%"></div></div><div class="bamt">195,896</div></div>
+    <div class="note">После прихода R5.0m Drill Tec провёл крупный платёжный прогон поставщикам и зарплаты.</div>
+  </div>
+  <div data-bank="drilltec" data-period="before" class="hide">
+    <div class="sec">Drill Tec · до инвестиций</div>
+    <div class="note">До июня счёт пополнялся под текущие операции из инкассо (в основном через ABSA). Отдельной глубокой истории по Drill Tec за 2025 в выгрузке нет — выписка охватывает май–июнь 2026.</div>
+  </div>
+
+  <!-- ===================== BIDVEST ===================== -->
+  <div data-bank="bidvest" data-period="any" class="hide">
+    <div class="pill">Bidvest · client receipts + loan transit</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance (июнь)</div><div class="v">R0.91m</div><div class="m">после транзита</div></div>
+      <div class="k"><div class="l">Заём прошёл (12 Jun)</div><div class="v">R8.11m</div><div class="m">Drawdown 01</div></div>
+      <div class="k"><div class="l">Выручка/мес (2026)</div><div class="v">~R1.1m</div><div class="m">Mota-Engil</div></div>
+      <div class="k"><div class="l">Период данных</div><div class="v" style="font-size:14px">фев–июн 2026</div><div class="m">CSV</div></div></div>
+  </div>
+  <div data-bank="bidvest" data-period="before" class="hide">
+    <div class="sec">Bidvest · до инвестиций <span>фев–май 2026</span></div>
+    <div class="brow"><div class="blab">Mota-Engil (выручка)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">~1,111,863</div></div>
+    <div class="brow"><div class="blab">→ Drill Tec / Investerra</div><div class="btr"><div class="bfl" style="width:75%"></div></div><div class="bamt">операции</div></div>
+    <div class="brow"><div class="blab">→ Toyota Financial</div><div class="btr"><div class="bfl" style="width:20%"></div></div><div class="bamt">лизинг авто</div></div>
+    <div class="note">Операционный счёт: входит выручка клиентов, уходит на операции, зарплаты и лизинг техники.</div>
+  </div>
+  <div data-bank="bidvest" data-period="after" class="hide">
+    <div class="sec">Bidvest · после инвестиций <span>июнь 2026</span></div>
+    <div class="brow"><div class="blab">Drawdown 1 (вход займа)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">+8,114,083</div></div>
+    <div class="brow"><div class="blab">→ Drill Tec</div><div class="btr"><div class="bfl" style="width:62%"></div></div><div class="bamt">−5,000,000</div></div>
+    <div class="brow"><div class="blab">→ EMS Mining FNB</div><div class="btr"><div class="bfl" style="width:27%"></div></div><div class="bamt">−2,207,979</div></div>
+    <div class="note">Bidvest — точка входа займа инвестора в EMS и его распределения.</div>
+  </div>
+
+  <!-- ===================== ABSA ===================== -->
+  <div data-bank="absa" data-period="any" class="hide">
+    <div class="pill">ABSA 4117757136 · бывший основной инкассовый счёт</div>
+    <div class="sec">ABSA — оборот по месяцам (credits) <span>Apr 2025 → May 2026</span></div>
+    <div class="chart">
+      <div class="col"><div class="bar2" style="height:1%"></div></div><div class="col"><div class="bar2" style="height:1%"></div></div>
+      <div class="col"><div class="bar2" style="height:52%"></div></div><div class="col"><div class="bar2" style="height:49%"></div></div>
+      <div class="col"><div class="bar2" style="height:76%"></div></div><div class="col"><div class="bar2" style="height:67%"></div></div>
+      <div class="col"><div class="bar2" style="height:100%"></div></div><div class="col"><div class="bar2" style="height:28%"></div></div>
+      <div class="col"><div class="bar2" style="height:11%"></div></div><div class="col"><div class="bar2" style="height:14%"></div></div>
+      <div class="col"><div class="bar2" style="height:16%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
+      <div class="col dead"><div class="bar2" style="height:2%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
+    </div>
+    <div class="xlabels"><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div></div>
+  </div>
+  <div data-bank="absa" data-period="before" class="hide">
+    <div class="sec">ABSA · до инвестиций <span>2025 — активный</span></div>
+    <div class="note">Основной инкассовый счёт EMS: пик <b>R7.2m</b> в окт 2025. Клиенты: Mota-Engil, Black Mountain, Acumen → свип на Drill Tec/Investerra. Балансы низкие из-за моментального свипа.</div>
+  </div>
+  <div data-bank="absa" data-period="after" class="hide">
+    <div class="sec">ABSA · после инвестиций <span>с марта 2026</span></div>
+    <div class="note">Счёт <b>уснул</b>: оборот ≈ 0, только банковские комиссии, баланс ~<b>R9,408</b>. Сборы переехали на Bidvest. Держим для полноты и аудита.</div>
+  </div>
+
+  <!-- ===================== FNB EMS ===================== -->
+  <div data-bank="fnb" data-period="any" class="hide">
+    <div class="pill">FNB EMS Mining Cheque 62322467681</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance (сейчас)</div><div class="v">R0</div><div class="m">овердрафт погашен</div></div>
+      <div class="k"><div class="l">Было (овердрафт)</div><div class="v neg" style="color:var(--alert)">−R2.21m</div><div class="m">до 12 июня</div></div>
+      <div class="k"><div class="l">Получено (12 Jun)</div><div class="v">R2.21m</div><div class="m">из займа (Bidvest)</div></div>
+      <div class="k"><div class="l">Период данных</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m"></div></div></div>
+  </div>
+  <div data-bank="fnb" data-period="before" class="hide">
+    <div class="sec">FNB EMS · до инвестиций</div>
+    <div class="note">Счёт был в <b style="color:var(--alert)">овердрафте −R2.21m</b> — копились проценты по долгу и комиссии. Показатель напряжённости с ликвидностью до прихода капитала.</div>
+  </div>
+  <div data-bank="fnb" data-period="after" class="hide">
+    <div class="sec">FNB EMS · после инвестиций</div>
+    <div class="note">12 июня поступило <b>R2,207,979</b> из займа (через Bidvest) → овердрафт погашен, баланс <b>R0</b>.</div>
+  </div>
+
+  <div class="foot">Sources: live FNB / Bidvest / ABSA / Drill Tec statements (Григорий) · SmartBuilder Transaction Listing FY2026. Вход инвестиций = 01–05 июня 2026. SmartBuilder — исторический срез (уровень группы). Bidvest: владелец счёта (EMS vs SCV) — уточнить. Confidential.</div>
 </div>
 
 <script>
@@ -195,6 +244,19 @@ else{document.getElementById('e').style.display='block';}}
 document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
 try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
 function tg(el){el.classList.toggle('open');var d=el.nextElementSibling;if(d&&d.classList.contains('detail'))d.classList.toggle('open');}
+
+var activeBank='all', activePeriod='all';
+function setBank(t){activeBank=t.getAttribute('data-bank');document.querySelectorAll('.tab[data-bank]').forEach(function(x){x.classList.toggle('active',x===t);});apply();}
+function setPeriod(t){activePeriod=t.getAttribute('data-period');document.querySelectorAll('.tab[data-period]').forEach(function(x){x.classList.toggle('active',x===t);});apply();}
+function apply(){
+  document.querySelectorAll('[data-bank][data-period]').forEach(function(el){
+    var b=el.getAttribute('data-bank'), p=el.getAttribute('data-period');
+    var bankOk=(b===activeBank);
+    var perOk=(p==='any')||(activePeriod==='all')||(p===activePeriod);
+    el.classList.toggle('hide', !(bankOk && perOk));
+  });
+}
+apply();
 </script>
 </body>
 </html>
