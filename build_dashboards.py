@@ -258,6 +258,7 @@ def main():
     ap.add_argument("--raw", help="папка с сырыми выписками FNB Asset/Claim (.csv/.zip) — основной режим")
     ap.add_argument("--ledger", help="xlsx-ледж­ер Александра (резерв/сверка)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--report", help="файл со списком спорных операций (для бота)")
     args = ap.parse_args()
     if args.raw:
         rows = load_raw(args.raw)
@@ -268,6 +269,25 @@ def main():
     if not rows:
         print("ERROR: в леджере не найдено транзакций", file=sys.stderr); sys.exit(1)
     m = compute(rows)
+    # --- спорные операции (требуют ручной классификации) ---
+    unc = [r for r in rows if r["category"] == "UNCATEGORIZED"]
+    if args.report:
+        with open(args.report, "w", encoding="utf-8") as rf:
+            if unc:
+                rf.write(f"Требуют проверки ({len(unc)}):\n")
+                for r in unc:
+                    amt = r["inflow"] or -r["outflow"]
+                    rf.write(f"• {r['date']} {r['account']} {amt:,.2f} — {r['counterparty']}\n")
+            else:
+                rf.write("OK: спорных операций нет\n")
+    # стоп-гейт: крупная неклассифицированная операция (>= R50k) → НЕ публиковать
+    material = [r for r in unc if max(r["inflow"], r["outflow"]) >= 50000]
+    if material:
+        print(f"BLOCK: {len(material)} крупных неклассифицированных операций — публикация остановлена", file=sys.stderr)
+        for r in material:
+            amt = r["inflow"] or -r["outflow"]
+            print(f"   {r['date']} {r['account']} {amt:,.2f} «{r['counterparty']}»", file=sys.stderr)
+        sys.exit(2)
     # --- sanity checks ---
     errs = []
     if not (0 <= m["preserved"] <= 1.0001):
