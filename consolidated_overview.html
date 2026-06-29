@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Minerals Group — Consolidated Overview</title>
+<style>
+:root{ --bg:#F5F2EA; --ink:#1A1A1A; --ink2:#555; --ink3:#8A8A82; --line:#D9D4C7;
+       --fill1:#1A1A1A; --fill2:#6B6B63; --fill3:#A8A399; --alert:#B00020; --card:#FCFAF4; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 70px}
+#ov{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:36px 40px;width:330px;text-align:center}
+.box .l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
+.box .t{font-size:17px;font-weight:700;margin:6px 0 18px}
+.f{width:100%;border:1px solid var(--line);background:#fff;border-radius:3px;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none}
+.f:focus{border-color:var(--ink)}
+.b{width:100%;background:var(--ink);color:var(--bg);border:none;border-radius:3px;padding:11px;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.err{color:var(--alert);font-size:11px;margin-top:8px;display:none}
+h1{font-size:25px;font-weight:700;letter-spacing:-.3px}
+.top{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
+.sub{font-size:13px;color:var(--ink2);margin-top:6px;max-width:760px}
+.hr{height:1px;background:var(--ink);border:none;margin:16px 0 22px}
+.meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.flow{font-size:12.5px;letter-spacing:.3px;margin:14px 0 0;color:var(--ink)}
+.flow b{font-weight:700}
+.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+.k{background:var(--card);padding:15px 16px}
+.k .l{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
+.k .v{font-size:22px;font-weight:700;margin-top:5px}
+.k .m{font-size:10.5px;color:var(--ink2);margin-top:3px}
+.sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:6px;margin:34px 0 14px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);padding:7px 9px;border-bottom:1px solid var(--ink)}
+td{padding:7px 9px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
+.neg{color:var(--alert)}
+.brow{display:flex;align-items:center;gap:10px;margin:7px 0}
+.blab{width:210px;font-size:12px;flex-shrink:0}
+.btr{flex:1;background:#Eae5d8;height:16px;border-radius:1px;overflow:hidden}
+.bfl{height:100%}
+.bamt{width:120px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;flex-shrink:0}
+.step{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line)}
+.step .num{width:24px;height:24px;border:1px solid var(--ink);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.step .d{font-size:12.5px}
+.step .d small{color:var(--ink2)}
+.step .a{font-variant-numeric:tabular-nums;font-weight:700;font-size:12.5px;white-space:nowrap}
+.note{font-size:11px;color:var(--ink2);margin-top:8px;line-height:1.45}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.tag{font-size:9.5px;border:1px solid var(--ink2);padding:1px 6px;border-radius:2px;color:var(--ink2)}
+.foot{font-size:10.5px;color:var(--ink3);margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.blab{width:130px}}
+</style>
+</head>
+<body>
+<div id="ov"><div class="box">
+  <div class="l">SA Minerals Group</div><div class="t">Consolidated Overview</div>
+  <input class="f" id="u" placeholder="Username" autocomplete="username">
+  <input class="f" id="p" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="b" onclick="lo()">Enter</button>
+  <div class="err" id="e">Incorrect username or password</div>
+</div></div>
+
+<div class="wrap" id="main" style="display:none">
+  <div class="top">Confidential · For Board / IC use only</div>
+  <h1>SA Minerals Group — Consolidated Overview</h1>
+  <div class="sub">One picture across both layers: investor capital (SA Minerals) and the operating company (EMS). Money flows from the funder through the SA Minerals vehicles into EMS and its disbursement account, Drill Tec.</div>
+  <div class="flow">AdRu Tech (funder) → <b>SCV Minerals</b> (holdco / CLN borrower) → SA Minerals <b>Asset Co</b> → <b>Claim Co</b> → <b>EMS Mining</b> → Drill Tec (operations)</div>
+  <div class="meta">
+    <span>Period: 18 May → 24 Jun 2026</span><span>Capital injected: R32.65m</span><span>Generated: 29 Jun 2026</span>
+  </div>
+  <hr class="hr">
+
+  <div class="kgrid">
+    <div class="k"><div class="l">Capital injected</div><div class="v">R32.65m</div><div class="m">AdRu Tech (3 SWIFTs)</div></div>
+    <div class="k"><div class="l">Recoverable assets</div><div class="v">R28.47m</div><div class="m">4 claims + EMS loan</div></div>
+    <div class="k"><div class="l">Group cash (invest)</div><div class="v">R3.99m</div><div class="m">Asset + Claim Co</div></div>
+    <div class="k"><div class="l">Capital preserved</div><div class="v">99.4%</div><div class="m">0.6% non-strategic</div></div>
+  </div>
+
+  <div class="sec">Where the cash sits — all group accounts</div>
+  <table>
+    <thead><tr><th>Layer</th><th>Entity / account</th><th>Bank</th><th class="n">Balance (R)</th></tr></thead>
+    <tbody>
+      <tr><td>Invest</td><td>SA Minerals (Asset Co)</td><td>FNB 63209738939</td><td class="n">3,253,991</td></tr>
+      <tr><td>Invest</td><td>SA Minerals Capital (Claim Co)</td><td>FNB 63209745116</td><td class="n">731,584</td></tr>
+      <tr><td>EMS</td><td>EMS Mining Cheque</td><td>FNB 62322467681</td><td class="n">0</td></tr>
+      <tr><td>EMS</td><td>EMS operating (revenue/disbursement)</td><td>Bidvest</td><td class="n">907,267</td></tr>
+      <tr><td>EMS</td><td>Drill Tec (trade disbursement)</td><td>FNB 62857146263</td><td class="n">1,399,293</td></tr>
+      <tr><td>EMS</td><td>EMS Mining</td><td>ABSA 4117757136</td><td class="n">9,408</td></tr>
+      <tr class="tot"><td colspan="3">Group total cash on hand</td><td class="n">6,301,543</td></tr>
+    </tbody>
+  </table>
+  <div class="note">Invest layer R3.99m (matches the shareholder ledger). EMS layer R2.32m across four accounts. <span class="tag">verify</span> the Bidvest account's exact legal owner (EMS vs SCV) — descriptions show both client receipts and the loan drawdown.</div>
+
+  <div class="sec">The money trail — investor capital into EMS</div>
+  <div class="step"><div class="num">1</div><div class="d">Investor capital lands at <b>Claim Co</b> <small>(via Asset Co intercompany)</small></div><div class="a">R32.65m in</div></div>
+  <div class="step"><div class="num">2</div><div class="d"><b>Loan to EMS</b> — Drawdown 01 from Claim Co <small>(12 Jun)</small></div><div class="a">R8,114,083</div></div>
+  <div class="step"><div class="num">3</div><div class="d">Received in <b>EMS Bidvest</b> account <small>(“DRAWDOWN REQUEST 1”)</small></div><div class="a">R8,114,083</div></div>
+  <div class="step"><div class="num">4</div><div class="d">→ to <b>Drill Tec</b> for operations <small>(suppliers, salaries)</small></div><div class="a">R5,000,000</div></div>
+  <div class="step"><div class="num">5</div><div class="d">→ to <b>EMS Mining FNB</b> <small>(cleared the overdraft, −R2.21m → R0)</small></div><div class="a">R2,207,979</div></div>
+  <div class="note">This chain is reconstructed end-to-end from the live FNB / Bidvest statements — the loan receivable on the invest side equals the cash that reached EMS operations.</div>
+
+  <div class="two">
+    <div>
+      <div class="sec">Capital status (invest layer)</div>
+      <div class="brow"><div class="blab">Recoverable assets</div><div class="btr"><div class="bfl" style="width:87%;background:var(--fill1)"></div></div><div class="bamt">87.2%</div></div>
+      <div class="brow"><div class="blab">Cash on hand</div><div class="btr"><div class="bfl" style="width:12.2%;background:var(--fill2)"></div></div><div class="bamt">12.2%</div></div>
+      <div class="brow"><div class="blab">Overhead (spent)</div><div class="btr"><div class="bfl" style="width:1.5%;background:var(--alert)"></div></div><div class="bamt">0.6%</div></div>
+      <div class="note">R28.47m recoverable + R3.99m cash = 99.4% of capital preserved.</div>
+    </div>
+    <div>
+      <div class="sec">CLN facility — drawn vs scheduled</div>
+      <div class="brow"><div class="blab">Drawn (Tranche 1)</div><div class="btr"><div class="bfl" style="width:29.4%;background:var(--fill1)"></div></div><div class="bamt">R32.6m</div></div>
+      <div class="brow"><div class="blab">Scheduled (T1 rem + T2–T5)</div><div class="btr"><div class="bfl" style="width:70.6%;background:var(--fill3)"></div></div><div class="bamt">R78.4m</div></div>
+      <div class="note">Total facility USD 6.875m / R110.96m. Next: T1 remainder USD 480k due 30 Jun; T2–T5 (Crypto Mauritius) through Dec 2026.</div>
+    </div>
+  </div>
+
+  <div class="foot">Sources: Shareholder Ledger v7 (SA Minerals Asset + Claim FNB) · live FNB / Bidvest / ABSA statements (Григорий) · CLN tranche plan (Board Update). Invest figures as of 24 Jun 2026; EMS balances per latest available statements. Confidential.</div>
+</div>
+
+<script>
+function lo(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim();
+if(u==='viewer'&&p==='2026'){try{sessionStorage.setItem('sam_auth','1')}catch(e){}document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}
+else{document.getElementById('e').style.display='block';}}
+document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
+try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
+</script>
+</body>
+</html>
