@@ -60,6 +60,89 @@ def load_ledger(path):
     return rows
 
 
+ACC = {"63209738939": "Asset Co", "63209745116": "Claim Co"}
+
+# Ручные оверрайды для операций, чей бизнес-смысл НЕ виден из текста банка.
+# Ключ: (date 'YYYY-MM-DD', amount round2). Заполняется человеком (1–2 в неделю).
+OVERRIDES = {
+    ("2026-06-22", -845375.09): {"category": "Claim Acquisition",
+                                 "counterparty": "Wilrock Properties (Pty) Ltd"},
+}
+
+def classify_raw(desc, ref, amt):
+    """Правила классификации сырой транзакции FNB → (category, internal, counterparty)."""
+    t = (str(desc) + " " + str(ref)).upper()
+    if "ADRU TECH" in t: return "Capital Injection", False, "AdRu Tech Ltd (Cyprus)"
+    if "ADT CASH DEPO" in t or ("DEPOSIT" in t and abs(amt) <= 5000): return "Account Activation", False, "Funded by Paul Khourie"
+    if "DRAWDOWN" in t: return "Loan to EMS (Receivable)", False, "EMS Mining"
+    if "INVESTEC" in t: return "Claim Acquisition", False, "Investec Bank"
+    if "BUBESI" in t: return "Claim Acquisition", False, "Bubesi Investments 46 (Pty) Ltd"
+    if "SANDVIK" in t: return "Claim Acquisition", False, "Sandvik Mining RSA (Pty) Ltd"
+    if "WILROCK" in t: return "Claim Acquisition", False, "Wilrock Properties (Pty) Ltd"
+    if any(k in t for k in ("SWIFT COMMISSION", "INWARD SWIFT", "FOREX TRANSFER", "SWIFT CORRECTION")):
+        return "Bank Charges", False, "FNB"
+    if ("TRF" in t or "TRANSFER FUNDS" in t) and ("SA MINERALS" in t or "TRANSFER FUNDS" in t):
+        return "Intercompany Transfer", True, "group account"
+    if "AFRIQOM" in t: return "Operating Expense — Travel & Conference", False, "AFRIQOM FZ LLC (UAE)"
+    if any(k in t for k in ("STRAND", "ACCOMMODATION", "GARDEN COURT", "HOTEL")):
+        return "Operating Expense — Travel & Conference", False, "Travel / accommodation"
+    if "INV17842" in t or "COLLECTIVE" in t: return "Operating Expense — Advisory", False, "Collective Accounting (Pty) Ltd"
+    if any(k in t for k in ("WOOD", "INVOICE 0001", "ADVISOR")): return "Operating Expense — Advisory", False, "Chris Wood (advisor)"
+    return "UNCATEGORIZED", False, str(desc).strip()[:40]
+
+def load_raw(path):
+    """Строит ledger-эквивалент из сырых выписок FNB Asset/Claim (.csv или .zip с .csv)."""
+    import zipfile, glob, os, csv as _csv, re
+    texts = []
+    for fp in glob.glob(os.path.join(path, "*")):
+        low = fp.lower()
+        if low.endswith(".zip"):
+            try:
+                z = zipfile.ZipFile(fp)
+                for n in z.namelist():
+                    if n.lower().endswith(".csv"):
+                        texts.append(z.read(n).decode("utf-8", "replace"))
+            except zipfile.BadZipFile:
+                pass
+        elif low.endswith(".csv"):
+            texts.append(open(fp, encoding="utf-8", errors="replace").read())
+    rows, flagged = [], []
+    for txt in texts:
+        lines = txt.splitlines()
+        acc_no = None
+        for ln in lines[:3]:
+            mm = re.search(r"ACCOUNT NUMBER\s*([0-9]+)", ln.upper())
+            if mm:
+                acc_no = mm.group(1); break
+        account = ACC.get(acc_no, acc_no or "?")
+        for r in _csv.reader(lines):
+            if len(r) < 4:
+                continue
+            try:
+                amt = round(float(r[2]), 2)
+            except (ValueError, IndexError):
+                continue
+            desc, ref = r[3], (r[4] if len(r) > 4 else "")
+            cat, internal, cp = classify_raw(desc, ref, amt)
+            ov = OVERRIDES.get((r[0].strip(), amt))
+            if ov:
+                cat = ov.get("category", cat); cp = ov.get("counterparty", cp); internal = ov.get("internal", internal)
+            if cat == "UNCATEGORIZED":
+                flagged.append((r[0].strip(), account, amt, str(desc).strip()))
+            rows.append({"date": r[0].strip(), "account": account,
+                         "direction": "INFLOW" if amt > 0 else "OUTFLOW",
+                         "category": cat, "counterparty": cp, "internal": internal,
+                         "inflow": amt if amt > 0 else 0.0, "outflow": -amt if amt < 0 else 0.0})
+    rows.sort(key=lambda x: (x["date"], x["account"]))
+    for i, r in enumerate(rows, 1):
+        r["num"] = i
+    if flagged:
+        sys.stderr.write(f"WARNING: {len(flagged)} операций не классифицированы (добавь в OVERRIDES):\n")
+        for d, a, amt, ds in flagged:
+            sys.stderr.write(f"   {d} {a} {amt:,.2f}  «{ds[:48]}»\n")
+    return rows
+
+
 def compute(rows):
     m = {}
     ext_in = sum(r["inflow"] for r in rows if r["direction"] == "INFLOW" and not r["internal"])
@@ -172,10 +255,16 @@ def render(m, gen_date):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ledger", required=True)
+    ap.add_argument("--raw", help="папка с сырыми выписками FNB Asset/Claim (.csv/.zip) — основной режим")
+    ap.add_argument("--ledger", help="xlsx-ледж­ер Александра (резерв/сверка)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
-    rows = load_ledger(args.ledger)
+    if args.raw:
+        rows = load_raw(args.raw)
+    elif args.ledger:
+        rows = load_ledger(args.ledger)
+    else:
+        print("ERROR: нужно указать --raw <папка> или --ledger <файл>", file=sys.stderr); sys.exit(1)
     if not rows:
         print("ERROR: в леджере не найдено транзакций", file=sys.stderr); sys.exit(1)
     m = compute(rows)
