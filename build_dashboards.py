@@ -578,8 +578,20 @@ td{padding:7px 9px;border-bottom:1px solid var(--line)}td.n,th.n{text-align:righ
 <div class="sec">Capital status (invest layer)</div>
 <div class="stack"><div style="width:@@REC_PCT@@;background:var(--fill1)">Recoverable</div><div style="width:@@CASH_PCT@@;background:var(--fill3);color:#1A1A1A">Cash</div><div style="width:@@OVH_PCT@@;background:var(--alert)"></div></div>
 <div class="legend"><span><i class="dot" style="background:var(--fill1)"></i>Recoverable @@REC_PCT@@</span><span><i class="dot" style="background:var(--fill3)"></i>Cash @@CASH_PCT@@</span><span><i class="dot" style="background:var(--alert)"></i>Overhead @@OVH_PCT@@</span></div>
-<div class="sec">CLN facility</div>
-<div class="note">Всего USD 6.875m / R110.96m (план траншей). Транш 1 получен; T1 остаток (USD 480k) и T2–T5 (Crypto Mauritius) — до декабря 2026. Детальный план — в инвест-дашборде.</div>
+<div class="sec">CLN facility — план траншей</div>
+<div class="note">Всего <b>USD 6,875,000 / R110,962,500</b>. Транш 1 получен (29.4%); остальное — до декабря 2026.</div>
+<table style="margin-top:10px"><thead><tr><th>Транш</th><th>Источник</th><th class="n">USD</th><th class="n">ZAR</th><th>Срок</th><th>Статус</th></tr></thead><tbody>
+<tr><td>T1</td><td>AdRu USD Cyprus</td><td class="n">2,020,000</td><td class="n">32,602,800</td><td>01–05 июн 2026</td><td>✓ получен</td></tr>
+<tr><td>T1 остаток</td><td>AdRu USD Cyprus</td><td class="n">480,000</td><td class="n">7,747,200</td><td>30 июн 2026</td><td>◆ ожидается</td></tr>
+<tr><td>T2a</td><td>Crypto Mauritius</td><td class="n">687,500</td><td class="n">11,096,250</td><td>31 июл 2026</td><td>○ план</td></tr>
+<tr><td>T2b</td><td>Crypto Mauritius</td><td class="n">687,500</td><td class="n">11,096,250</td><td>31 авг 2026</td><td>○ план</td></tr>
+<tr><td>T3a</td><td>Crypto Mauritius</td><td class="n">500,000</td><td class="n">8,070,000</td><td>30 сен 2026</td><td>○ план</td></tr>
+<tr><td>T3b</td><td>Crypto Mauritius</td><td class="n">500,000</td><td class="n">8,070,000</td><td>31 окт 2026</td><td>○ план</td></tr>
+<tr><td>T4</td><td>Crypto Mauritius</td><td class="n">1,000,000</td><td class="n">16,140,000</td><td>30 ноя 2026</td><td>○ план</td></tr>
+<tr><td>T5</td><td>Crypto Mauritius</td><td class="n">1,000,000</td><td class="n">16,140,000</td><td>31 дек 2026</td><td>○ план</td></tr>
+<tr class="tot"><td colspan="2">Всего CLN</td><td class="n">6,875,000</td><td class="n">110,962,500</td><td colspan="2"></td></tr>
+</tbody></table>
+<div class="note">Источник плана — Board Update. Транши 2–5 идут от SCV Minerals (Маврикий / «Crypto Mauritius»).</div>
 <div class="foot">Источник: инвест — сырые выписки FNB Asset/Claim (генератор); EMS-балансы — свежие выписки (as of @@ASOF@@). Auto-generated @@GEN@@. Confidential.</div>
 </div>
 <script>
