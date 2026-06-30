@@ -328,7 +328,7 @@ def render_consolidated(m, ems, gen_date):
         "@@INVCASH@@": millions(invcash), "@@PRES@@": f'{m["preserved"]*100:.1f}%',
         "@@ASSET@@": rm0(asset["close"]), "@@CLAIM@@": rm0(claim["close"]),
         "@@FNB@@": rm0(fn), "@@BIDV@@": rm0(bd), "@@ABSA@@": rm0(ab), "@@DRILL@@": rm0(dt),
-        "@@EMSTOT@@": rm0(emstot), "@@GROUPTOT@@": rm0(invcash + emstot),
+        "@@INVTOT@@": rm0(invcash), "@@EMSTOT@@": rm0(emstot), "@@GROUPTOT@@": rm0(invcash + emstot),
         "@@LOAN@@": rm0(m["loan"]), "@@SPLIT_DT@@": rm0(float(e["split_drilltec"])),
         "@@SPLIT_FNB@@": rm0(float(e["split_fnb"])),
         "@@REC_PCT@@": f'{m["recoverable"]/inj*100 if inj else 0:.1f}%',
@@ -565,7 +565,9 @@ td{padding:7px 9px;border-bottom:1px solid var(--line)}td.n,th.n{text-align:righ
 <tr><td>EMS</td><td>EMS operating · Bidvest</td><td class="n">@@BIDV@@</td></tr>
 <tr><td>EMS</td><td>Drill Tec · FNB …6263</td><td class="n">@@DRILL@@</td></tr>
 <tr><td>EMS</td><td>EMS Mining · ABSA …7136</td><td class="n">@@ABSA@@</td></tr>
-<tr class="tot"><td>Group total</td><td>invest + EMS (@@EMSTOT@@)</td><td class="n">@@GROUPTOT@@</td></tr>
+<tr class="tot"><td>Invest — весь кэш</td><td>Asset + Claim Co</td><td class="n">@@INVTOT@@</td></tr>
+<tr class="tot"><td>EMS — весь кэш</td><td>4 счёта EMS</td><td class="n">@@EMSTOT@@</td></tr>
+<tr class="tot"><td>Группа — итого кэш</td><td>invest + EMS</td><td class="n">@@GROUPTOT@@</td></tr>
 </tbody></table>
 <div class="sec">The money trail — investor capital into EMS</div>
 <div class="step"><div class="num">1</div><div class="d"><b>Loan to EMS</b> — Drawdown 01 от Claim Co</div><div class="a">@@LOAN@@</div></div>
