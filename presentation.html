@@ -59,7 +59,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
 <section class="slide">
   <div class="kick">Confidential · For Board / IC use</div>
   <h1>SA Minerals — финансовый дашборд</h1>
-  <div class="sub">Автоматизированная еженедельная отчётность по группе: инвест-капитал (SA Minerals) и операционная компания (EMS). Данные с Google Drive → пересборка по расписанию → публикация на GitHub → уведомления в Telegram. Логин: <b>viewer / 2026</b>.</div>
+  <div class="sub">Автоматизированная еженедельная отчетность по группе: инвест-капитал (SA Minerals) и операционная компания (EMS). Данные с Google Drive → пересборка по расписанию → публикация на GitHub → уведомления в Telegram. Логин: <b>viewer / 2026</b>.</div>
   <div class="btns">
     <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">Сводная</a>
     <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/sa_minerals_group_dashboard.html">Инвест-слой</a>
@@ -90,7 +90,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
   <div class="flow">
     <div class="fcard">
       <div class="ic"><svg width="40" height="40" viewBox="0 0 40 40"><polygon points="13,6 27,6 20,18" fill="#2AABEE" opacity="0"/><polygon points="14,5 26,5 33,29 21,29" fill="#FFBA00"/><polygon points="14,5 7,29 13,29 21,5" fill="#1A73E8"/><polygon points="7,29 33,29 30,34 10,34" fill="#00AC47"/></svg></div>
-      <h3>Google Drive</h3><p>Команда кладёт выписки в папки до пятницы 12:00</p>
+      <h3>Google Drive</h3><p>Команда кладет выписки в папки до пятницы 12:00</p>
     </div>
     <div class="arrow">→</div>
     <div class="fcard">
@@ -120,10 +120,10 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
 
 <!-- ИСТОЧНИКИ -->
 <section class="slide">
-  <div class="kick">03 · Источники (что берёт код)</div>
+  <div class="kick">03 · Источники (что берет код)</div>
   <h2>Файлы по банкам</h2>
   <table>
-    <thead><tr><th>Слой</th><th>Банк / счёт</th><th>Текущее имя</th><th>Рекомендуемое имя</th><th>Формат</th></tr></thead>
+    <thead><tr><th>Слой</th><th>Банк / счет</th><th>Текущее имя</th><th>Рекомендуемое имя</th><th>Формат</th></tr></thead>
     <tbody>
       <tr><td>Инвест</td><td>FNB · Asset Co …8939</td><td>transaction_history…Asset_Co (2).zip</td><td>FNB_AssetCo_&lt;период&gt;.csv</td><td>CSV</td></tr>
       <tr><td>Инвест</td><td>FNB · Claim Co …5116</td><td>transaction_history…Claim_Co (2).zip</td><td>FNB_ClaimCo_&lt;период&gt;.csv</td><td>CSV</td></tr>
@@ -131,21 +131,24 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
       <tr><td>EMS</td><td>FNB · Drill Tec …6263</td><td>FNB Drill Tec Cheque Acc ….pdf</td><td>FNB_DrillTec_&lt;период&gt;.pdf</td><td>PDF</td></tr>
       <tr><td>EMS</td><td>Bidvest</td><td>Statement Report June.csv</td><td>Bidvest_&lt;Месяц&gt;_&lt;ГГГГ&gt;.csv</td><td>CSV</td></tr>
       <tr><td>EMS</td><td>ABSA …7136</td><td>ABSA 29042026 28052026.pdf</td><td>ABSA_&lt;период&gt;.pdf</td><td>PDF</td></tr>
-      <tr><td>EMS</td><td>SmartBuilder (категории)</td><td>Transaction List.xlsx</td><td>transactions_FY2026_&lt;дата&gt;.xlsx</td><td>XLSX</td></tr>
+      <tr><td>EMS · SmartBuilder</td><td>Transaction Listing (категории затрат)</td><td>Transaction List.xlsx</td><td>transactions_FY2026_&lt;дата&gt;.xlsx</td><td>XLSX</td></tr>
+      <tr><td>EMS · SmartBuilder</td><td>Creditors Age (AP + долги SARS)</td><td>—</td><td>creditors_age_&lt;ГГГГММ&gt;.xlsx</td><td>XLSX</td></tr>
+      <tr><td>EMS · SmartBuilder</td><td>Debtors Age (дебиторка AR)</td><td>—</td><td>debtors_age_&lt;ГГГГММ&gt;.xlsx</td><td>XLSX</td></tr>
+      <tr><td>EMS · бюджет</td><td>Budget FY2027 (план / EBITDA)</td><td>EMS Mining - Monthly Budget FY2026-2027.xlsx</td><td>budget_FY2027_&lt;дата&gt;.xlsx</td><td>XLSX</td></tr>
     </tbody>
   </table>
-  <div class="note">Имя файла — всегда с датой (ГГГГММДД). Новую версию класть рядом, прошлую не перезаписывать.</div>
+  <div class="note">Имя файла — всегда с датой (ГГГГММДД). Новую версию класть рядом, прошлую не перезаписывать. Документы SmartBuilder (G1 → Creditors/Debtors Age) и бюджет питают блок «🟦 SmartBuilder-снимок» в EMS-дашборде (риск SARS, обязательства, AP/AR, бюджет).</div>
 </section>
 
 <!-- СТРУКТУРА -->
 <section class="slide">
   <div class="kick">04 · Структура группы</div>
   <h2>Кто есть кто — и где смотреть</h2>
-  <div class="sub">AdRu Tech (фандер) → SCV Minerals (холдинг / CLN) → SA Minerals Asset Co → Claim Co → EMS Mining → Drill Tec. Мостик слоёв — заём EMS R8.11m.</div>
+  <div class="sub">AdRu Tech (фандер) → SCV Minerals (холдинг / CLN) → SA Minerals Asset Co → Claim Co → EMS Mining → Drill Tec. Мостик слоев — заем EMS R8.11m.</div>
   <div class="zones">
     <div class="zone" style="background:var(--zcons)"><h3>📊 Сводная</h3><p>Фандер + холдинг (CLN), весь кэш группы, путь денег. Для борда и инвестора.</p></div>
     <div class="zone" style="background:var(--zinv)"><h3>📊 Инвест-слой</h3><p>SA Minerals Asset + Claim Co. Детально: транзакции, клеймы, waterfall.</p></div>
-    <div class="zone" style="background:var(--zems)"><h3>🏭 EMS financial</h3><p>4 счёта EMS (FNB / Bidvest / ABSA / Drill Tec). Операции компании.</p></div>
+    <div class="zone" style="background:var(--zems)"><h3>🏭 EMS financial</h3><p>4 счета EMS (FNB / Bidvest / ABSA / Drill Tec). Операции компании.</p></div>
   </div>
   <div class="btns"><a class="btn alt" href="https://ogesina-dotcom.github.io/-dashboards-/structure.html">Открыть полную схему →</a></div>
 </section>
@@ -160,7 +163,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
       <div class="look"><b>Что смотреть:</b><ul class="look">
         <li>KPI <b>Capital preserved</b> — сохранность капитала</li>
         <li>Таблица «где кэш» — все счета группы</li>
-        <li>«Путь денег» — куда ушёл заём EMS</li></ul></div>
+        <li>«Путь денег» — куда ушел заем EMS</li></ul></div>
       <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">Открыть Сводную</a>
     </div>
     <div class="cut">
@@ -173,7 +176,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
       </div>
       <div class="callout">← сохранность капитала и куда ушли деньги</div>
       <div style="margin-top:8px">
-        <div class="step"><div class="n">1</div>Заём EMS (Drawdown 01) · R8.11m</div>
+        <div class="step"><div class="n">1</div>Заем EMS (Drawdown 01) · R8.11m</div>
         <div class="step"><div class="n">2</div>→ Drill Tec (операции) · R5.0m</div>
         <div class="step"><div class="n">3</div>→ EMS FNB (овердрафт) · R2.21m</div>
       </div>
@@ -216,15 +219,16 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
   <h2>EMS financial — операционный взгляд</h2>
   <div class="two">
     <div>
-      <div class="sub">Кэш по 4 банкам EMS, фильтр по банку и период «до / после инвестиций», 14-мес. история ABSA, расходы Drill Tec, выручка Mota-Engil, drill-down по категориям SmartBuilder.</div>
+      <div class="sub">Два домена: 🟢 <b>Live</b> (кэш по 4 банкам, фильтр банк + до/после инвестиций) и 🟦 <b>SmartBuilder-снимок</b> (риск SARS, обязательства, AP/AR, бюджет — со штампом даты, фильтром не меняется).</div>
       <div class="look"><b>Что смотреть:</b><ul class="look">
-        <li>Переключатель <b>банк</b> + <b>до/после инвестиций</b></li>
-        <li>Расходы Drill Tec — поставщики и зарплаты</li>
-        <li>Категории SmartBuilder — клик раскрывает контракты</li></ul></div>
+        <li>⚠ <b>Риск SARS</b> — налоговые долги R64.5m, валовые обязательства R88.2m</li>
+        <li>Переключатель <b>банк</b> + <b>до/после</b> (действует только на Live)</li>
+        <li>AP/AR age analysis + бюджет FY2027 (путь к EBITDA+)</li></ul></div>
       <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/ems_financial_live.html">Открыть EMS financial</a>
     </div>
     <div class="cut">
-      <div class="cap">врезка · фильтр и расходы</div>
+      <div class="cap">врезка · риск + фильтр</div>
+      <div style="background:#FBEFEF;border-left:3px solid #B00020;padding:6px 9px;border-radius:0 4px 4px 0;font-size:11px;color:#B00020;font-weight:700;margin-bottom:8px">⚠ SARS долги R64.5m · обязательства R88.2m (снимок)</div>
       <div class="tabs"><span class="tab on">Все</span><span class="tab">Drill Tec</span><span class="tab">Bidvest</span><span class="tab">ABSA</span></div>
       <div class="tabs"><span class="tab on">Весь период</span><span class="tab">До инвестиций</span><span class="tab">После</span></div>
       <div class="bar"><div class="bl">HSS</div><div class="bt"><div class="bf" style="width:100%"></div></div><div class="ba">654k</div></div>
@@ -240,7 +244,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line)}
   <div class="kick">08 · Статус и ссылки</div>
   <h2>Готово к работе</h2>
   <div class="sub">Закрыто: перенос файлов, рабочий chat_id, 3 триггера, доступы (Run now), авто-пересборка протестирована. Остался один будущий пункт — обновить GitHub-токен ~сентябрь 2026.</div>
-  <div class="note"><b>Идеи на развитие — автозабор данных из источников:</b> (1) платёжки приходят на почту → автосохранение на Google Drive — повысит качество классификации; (2) SmartBuilder — прямая автоматизация выгрузки пока выглядит невозможной (закрытая система). Изучить.</div>
+  <div class="note"><b>Идеи на развитие — автозабор данных из источников:</b> (1) платежки приходят на почту → автосохранение на Google Drive — повысит качество классификации; (2) SmartBuilder — прямая автоматизация выгрузки пока выглядит невозможной (закрытая система). Изучить.</div>
   <div class="links" style="margin-top:14px">
     <a href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">📊 Сводная</a>
     <a href="https://ogesina-dotcom.github.io/-dashboards-/sa_minerals_group_dashboard.html">📊 Инвест-слой</a>

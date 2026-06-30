@@ -4,7 +4,7 @@ build_dashboards.py — детерминированный генератор ф
 
 Версия 1: пересобирает инвест-слой (sa_minerals_group_dashboard.html) ПОЛНОСТЬЮ
 из листа "Ledger" файла Shareholder Ledger (xlsx). Все цифры считаются из транзакций,
-ничего не хардкодится. Интеркомпани-переводы (Internal=Yes) исключаются из "развёртывания".
+ничего не хардкодится. Интеркомпани-переводы (Internal=Yes) исключаются из "развертывания".
 
 Запуск:
     python3 build_dashboards.py --ledger <путь к .xlsx> --out <путь к .html>
@@ -16,7 +16,7 @@ import argparse, sys, datetime, os, json
 import openpyxl
 
 # Балансы EMS-счетов по умолчанию (последние известные). Пятничная задача
-# обновляет их из свежих выписок и передаёт через --ems-balances <json>.
+# обновляет их из свежих выписок и передает через --ems-balances <json>.
 EMS_DEFAULTS = {"fnb_ems": 0.0, "bidvest": 907267.0, "absa": 9408.0, "drilltec": 1399293.0,
                 "split_drilltec": 5000000.0, "split_fnb": 2207979.0}
 
@@ -165,7 +165,7 @@ def compute(rows):
     m["overhead"] = overhead
     m["cash"] = cash
     m["preserved"] = (recoverable + cash) / ext_in if ext_in else 0.0
-    # per-account closing balances (включая интеркомпани — это реальные деньги на счёте)
+    # per-account closing balances (включая интеркомпани — это реальные деньги на счете)
     accts = {}
     for r in rows:
         a = r["account"]
@@ -259,7 +259,7 @@ def render(m, gen_date):
 
 
 def build_pdf(m, path, gen_date):
-    """Чистый табличный PDF-отчёт инвест-слоя (reportlab) — для архива на Drive."""
+    """Чистый табличный PDF-отчет инвест-слоя (reportlab) — для архива на Drive."""
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
@@ -350,7 +350,7 @@ def main():
     ap.add_argument("--ems-balances", help="JSON с балансами EMS-счетов (для сводного)")
     ap.add_argument("--report", help="файл со списком спорных операций (для бота)")
     ap.add_argument("--metrics-out", help="CSV-снимок ключевых метрик (для архива на Drive)")
-    ap.add_argument("--pdf-out", help="чистый табличный PDF-отчёт инвест-слоя (для архива на Drive)")
+    ap.add_argument("--pdf-out", help="чистый табличный PDF-отчет инвест-слоя (для архива на Drive)")
     args = ap.parse_args()
     if args.raw:
         rows = load_raw(args.raw)
@@ -464,7 +464,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
 <div class="top">Confidential · For Board / IC use only · auto-generated</div>
 <h1>SA Minerals Group — Shareholder Dashboard</h1>
-<div class="sub">Консолидированное развёртывание капитала инвестора по двум счетам FNB (Asset Co + Claim Co). Интеркомпани-переводы исключены из KPI развёртывания. Собрано автоматически из сырых банковских выписок FNB (классификатор).</div>
+<div class="sub">Консолидированное развертывание капитала инвестора по двум счетам FNB (Asset Co + Claim Co). Интеркомпани-переводы исключены из KPI развертывания. Собрано автоматически из сырых банковских выписок FNB (классификатор).</div>
 <div class="meta"><span>Capital injected: @@KPI_INJECTED@@</span><span>Generated: @@GEN@@</span></div>
 <hr class="hr">
 <div class="kgrid">
@@ -566,12 +566,12 @@ td{padding:7px 9px;border-bottom:1px solid var(--line)}td.n,th.n{text-align:righ
 <tr><td>EMS</td><td>Drill Tec · FNB …6263</td><td class="n">@@DRILL@@</td></tr>
 <tr><td>EMS</td><td>EMS Mining · ABSA …7136</td><td class="n">@@ABSA@@</td></tr>
 <tr class="tot"><td>Invest — весь кэш</td><td>Asset + Claim Co</td><td class="n">@@INVTOT@@</td></tr>
-<tr class="tot"><td>EMS — весь кэш</td><td>4 счёта EMS</td><td class="n">@@EMSTOT@@</td></tr>
+<tr class="tot"><td>EMS — весь кэш</td><td>4 счета EMS</td><td class="n">@@EMSTOT@@</td></tr>
 <tr class="tot"><td>Группа — итого кэш</td><td>invest + EMS</td><td class="n">@@GROUPTOT@@</td></tr>
 </tbody></table>
 <div class="sec">The money trail — investor capital into EMS</div>
 <div class="step"><div class="num">1</div><div class="d"><b>Loan to EMS</b> — Drawdown 01 от Claim Co</div><div class="a">@@LOAN@@</div></div>
-<div class="step"><div class="num">2</div><div class="d">Пришёл в <b>EMS Bidvest</b> <small>(«DRAWDOWN REQUEST 1»)</small></div><div class="a">@@LOAN@@</div></div>
+<div class="step"><div class="num">2</div><div class="d">Пришел в <b>EMS Bidvest</b> <small>(«DRAWDOWN REQUEST 1»)</small></div><div class="a">@@LOAN@@</div></div>
 <div class="step"><div class="num">3</div><div class="d">→ <b>Drill Tec</b> (операции, поставщики, зарплаты)</div><div class="a">@@SPLIT_DT@@</div></div>
 <div class="step"><div class="num">4</div><div class="d">→ <b>EMS Mining FNB</b> <small>(погасил овердрафт)</small></div><div class="a">@@SPLIT_FNB@@</div></div>
 <div class="note">Цепочка восстановлена из живых выписок: займ-актив на инвест-стороне = деньги, дошедшие до операций EMS.</div>
