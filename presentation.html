@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Minerals — финансовый дашборд · презентация</title>
+<style>
+:root{--bg:#F5F2EA;--ink:#1A1A1A;--ink2:#555;--ink3:#8A8A82;--line:#D9D4C7;--card:#FCFAF4;--accent:#B00020;
+--drive:#1A73E8;--tg:#2AABEE;--gh:#1A1A1A;--zinv:#ECE3D0;--zems:#E2EAE0;--zcons:#DCE2E8;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.slide{max-width:1000px;margin:0 auto;padding:46px 26px;border-bottom:1px solid var(--line)}
+.kick{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3);font-weight:700}
+h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:6px 0}
+h2{font-size:22px;font-weight:800;margin:2px 0 4px}
+.sub{font-size:14px;color:var(--ink2);max-width:760px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{display:inline-block;background:var(--ink);color:var(--bg);text-decoration:none;font-size:12.5px;padding:9px 14px;border-radius:5px}
+.btn.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.grid8{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 13px;font-size:12.5px}
+.chip b{display:block;font-size:13px;margin-bottom:2px}
+.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:20px}
+.fcard{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
+.fcard .ic{height:46px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.fcard h3{font-size:14px;margin-bottom:4px}
+.fcard p{font-size:11.5px;color:var(--ink2)}
+.arrow{display:flex;align-items:center;color:var(--ink3);font-size:22px}
+.sched{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.sched div{font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.sched div:last-child{border:none}.sched b{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+th{text-align:left;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3);padding:6px 8px;border-bottom:1px solid var(--ink)}
+td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.zone{border-radius:10px;padding:14px;border:1px solid var(--line)}
+.zone h3{font-size:13px}.zone p{font-size:11.5px;color:var(--ink2);margin-top:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin-top:14px}
+.look{font-size:13px;margin:8px 0}.look li{margin:5px 0;font-size:12.5px}
+.cut{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative}
+.cut .cap{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px}
+.kpi .l{font-size:8.5px;text-transform:uppercase;color:var(--ink3);letter-spacing:.5px}
+.kpi .v{font-size:16px;font-weight:800}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0}.bar .bl{width:78px;font-size:10px}
+.bt{flex:1;height:12px;background:#EAE5D8;border-radius:2px;overflow:hidden}.bf{height:100%;background:var(--ink)}
+.ba{font-size:10px;width:62px;text-align:right;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.tab{font-size:10.5px;border:1px solid var(--line);border-radius:3px;padding:3px 8px;background:var(--bg)}
+.tab.on{background:var(--ink);color:var(--bg)}
+.callout{color:var(--accent);font-size:11px;font-weight:700;margin-top:8px}
+.step{display:flex;gap:8px;align-items:center;font-size:11px;padding:4px 0;border-bottom:1px solid var(--line)}
+.step .n{width:18px;height:18px;border:1px solid var(--ink);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center}
+.note{font-size:11px;color:var(--ink2);margin-top:8px}
+.links{font-size:13px}.links a{color:var(--ink);display:block;padding:4px 0}
+.foot{font-size:11px;color:var(--ink3);text-align:center;padding:24px}
+@media(max-width:760px){.grid8{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.zones{grid-template-columns:1fr}.flow{flex-direction:column}.arrow{transform:rotate(90deg)}}
+</style></head><body>
+
+<!-- HERO -->
+<section class="slide">
+  <div class="kick">Confidential · For Board / IC use</div>
+  <h1>SA Minerals — финансовый дашборд</h1>
+  <div class="sub">Автоматизированная еженедельная отчётность по группе: инвест-капитал (SA Minerals) и операционная компания (EMS). Данные с Google Drive → пересборка по расписанию → публикация на GitHub → уведомления в Telegram. Логин: <b>viewer / 2026</b>.</div>
+  <div class="btns">
+    <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">Сводная</a>
+    <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/ems_financial_live.html">EMS financial</a>
+    <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/sa_minerals_group_dashboard.html">Инвест-слой</a>
+    <a class="btn alt" href="https://ogesina-dotcom.github.io/-dashboards-/structure.html">Структура</a>
+  </div>
+</section>
+
+<!-- ЧТО СДЕЛАНО -->
+<section class="slide">
+  <div class="kick">01 · Что сделано</div>
+  <h2>Система целиком</h2>
+  <div class="grid8">
+    <div class="chip"><b>Источники</b>выписки FNB / Bidvest / ABSA + бухгалтерия EMS</div>
+    <div class="chip"><b>Папки на Drive</b>единая структура для загрузки</div>
+    <div class="chip"><b>3 дашборда + схема</b>на GitHub Pages</div>
+    <div class="chip"><b>Генератор</b>собирает дашборды из сырья</div>
+    <div class="chip"><b>2 задачи по расписанию</b>проверка + пересборка</div>
+    <div class="chip"><b>Telegram-бот</b>напоминания и анонсы</div>
+    <div class="chip"><b>Архив на Drive</b>метрики + PDF каждую неделю</div>
+    <div class="chip"><b>Без ручного леджера</b>строим из выписок, не зависим от 1 человека</div>
+  </div>
+</section>
+
+<!-- КОНВЕЙЕР -->
+<section class="slide">
+  <div class="kick">02 · Как идут данные</div>
+  <h2>Конвейер</h2>
+  <div class="flow">
+    <div class="fcard">
+      <div class="ic"><svg width="40" height="40" viewBox="0 0 40 40"><polygon points="13,6 27,6 20,18" fill="#2AABEE" opacity="0"/><polygon points="14,5 26,5 33,29 21,29" fill="#FFBA00"/><polygon points="14,5 7,29 13,29 21,5" fill="#1A73E8"/><polygon points="7,29 33,29 30,34 10,34" fill="#00AC47"/></svg></div>
+      <h3>Google Drive</h3><p>Команда кладёт выписки в папки до пятницы 12:00</p>
+    </div>
+    <div class="arrow">→</div>
+    <div class="fcard">
+      <div class="ic"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="22" rx="3" fill="none" stroke="#1A1A1A" stroke-width="2"/><path d="M11 16h18M11 21h18M11 26h11" stroke="#1A1A1A" stroke-width="2"/><circle cx="31" cy="30" r="6" fill="#B00020"/><path d="M31 27v3l2 1" stroke="#fff" stroke-width="1.6" fill="none"/></svg></div>
+      <h3>Расписание · 2 задачи</h3><p>precheck (12:30) проверка + спорные; rebuild (17:00) пересборка + архив</p>
+    </div>
+    <div class="arrow">→</div>
+    <div class="fcard">
+      <div class="ic"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#1A1A1A"/><circle cx="14" cy="17" r="2.4" fill="#fff"/><circle cx="26" cy="17" r="2.4" fill="#fff"/><circle cx="20" cy="28" r="2.4" fill="#fff"/><path d="M14 19v3a6 6 0 0 0 12 0v-3M20 28v-3" stroke="#fff" stroke-width="1.6" fill="none"/></svg></div>
+      <h3>GitHub Pages</h3><p>push в main → сайт пересобирается, ссылки обновляются</p>
+    </div>
+    <div class="arrow">→</div>
+    <div class="fcard">
+      <div class="ic"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#2AABEE"/><path d="M11 20l18-7-3 16-5-4-3 3-1-5z" fill="#fff"/><path d="M16 23l10-7-8 8z" fill="#cfe8f7"/></svg></div>
+      <h3>Telegram-бот</h3><p>напоминания, спорные операции, анонс «обновлено»</p>
+    </div>
+  </div>
+  <div class="sched">
+    <div>🗓 <b>Чт 09:00</b> — напоминание «сохраните выписки до пятницы»</div>
+    <div>🗓 <b>Пт 12:30</b> — precheck: проверка файлов + список спорных операций</div>
+    <div>🗓 <b>Пт 13:00</b> — спорные операции в чат (если есть)</div>
+    <div>🗓 <b>Пт 17:00</b> — rebuild: пересборка дашбордов + публикация + архив</div>
+    <div>🗓 <b>Пт 18:00</b> — анонс «дашборды обновлены»</div>
+  </div>
+  <div class="note">Страховка: при крупной неопознанной операции дашборд не публикуется (стоп-гейт) + сверка цифр перед публикацией.</div>
+</section>
+
+<!-- ИСТОЧНИКИ -->
+<section class="slide">
+  <div class="kick">03 · Источники (что берёт код)</div>
+  <h2>Файлы по банкам</h2>
+  <table>
+    <thead><tr><th>Слой</th><th>Банк / счёт</th><th>Текущее имя</th><th>Рекомендуемое имя</th><th>Формат</th></tr></thead>
+    <tbody>
+      <tr><td>Инвест</td><td>FNB · Asset Co …8939</td><td>transaction_history…Asset_Co (2).zip</td><td>FNB_AssetCo_&lt;период&gt;.csv</td><td>CSV</td></tr>
+      <tr><td>Инвест</td><td>FNB · Claim Co …5116</td><td>transaction_history…Claim_Co (2).zip</td><td>FNB_ClaimCo_&lt;период&gt;.csv</td><td>CSV</td></tr>
+      <tr><td>EMS</td><td>FNB · EMS Cheque …7681</td><td>FNB EMS Mining Cheque ….pdf</td><td>FNB_EMS_Cheque_&lt;период&gt;.pdf</td><td>PDF</td></tr>
+      <tr><td>EMS</td><td>FNB · Drill Tec …6263</td><td>FNB Drill Tec Cheque Acc ….pdf</td><td>FNB_DrillTec_&lt;период&gt;.pdf</td><td>PDF</td></tr>
+      <tr><td>EMS</td><td>Bidvest</td><td>Statement Report June.csv</td><td>Bidvest_&lt;Месяц&gt;_&lt;ГГГГ&gt;.csv</td><td>CSV</td></tr>
+      <tr><td>EMS</td><td>ABSA …7136</td><td>ABSA 29042026 28052026.pdf</td><td>ABSA_&lt;период&gt;.pdf</td><td>PDF</td></tr>
+      <tr><td>EMS</td><td>SmartBuilder (категории)</td><td>Transaction List.xlsx</td><td>transactions_FY2026_&lt;дата&gt;.xlsx</td><td>XLSX</td></tr>
+    </tbody>
+  </table>
+  <div class="note">Имя файла — всегда с датой (ГГГГММДД). Новую версию класть рядом, прошлую не перезаписывать.</div>
+</section>
+
+<!-- СТРУКТУРА -->
+<section class="slide">
+  <div class="kick">04 · Структура группы</div>
+  <h2>Кто есть кто — и где смотреть</h2>
+  <div class="sub">AdRu Tech (фандер) → SCV Minerals (холдинг / CLN) → SA Minerals Asset Co → Claim Co → EMS Mining → Drill Tec. Мостик слоёв — заём EMS R8.11m.</div>
+  <div class="zones">
+    <div class="zone" style="background:var(--zcons)"><h3>📊 Сводная</h3><p>Фандер + холдинг (CLN), весь кэш группы, путь денег. Для борда и инвестора.</p></div>
+    <div class="zone" style="background:var(--zinv)"><h3>📊 Инвест-слой</h3><p>SA Minerals Asset + Claim Co. Детально: транзакции, клеймы, waterfall.</p></div>
+    <div class="zone" style="background:var(--zems)"><h3>🏭 EMS financial</h3><p>4 счёта EMS (FNB / Bidvest / ABSA / Drill Tec). Операции компании.</p></div>
+  </div>
+  <div class="btns"><a class="btn alt" href="https://ogesina-dotcom.github.io/-dashboards-/structure.html">Открыть полную схему →</a></div>
+</section>
+
+<!-- ДАШБОРД 1 -->
+<section class="slide">
+  <div class="kick">05 · Дашборд · Сводная</div>
+  <h2>Сводная — взгляд борда/инвестора</h2>
+  <div class="two">
+    <div>
+      <div class="sub">Главный экран: сколько завели, сколько сохранено, весь кэш группы, путь денег инвестор→EMS, план траншей CLN.</div>
+      <div class="look"><b>Что смотреть:</b><ul class="look">
+        <li>KPI <b>Capital preserved</b> — сохранность капитала</li>
+        <li>Таблица «где кэш» — все счета группы</li>
+        <li>«Путь денег» — куда ушёл заём EMS</li></ul></div>
+      <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">Открыть Сводную</a>
+    </div>
+    <div class="cut">
+      <div class="cap">врезка из дашборда</div>
+      <div class="kpis">
+        <div class="kpi"><div class="l">Capital injected</div><div class="v">R32.65m</div></div>
+        <div class="kpi"><div class="l">Recoverable</div><div class="v">R23.52m</div></div>
+        <div class="kpi"><div class="l">Group cash</div><div class="v">R8.94m</div></div>
+        <div class="kpi"><div class="l">Preserved</div><div class="v">99.4%</div></div>
+      </div>
+      <div class="callout">← сохранность капитала и куда ушли деньги</div>
+      <div style="margin-top:8px">
+        <div class="step"><div class="n">1</div>Заём EMS (Drawdown 01) · R8.11m</div>
+        <div class="step"><div class="n">2</div>→ Drill Tec (операции) · R5.0m</div>
+        <div class="step"><div class="n">3</div>→ EMS FNB (овердрафт) · R2.21m</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ДАШБОРД 2 -->
+<section class="slide">
+  <div class="kick">06 · Дашборд · Инвест-слой</div>
+  <h2>Инвест-слой — детальный первоисточник</h2>
+  <div class="two">
+    <div>
+      <div class="sub">Доказательная база: все транзакции, портфель клеймов (cost vs face value), waterfall капитала. Для тебя, Богдашина, due diligence.</div>
+      <div class="look"><b>Что смотреть:</b><ul class="look">
+        <li>Портфель клеймов — какие активы приобретены</li>
+        <li>Waterfall — куда «утекал» капитал по шагам</li>
+        <li>Полный леджер — каждая операция объяснима</li></ul></div>
+      <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/sa_minerals_group_dashboard.html">Открыть Инвест-слой</a>
+    </div>
+    <div class="cut">
+      <div class="cap">врезка · портфель клеймов</div>
+      <table style="margin-top:0">
+        <thead><tr><th>Клейм</th><th>Cost</th><th>Face</th></tr></thead>
+        <tbody>
+          <tr><td>Investec</td><td>R13.06m</td><td>R13.06m</td></tr>
+          <tr><td>Bubesi (T1)</td><td>R1.50m</td><td>R3.94m</td></tr>
+          <tr><td>Wilrock</td><td>R0.85m</td><td>R0.85m</td></tr>
+          <tr><td>Loan to EMS</td><td>R8.11m</td><td>R8.11m</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">← cost vs face value по каждой сделке</div>
+    </div>
+  </div>
+</section>
+
+<!-- ДАШБОРД 3 -->
+<section class="slide">
+  <div class="kick">07 · Дашборд · EMS financial</div>
+  <h2>EMS financial — операционный взгляд</h2>
+  <div class="two">
+    <div>
+      <div class="sub">Кэш по 4 банкам EMS, фильтр по банку и период «до / после инвестиций», 14-мес. история ABSA, расходы Drill Tec, выручка Mota-Engil, drill-down по категориям SmartBuilder.</div>
+      <div class="look"><b>Что смотреть:</b><ul class="look">
+        <li>Переключатель <b>банк</b> + <b>до/после инвестиций</b></li>
+        <li>Расходы Drill Tec — поставщики и зарплаты</li>
+        <li>Категории SmartBuilder — клик раскрывает контракты</li></ul></div>
+      <a class="btn" href="https://ogesina-dotcom.github.io/-dashboards-/ems_financial_live.html">Открыть EMS financial</a>
+    </div>
+    <div class="cut">
+      <div class="cap">врезка · фильтр и расходы</div>
+      <div class="tabs"><span class="tab on">Все</span><span class="tab">Drill Tec</span><span class="tab">Bidvest</span><span class="tab">ABSA</span></div>
+      <div class="tabs"><span class="tab on">Весь период</span><span class="tab">До инвестиций</span><span class="tab">После</span></div>
+      <div class="bar"><div class="bl">HSS</div><div class="bt"><div class="bf" style="width:100%"></div></div><div class="ba">654k</div></div>
+      <div class="bar"><div class="bl">Salaries</div><div class="bt"><div class="bf" style="width:96%"></div></div><div class="ba">630k</div></div>
+      <div class="bar"><div class="bl">All Africa</div><div class="bt"><div class="bf" style="width:90%"></div></div><div class="ba">587k</div></div>
+      <div class="callout">← выбери банк и период до/после инвестиций</div>
+    </div>
+  </div>
+</section>
+
+<!-- ИТОГ + ССЫЛКИ -->
+<section class="slide">
+  <div class="kick">08 · Статус и ссылки</div>
+  <h2>Готово к работе</h2>
+  <div class="sub">Закрыто: перенос файлов, рабочий chat_id, 3 триггера, доступы (Run now), авто-пересборка протестирована. Остался один будущий пункт — обновить GitHub-токен ~сентябрь 2026.</div>
+  <div class="links" style="margin-top:14px">
+    <a href="https://ogesina-dotcom.github.io/-dashboards-/consolidated_overview.html">📊 Сводная</a>
+    <a href="https://ogesina-dotcom.github.io/-dashboards-/sa_minerals_group_dashboard.html">📊 Инвест-слой</a>
+    <a href="https://ogesina-dotcom.github.io/-dashboards-/ems_financial_live.html">🏭 EMS financial</a>
+    <a href="https://ogesina-dotcom.github.io/-dashboards-/structure.html">🗺 Структура</a>
+    <a href="https://github.com/ogesina-dotcom/-dashboards-">💻 Репозиторий (код + история)</a>
+  </div>
+</section>
+
+<div class="foot">SA Minerals Group · финансовый дашборд · логин viewer / 2026 · Confidential</div>
+</body></html>
