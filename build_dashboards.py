@@ -464,7 +464,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
 <div class="top">Confidential · For Board / IC use only · auto-generated</div>
 <h1>SA Minerals Group — Shareholder Dashboard</h1>
-<div class="sub">Консолидированное развёртывание капитала инвестора по двум счетам FNB (Asset Co + Claim Co). Интеркомпани-переводы исключены из KPI развёртывания. Собрано автоматически из леджера.</div>
+<div class="sub">Консолидированное развёртывание капитала инвестора по двум счетам FNB (Asset Co + Claim Co). Интеркомпани-переводы исключены из KPI развёртывания. Собрано автоматически из сырых банковских выписок FNB (классификатор).</div>
 <div class="meta"><span>Capital injected: @@KPI_INJECTED@@</span><span>Generated: @@GEN@@</span></div>
 <hr class="hr">
 <div class="kgrid">
@@ -492,7 +492,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <table><thead><tr><th>#</th><th>Counterparty</th><th>Date</th><th class="n">Cost (R)</th><th class="n">Face (R)</th></tr></thead><tbody>@@CLAIM_ROWS@@</tbody></table>
 <div class="sec">Full transaction ledger <span>@@NTXN@@ transactions</span></div>
 <div style="overflow-x:auto"><table id="lg"><thead><tr><th>#</th><th>Date</th><th>Account</th><th>Dir</th><th>Category</th><th>Counterparty</th><th class="n">Inflow</th><th class="n">Outflow</th></tr></thead><tbody id="lb"></tbody></table></div>
-<div class="foot">Source: Shareholder Ledger (Asset + Claim FNB). Auto-generated @@GEN@@. Confidential.</div>
+<div class="foot">Источник: сырые выписки FNB (Asset Co + Claim Co), авто-классификатор. Сгенерировано @@GEN@@. Confidential.</div>
 </div>
 <script>
 function lo(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim();
