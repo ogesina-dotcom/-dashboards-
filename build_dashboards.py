@@ -12,8 +12,13 @@ build_dashboards.py — детерминированный генератор ф
 Перед публикацией прогоняются проверки: сохранность капитала 0–100%,
 recoverable + cash + overhead == capital injected. При провале — exit 1 (не публиковать).
 """
-import argparse, sys, datetime
+import argparse, sys, datetime, os, json
 import openpyxl
+
+# Балансы EMS-счетов по умолчанию (последние известные). Пятничная задача
+# обновляет их из свежих выписок и передаёт через --ems-balances <json>.
+EMS_DEFAULTS = {"fnb_ems": 0.0, "bidvest": 907267.0, "absa": 9408.0, "drilltec": 1399293.0,
+                "split_drilltec": 5000000.0, "split_fnb": 2207979.0}
 
 
 def load_ledger(path):
@@ -307,11 +312,42 @@ def build_pdf(m, path, gen_date):
     doc.build(el)
 
 
+def render_consolidated(m, ems, gen_date):
+    rm0 = lambda n: f"{n:,.0f}"
+    a = m["accounts"]
+    asset = next((v for k, v in a.items() if "Asset" in k), {"close": 0})
+    claim = next((v for k, v in a.items() if "Claim" in k), {"close": 0})
+    invcash = asset["close"] + claim["close"]
+    e = dict(EMS_DEFAULTS); e.update(ems or {})
+    dt, bd, ab, fn = float(e["drilltec"]), float(e["bidvest"]), float(e["absa"]), float(e["fnb_ems"])
+    emstot = dt + bd + ab + fn
+    inj = m["injected"]
+    repl = {
+        "@@GEN@@": gen_date, "@@ASOF@@": str(e.get("asof", "—")),
+        "@@INJ@@": millions(inj), "@@REC@@": millions(m["recoverable"]),
+        "@@INVCASH@@": millions(invcash), "@@PRES@@": f'{m["preserved"]*100:.1f}%',
+        "@@ASSET@@": rm0(asset["close"]), "@@CLAIM@@": rm0(claim["close"]),
+        "@@FNB@@": rm0(fn), "@@BIDV@@": rm0(bd), "@@ABSA@@": rm0(ab), "@@DRILL@@": rm0(dt),
+        "@@EMSTOT@@": rm0(emstot), "@@GROUPTOT@@": rm0(invcash + emstot),
+        "@@LOAN@@": rm0(m["loan"]), "@@SPLIT_DT@@": rm0(float(e["split_drilltec"])),
+        "@@SPLIT_FNB@@": rm0(float(e["split_fnb"])),
+        "@@REC_PCT@@": f'{m["recoverable"]/inj*100 if inj else 0:.1f}%',
+        "@@CASH_PCT@@": f'{invcash/inj*100 if inj else 0:.1f}%',
+        "@@OVH_PCT@@": f'{m["overhead"]/inj*100 if inj else 0:.1f}%',
+    }
+    t = CONS_TEMPLATE
+    for k, v in repl.items():
+        t = t.replace(k, v)
+    return t
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw", help="папка с сырыми выписками FNB Asset/Claim (.csv/.zip) — основной режим")
     ap.add_argument("--ledger", help="xlsx-ледж­ер Александра (резерв/сверка)")
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out", help="инвест-дашборд HTML")
+    ap.add_argument("--consolidated-out", help="сводный дашборд HTML")
+    ap.add_argument("--ems-balances", help="JSON с балансами EMS-счетов (для сводного)")
     ap.add_argument("--report", help="файл со списком спорных операций (для бота)")
     ap.add_argument("--metrics-out", help="CSV-снимок ключевых метрик (для архива на Drive)")
     ap.add_argument("--pdf-out", help="чистый табличный PDF-отчёт инвест-слоя (для архива на Drive)")
@@ -368,15 +404,22 @@ def main():
                      f'{m["recoverable"]:.2f},{m["overhead"]:.2f},{m["cash"]:.2f},'
                      f'{m["preserved"]*100:.2f},{asset["close"]:.2f},{claim["close"]:.2f},'
                      f'{sum(v["close"] for v in a.values()):.2f},{len(m["txns"])}\n')
+    gen = datetime.date.today().strftime("%d %b %Y")
     if args.pdf_out:
-        build_pdf(m, args.pdf_out, datetime.date.today().strftime("%d %b %Y"))
-    html = render(m, datetime.date.today().strftime("%d %b %Y"))
-    with open(args.out, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"OK → {args.out}")
+        build_pdf(m, args.pdf_out, gen)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as f:
+            f.write(render(m, gen))
+        print(f"OK invest → {args.out}")
+    if args.consolidated_out:
+        ems = json.load(open(args.ems_balances, encoding="utf-8")) if args.ems_balances else {}
+        with open(args.consolidated_out, "w", encoding="utf-8") as f:
+            f.write(render_consolidated(m, ems, gen))
+        print(f"OK consolidated → {args.consolidated_out}")
+    if not (args.out or args.consolidated_out):
+        print("WARNING: не указан ни --out, ни --consolidated-out", file=sys.stderr)
     print(f"  injected={millions(m['injected'])} recoverable={millions(m['recoverable'])} "
-          f"cash={millions(m['cash'])} preserved={m['preserved']*100:.1f}% "
-          f"txns={len(m['txns'])}")
+          f"cash={millions(m['cash'])} preserved={m['preserved']*100:.1f}% txns={len(m['txns'])}")
 
 
 TEMPLATE = r"""<!DOCTYPE html>
@@ -464,6 +507,85 @@ function fmt(n){return n==null?"":n.toLocaleString('en-US',{maximumFractionDigit
 var tb=document.getElementById('lb');
 L.forEach(function(r){var tr=document.createElement('tr');var d=r[3]==='IN'?'<span class="tag t-in">IN</span>':'<span class="tag t-out">OUT</span>';
 tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+d+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td class="n">'+fmt(r[6])+'</td><td class="n">'+fmt(r[7])+'</td>';tb.appendChild(tr);});
+</script></body></html>"""
+
+
+CONS_TEMPLATE = r"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Minerals Group — Consolidated Overview</title>
+<style>
+:root{--bg:#F5F2EA;--ink:#1A1A1A;--ink2:#555;--ink3:#8A8A82;--line:#D9D4C7;--fill1:#1A1A1A;--fill3:#A8A399;--alert:#B00020;--card:#FCFAF4;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 70px}
+#ov{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center}
+.box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:36px 40px;width:330px;text-align:center}
+.box .l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}.box .t{font-size:17px;font-weight:700;margin:6px 0 18px}
+.f{width:100%;border:1px solid var(--line);background:#fff;border-radius:3px;padding:10px 12px;font-size:13px;margin-bottom:10px;outline:none}
+.b{width:100%;background:var(--ink);color:var(--bg);border:none;border-radius:3px;padding:11px;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.err{color:var(--alert);font-size:11px;margin-top:8px;display:none}
+h1{font-size:25px;font-weight:700}.top{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink3)}
+.sub{font-size:13px;color:var(--ink2);margin-top:6px;max-width:760px}.flow{font-size:12.5px;margin-top:10px}.flow b{font-weight:700}
+.hr{height:1px;background:var(--ink);border:none;margin:16px 0 20px}.meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+.k{background:var(--card);padding:15px 16px}.k .l{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
+.k .v{font-size:22px;font-weight:700;margin-top:5px}.k .m{font-size:10.5px;color:var(--ink2);margin-top:3px}
+.sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:30px 0 14px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th{text-align:left;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);padding:7px 9px;border-bottom:1px solid var(--ink)}
+td{padding:7px 9px;border-bottom:1px solid var(--line)}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
+.step{display:grid;grid-template-columns:26px 1fr auto;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.step .num{width:24px;height:24px;border:1px solid var(--ink);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.step .a{font-variant-numeric:tabular-nums;font-weight:700;font-size:12.5px;white-space:nowrap}.step .d{font-size:12.5px}.step small{color:var(--ink2)}
+.stack{display:flex;height:34px;border-radius:3px;overflow:hidden;margin:6px 0 12px}.stack>div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:11px;height:11px;border-radius:2px;display:inline-block}
+.note{font-size:11px;color:var(--ink2);margin-top:8px}.foot{font-size:10.5px;color:var(--ink3);margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div id="ov"><div class="box"><div class="l">SA Minerals Group</div><div class="t">Consolidated Overview</div>
+<input class="f" id="u" placeholder="Username"><input class="f" id="p" type="password" placeholder="Password">
+<button class="b" onclick="lo()">Enter</button><div class="err" id="e">Incorrect username or password</div></div></div>
+<div class="wrap" id="main" style="display:none">
+<div class="top">Confidential · For Board / IC use only · auto-generated</div>
+<h1>SA Minerals Group — Consolidated Overview</h1>
+<div class="sub">Один взгляд на оба слоя: инвест-капитал (SA Minerals) и операционная компания (EMS). Деньги идут от фандера через SA Minerals в EMS и его диспенсер Drill Tec.</div>
+<div class="flow">AdRu Tech → <b>SCV Minerals</b> (холдинг/CLN) → SA Minerals <b>Asset Co</b> → <b>Claim Co</b> → <b>EMS Mining</b> → Drill Tec</div>
+<div class="meta"><span>Capital injected: @@INJ@@</span><span>Generated: @@GEN@@</span><span>EMS balances as of: @@ASOF@@</span></div>
+<hr class="hr">
+<div class="kgrid">
+<div class="k"><div class="l">Capital injected</div><div class="v">@@INJ@@</div><div class="m">AdRu Tech + activations</div></div>
+<div class="k"><div class="l">Recoverable assets</div><div class="v">@@REC@@</div><div class="m">claims + EMS loan</div></div>
+<div class="k"><div class="l">Group cash (invest)</div><div class="v">@@INVCASH@@</div><div class="m">Asset + Claim Co</div></div>
+<div class="k"><div class="l">Capital preserved</div><div class="v">@@PRES@@</div><div class="m">(recoverable+cash)÷injected</div></div>
+</div>
+<div class="sec">Where the cash sits — all group accounts</div>
+<table><thead><tr><th>Layer</th><th>Account</th><th class="n">Balance (R)</th></tr></thead><tbody>
+<tr><td>Invest</td><td>SA Minerals (Asset Co) · FNB …8939</td><td class="n">@@ASSET@@</td></tr>
+<tr><td>Invest</td><td>SA Minerals Capital (Claim Co) · FNB …5116</td><td class="n">@@CLAIM@@</td></tr>
+<tr><td>EMS</td><td>EMS Mining Cheque · FNB …7681</td><td class="n">@@FNB@@</td></tr>
+<tr><td>EMS</td><td>EMS operating · Bidvest</td><td class="n">@@BIDV@@</td></tr>
+<tr><td>EMS</td><td>Drill Tec · FNB …6263</td><td class="n">@@DRILL@@</td></tr>
+<tr><td>EMS</td><td>EMS Mining · ABSA …7136</td><td class="n">@@ABSA@@</td></tr>
+<tr class="tot"><td>Group total</td><td>invest + EMS (@@EMSTOT@@)</td><td class="n">@@GROUPTOT@@</td></tr>
+</tbody></table>
+<div class="sec">The money trail — investor capital into EMS</div>
+<div class="step"><div class="num">1</div><div class="d"><b>Loan to EMS</b> — Drawdown 01 от Claim Co</div><div class="a">@@LOAN@@</div></div>
+<div class="step"><div class="num">2</div><div class="d">Пришёл в <b>EMS Bidvest</b> <small>(«DRAWDOWN REQUEST 1»)</small></div><div class="a">@@LOAN@@</div></div>
+<div class="step"><div class="num">3</div><div class="d">→ <b>Drill Tec</b> (операции, поставщики, зарплаты)</div><div class="a">@@SPLIT_DT@@</div></div>
+<div class="step"><div class="num">4</div><div class="d">→ <b>EMS Mining FNB</b> <small>(погасил овердрафт)</small></div><div class="a">@@SPLIT_FNB@@</div></div>
+<div class="note">Цепочка восстановлена из живых выписок: займ-актив на инвест-стороне = деньги, дошедшие до операций EMS.</div>
+<div class="sec">Capital status (invest layer)</div>
+<div class="stack"><div style="width:@@REC_PCT@@;background:var(--fill1)">Recoverable</div><div style="width:@@CASH_PCT@@;background:var(--fill3);color:#1A1A1A">Cash</div><div style="width:@@OVH_PCT@@;background:var(--alert)"></div></div>
+<div class="legend"><span><i class="dot" style="background:var(--fill1)"></i>Recoverable @@REC_PCT@@</span><span><i class="dot" style="background:var(--fill3)"></i>Cash @@CASH_PCT@@</span><span><i class="dot" style="background:var(--alert)"></i>Overhead @@OVH_PCT@@</span></div>
+<div class="sec">CLN facility</div>
+<div class="note">Всего USD 6.875m / R110.96m (план траншей). Транш 1 получен; T1 остаток (USD 480k) и T2–T5 (Crypto Mauritius) — до декабря 2026. Детальный план — в инвест-дашборде.</div>
+<div class="foot">Источник: инвест — сырые выписки FNB Asset/Claim (генератор); EMS-балансы — свежие выписки (as of @@ASOF@@). Auto-generated @@GEN@@. Confidential.</div>
+</div>
+<script>
+function lo(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim();
+if(u==='viewer'&&p==='2026'){try{sessionStorage.setItem('sam_auth','1')}catch(e){}document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}
+else{document.getElementById('e').style.display='block';}}
+document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
+try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
 </script></body></html>"""
 
 
