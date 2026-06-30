@@ -473,7 +473,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="k"><div class="l">Cash on hand</div><div class="v">@@KPI_CASH@@</div><div class="m">Asset + Claim Co</div></div>
 <div class="k"><div class="l">Capital preserved</div><div class="v">@@KPI_PRESERVED@@</div><div class="m">(recoverable+cash)÷injected</div></div>
 <div class="k"><div class="l">Overhead</div><div class="v">@@KPI_OVERHEAD@@</div><div class="m">opex + bank fees</div></div>
-<div class="k"><div class="l">Transactions</div><div class="v">@@NTXN@@</div><div class="m">в леджере</div></div>
+<div class="k"><div class="l">Transactions</div><div class="v">@@NTXN@@</div><div class="m">в выписках</div></div>
 </div>
 <div class="sec">Where the cash sits</div>
 <table><thead><tr><th>Account</th><th class="n">Closing (R)</th><th class="n">% Group</th></tr></thead><tbody>
