@@ -7,7 +7,7 @@
 <style>
 :root{ --bg:#F5F2EA; --ink:#1A1A1A; --ink2:#555; --ink3:#8A8A82; --line:#D9D4C7;
        --fill1:#1A1A1A; --fill2:#6B6B63; --fill3:#A8A399; --alert:#B00020; --card:#FCFAF4;
-       --live:#2E7D32; --snap:#3A5BA0; }
+       --live:#2E7D32; --snap:#3A5BA0; --zero:#8A5A1A; }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.5}
 .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 70px}
@@ -27,15 +27,17 @@ h1{font-size:25px;font-weight:700;letter-spacing:-.3px}
 .tabrow .lbl{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-right:4px;width:54px}
 .tab{font-size:12px;border:1px solid var(--line);background:var(--card);color:var(--ink2);padding:5px 11px;border-radius:3px;cursor:pointer}
 .tab:hover{border-color:var(--ink2)}.tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab.zero{border-color:var(--zero);color:var(--zero)}.tab.zero.active{background:var(--zero);color:#fff;border-color:var(--zero)}
 .scope{font-size:10.5px;color:var(--ink3);margin-top:7px}
 .domain{display:flex;align-items:center;gap:10px;margin:30px 0 6px;padding:9px 14px;border-radius:6px;font-weight:700;font-size:13px}
 .domain.live{background:#EAF1EA;border-left:4px solid var(--live)}
 .domain.snap{background:#E8ECF4;border-left:4px solid var(--snap)}
+.domain.zerobn{background:#F3EADB;border-left:4px solid var(--zero)}
 .domain .stamp{margin-left:auto;font-size:10.5px;font-weight:400;color:var(--ink2)}
 .kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:12px 0}
 .k{background:var(--card);padding:14px 15px}
 .k .l{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3)}
-.k .v{font-size:20px;font-weight:700;margin-top:5px}.k .v.red{color:var(--alert)}
+.k .v{font-size:20px;font-weight:700;margin-top:5px}.k .v.red{color:var(--alert)}.k .v.grn{color:var(--live)}
 .k .m{font-size:10.5px;color:var(--ink2);margin-top:3px}
 .sec{font-size:11px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:24px 0 12px;font-weight:700}
 .sec span{float:right;font-size:9.5px;letter-spacing:.5px;color:var(--ink3);text-transform:none;font-weight:400}
@@ -65,6 +67,12 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 .foot{font-size:10.5px;color:var(--ink3);margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
 .hide{display:none!important}
 .pill{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:10px;padding:1px 8px;color:var(--ink3);margin-bottom:6px}
+.zcol{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.zcol h4{font-size:13px;margin-bottom:8px}.zcol ul{list-style:none;font-size:12px}.zcol li{padding:4px 0;border-bottom:1px dashed var(--line)}.zcol li:last-child{border:none}
+.zcol li b{font-variant-numeric:tabular-nums}
+.step{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.step .n{width:22px;height:22px;border:1px solid var(--zero);color:var(--zero);border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.step .a{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 @media(max-width:760px){.kgrid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.blab{width:135px}}
 </style>
 </head>
@@ -80,27 +88,23 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
   <div class="top">Confidential · For Board / IC use only</div>
   <h1>EMS Mining — Financial</h1>
-  <div class="sub">Два домена данных: <b style="color:var(--live)">🟢 Live</b> — актуальные банковские выписки (Григорий); <b style="color:var(--snap)">🟦 SmartBuilder</b> — учетный снимок (обязательства, SARS, AP/AR, бюджет). Вход инвестиций = 01–05 июня 2026.</div>
+  <div class="sub">Два домена данных: <b style="color:var(--live)">🟢 Live</b> — актуальные банковские выписки (Григорий); <b style="color:var(--snap)">🟦 SmartBuilder</b> — учетный снимок (обязательства, SARS, AP/AR, бюджет). Вкладка <b style="color:var(--zero)">🎬 Нулевая точка</b> — замороженный срез момента входа инвестиций.</div>
 
   <div class="controls">
-    <div class="tabrow"><span class="lbl">Банк</span>
+    <div class="tabrow"><span class="lbl">Вид</span>
       <span class="tab active" data-bank="all" onclick="setBank(this)">Все</span>
       <span class="tab" data-bank="drilltec" onclick="setBank(this)">Drill Tec</span>
       <span class="tab" data-bank="bidvest" onclick="setBank(this)">Bidvest</span>
       <span class="tab" data-bank="absa" onclick="setBank(this)">ABSA</span>
       <span class="tab" data-bank="fnb" onclick="setBank(this)">FNB EMS</span>
+      <span class="tab zero" data-bank="zero" onclick="setBank(this)">🎬 Нулевая точка</span>
     </div>
-    <div class="tabrow" style="margin-top:6px"><span class="lbl">Период</span>
-      <span class="tab active" data-period="all" onclick="setPeriod(this)">Весь период</span>
-      <span class="tab" data-period="before" onclick="setPeriod(this)">До инвестиций</span>
-      <span class="tab" data-period="after" onclick="setPeriod(this)">После инвестиций</span>
-    </div>
-    <div class="scope">Фильтр банк/период действует на блоки <b style="color:var(--live)">🟢 Live</b>. Блок <b style="color:var(--snap)">🟦 SmartBuilder</b> — снимок на фикс. дату, фильтром не меняется.</div>
+    <div class="scope">Вкладки — по счетам EMS. <b style="color:var(--zero)">🎬 Нулевая точка</b> — застывший срез июня 2026 (откуда стартовали). <b style="color:var(--snap)">🟦 SmartBuilder</b> — снимок на фикс. дату.</div>
   </div>
 
-  <!-- =================== 🟢 LIVE =================== -->
-  <div class="domain live" data-bank="all" data-period="any">🟢 Live · банковские выписки <span class="stamp">актуально · Григорий</span></div>
-  <div data-bank="all" data-period="any">
+  <!-- =================== 🟢 LIVE (вид «Все») =================== -->
+  <div data-view="all">
+    <div class="domain live">🟢 Live · банковские выписки <span class="stamp">актуально · Григорий</span></div>
     <div class="kgrid">
       <div class="k"><div class="l">EMS cash on hand</div><div class="v">R2.32m</div><div class="m">4 счета</div></div>
       <div class="k"><div class="l">Loan received</div><div class="v">R8.11m</div><div class="m">Drawdown 01, 12 Jun</div></div>
@@ -118,61 +122,9 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
         <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">2,315,968</td></tr>
       </tbody>
     </table>
-  </div>
-  <div data-bank="all" data-period="before"><div class="sec">До инвестиций — EMS на самофинансировании <span>2025 → май 2026</span></div>
-    <div class="note">Выручка клиентов (Mota-Engil, Black Mountain, Acumen) приходила на <b>ABSA</b> (оборот до R7.2m/мес) и уходила на операции через Drill Tec. Внешнего капитала не было; FNB уходил в овердрафт (−R2.2m).</div></div>
-  <div data-bank="all" data-period="after"><div class="sec">После инвестиций — приход капитала <span>июнь 2026</span></div>
-    <div class="note">12 июня — заем <b>R8,114,083</b> на Bidvest → <b>R5.0m на Drill Tec</b> + <b>R2.2m на FNB</b> (погасил овердрафт). Сборы клиентов сместились с ABSA на Bidvest.</div></div>
 
-  <div data-bank="drilltec" data-period="any" class="hide"><div class="pill">Drill Tec · FNB 62857146263 · trade-disbursement</div>
-    <div class="kgrid"><div class="k"><div class="l">Balance (24 Jun)</div><div class="v">R1.40m</div><div class="m">operating</div></div>
-      <div class="k"><div class="l">Получено от EMS</div><div class="v">R5.00m</div><div class="m">из займа, 12 Jun</div></div>
-      <div class="k"><div class="l">Роль</div><div class="v" style="font-size:14px">Поставщики</div><div class="m">+ зарплаты</div></div>
-      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m"></div></div></div></div>
-  <div data-bank="drilltec" data-period="after" class="hide"><div class="sec">Drill Tec · после инвестиций <span>12 Jun batch</span></div>
-    <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
-    <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
-    <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
-    <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div></div>
-  <div data-bank="drilltec" data-period="before" class="hide"><div class="sec">Drill Tec · до инвестиций</div><div class="note">Пополнялся под операции из инкассо (ABSA). Отдельной глубокой истории за 2025 в выгрузке нет.</div></div>
-
-  <div data-bank="bidvest" data-period="any" class="hide"><div class="pill">Bidvest · client receipts + loan transit</div>
-    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R0.91m</div><div class="m">после транзита</div></div>
-      <div class="k"><div class="l">Заем прошел</div><div class="v">R8.11m</div><div class="m">12 Jun</div></div>
-      <div class="k"><div class="l">Выручка/мес</div><div class="v">~R1.1m</div><div class="m">Mota-Engil</div></div>
-      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">фев–июн 2026</div><div class="m"></div></div></div></div>
-  <div data-bank="bidvest" data-period="before" class="hide"><div class="sec">Bidvest · до инвестиций <span>фев–май 2026</span></div>
-    <div class="brow"><div class="blab">Mota-Engil (выручка)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">~1,111,863</div></div>
-    <div class="note">Операционный счет: входит выручка, уходит на операции/зарплаты/лизинг.</div></div>
-  <div data-bank="bidvest" data-period="after" class="hide"><div class="sec">Bidvest · после инвестиций <span>июнь 2026</span></div>
-    <div class="brow"><div class="blab">Drawdown 1 (вход)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">+8,114,083</div></div>
-    <div class="brow"><div class="blab">→ Drill Tec</div><div class="btr"><div class="bfl" style="width:62%"></div></div><div class="bamt">−5,000,000</div></div>
-    <div class="brow"><div class="blab">→ EMS FNB</div><div class="btr"><div class="bfl" style="width:27%"></div></div><div class="bamt">−2,207,979</div></div></div>
-
-  <div data-bank="absa" data-period="any" class="hide"><div class="pill">ABSA 4117757136 · бывший инкассовый счет</div>
-    <div class="sec">ABSA — оборот по месяцам (credits) <span>Apr 2025 → May 2026</span></div>
-    <div class="chart">
-      <div class="col"><div class="bar2" style="height:1%"></div></div><div class="col"><div class="bar2" style="height:1%"></div></div>
-      <div class="col"><div class="bar2" style="height:52%"></div></div><div class="col"><div class="bar2" style="height:49%"></div></div>
-      <div class="col"><div class="bar2" style="height:76%"></div></div><div class="col"><div class="bar2" style="height:67%"></div></div>
-      <div class="col"><div class="bar2" style="height:100%"></div></div><div class="col"><div class="bar2" style="height:28%"></div></div>
-      <div class="col"><div class="bar2" style="height:11%"></div></div><div class="col"><div class="bar2" style="height:14%"></div></div>
-      <div class="col"><div class="bar2" style="height:16%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
-      <div class="col dead"><div class="bar2" style="height:2%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
-    </div>
-    <div class="xlabels"><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div></div>
-    <div class="note">Пик <b>R7.2m</b> в окт 2025. С марта 2026 счет спящий (серые столбики), баланс ~R9.4k. Сборы переехали на Bidvest.</div></div>
-
-  <div data-bank="fnb" data-period="any" class="hide"><div class="pill">FNB EMS Mining Cheque 62322467681</div>
-    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R0</div><div class="m">овердрафт погашен</div></div>
-      <div class="k"><div class="l">Было</div><div class="v neg">−R2.21m</div><div class="m">до 12 июня</div></div>
-      <div class="k"><div class="l">Получено</div><div class="v">R2.21m</div><div class="m">из займа</div></div>
-      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m"></div></div></div></div>
-
-  <!-- =================== 🟦 SMARTBUILDER SNAPSHOT =================== -->
-  <div class="domain snap" data-bank="all" data-period="any">🟦 Учетная картина EMS · SmartBuilder <span class="stamp">снимок · обязательства 31 мая 2026 · фильтром не меняется</span></div>
-
-  <div data-bank="all" data-period="any">
+    <!-- 🟦 SmartBuilder snapshot -->
+    <div class="domain snap">🟦 Учетная картина EMS · SmartBuilder <span class="stamp">снимок · обязательства 31 мая 2026</span></div>
     <div class="risk">
       <h3>⚠ Риск SARS — определяющий</h3>
       <div class="big">R64.5m налоговых долгов</div>
@@ -184,7 +136,6 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
       <div class="k"><div class="l">Чистая экспозиция</div><div class="v red">R75.7m</div><div class="m">за вычетом AR R12.5m</div></div>
       <div class="k"><div class="l">Инвестиция (заем)</div><div class="v">R8.11m</div><div class="m">≈ 9% от обязательств</div></div>
     </div>
-
     <div class="sec">Total obligations — gross exposure <span>SmartBuilder · май 2026</span></div>
     <table>
       <thead><tr><th>Обязательство</th><th>Приоритет</th><th class="n">R</th></tr></thead>
@@ -201,7 +152,6 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
         <tr class="tot"><td colspan="2">Net exposure</td><td class="n">75.7m</td></tr>
       </tbody>
     </table>
-
     <div class="two">
       <div>
         <div class="sec">AR — нам должны клиенты <span>Jun 2026</span></div>
@@ -218,7 +168,6 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
         <div class="note">92% кредиторки просрочено более 90 дней — острый дефицит оборотного капитала.</div>
       </div>
     </div>
-
     <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · клик = детализация</span></div>
     <div id="costs">
       <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div></div>
@@ -232,7 +181,6 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
       <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div></div>
       <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R8.54m</span></div><div class="drow"><span>Mota-Engil</span><span>R2.54m</span></div></div>
     </div>
-
     <div class="sec">Budget P&amp;L FY2027 — путь к EBITDA+ <span>план · Aug 2026 → Jun 2027</span></div>
     <div class="note" style="margin-top:0">Выручка <b>R59.9m</b> за 11 мес, EBITDA <b>+R1.2m</b> за год. Первый EBITDA-плюс — <b>окт '26</b>, ЕСЛИ 5 контрактов стартуют с авг '26 (подписанные, не pipeline) и есть рассрочка SARS.</div>
     <table style="margin-top:10px">
@@ -245,10 +193,99 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
         <tr><td>Jun '27</td><td class="n">R5.9m</td><td class="n">R2.4m</td><td class="n pos">+R0.4m</td></tr>
       </tbody>
     </table>
-    <div class="cav"><b>Это учетный снимок, не live-кэш.</b> Обязательства — на 31 мая 2026; категории — кумулятив GL FY2026; бюджет — план. Эти блоки <b>не зависят</b> от фильтра «банк / до-после» выше. Для live-P&L Григорий выгружает свежий Transaction Listing.</div>
+    <div class="cav"><b>Это учетный снимок, не live-кэш.</b> Обязательства — на 31 мая 2026; категории — кумулятив GL FY2026; бюджет — план. Эти блоки не зависят от выбора счета. Для live-P&L Григорий выгружает свежий Transaction Listing.</div>
   </div>
 
-  <div class="foot">Источники: 🟢 live — FNB / Bidvest / ABSA / Drill Tec выписки (Григорий); 🟦 snapshot — SmartBuilder (обязательства 31 мая 2026, age analysis, бюджет FY2027). Bidvest: владелец счета (EMS vs SCV) — уточнить. Confidential.</div>
+  <!-- =================== DRILL TEC =================== -->
+  <div data-view="drilltec" class="hide">
+    <div class="pill">Drill Tec · FNB 62857146263 · trade-disbursement</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance (24 Jun)</div><div class="v">R1.40m</div><div class="m">operating</div></div>
+      <div class="k"><div class="l">Получено от EMS</div><div class="v">R5.00m</div><div class="m">из займа, 12 Jun</div></div>
+      <div class="k"><div class="l">Роль</div><div class="v" style="font-size:14px">Поставщики</div><div class="m">+ зарплаты</div></div>
+      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m"></div></div></div>
+    <div class="sec">Топ-расходы (12 Jun batch)</div>
+    <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
+    <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
+    <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
+    <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
+    <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
+    <div class="note">Drill Tec — операционный диспенсер EMS: сюда пришло R5.0m из займа, отсюда платят поставщикам и зарплаты.</div>
+  </div>
+
+  <!-- =================== BIDVEST =================== -->
+  <div data-view="bidvest" class="hide">
+    <div class="pill">Bidvest · client receipts + loan transit</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R0.91m</div><div class="m">после транзита</div></div>
+      <div class="k"><div class="l">Заем прошел</div><div class="v">R8.11m</div><div class="m">12 Jun</div></div>
+      <div class="k"><div class="l">Выручка/мес</div><div class="v">~R1.1m</div><div class="m">Mota-Engil</div></div>
+      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">фев–июн 2026</div><div class="m"></div></div></div>
+    <div class="note" style="margin-top:6px">📌 <b>12 июня — drawdown R8.11m</b> зашел сюда и разошелся: → Drill Tec R5.0m, → EMS FNB R2.21m. (детали — на вкладке 🎬 Нулевая точка)</div>
+    <div class="sec">Выручка клиентов</div>
+    <div class="brow"><div class="blab">Mota-Engil (помесячно)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">~1,111,863</div></div>
+    <div class="brow"><div class="blab">→ Drill Tec / Investerra</div><div class="btr"><div class="bfl" style="width:75%"></div></div><div class="bamt">операции</div></div>
+    <div class="brow"><div class="blab">→ Toyota Financial</div><div class="btr"><div class="bfl" style="width:20%"></div></div><div class="bamt">лизинг авто</div></div>
+    <div class="note">Операционный счет: входит выручка клиентов, уходит на операции, зарплаты и лизинг техники.</div>
+  </div>
+
+  <!-- =================== ABSA =================== -->
+  <div data-view="absa" class="hide">
+    <div class="pill">ABSA 4117757136 · бывший инкассовый счет</div>
+    <div class="sec">ABSA — оборот по месяцам (credits) <span>Apr 2025 → May 2026</span></div>
+    <div class="chart">
+      <div class="col"><div class="bar2" style="height:1%"></div></div><div class="col"><div class="bar2" style="height:1%"></div></div>
+      <div class="col"><div class="bar2" style="height:52%"></div></div><div class="col"><div class="bar2" style="height:49%"></div></div>
+      <div class="col"><div class="bar2" style="height:76%"></div></div><div class="col"><div class="bar2" style="height:67%"></div></div>
+      <div class="col"><div class="bar2" style="height:100%"></div></div><div class="col"><div class="bar2" style="height:28%"></div></div>
+      <div class="col"><div class="bar2" style="height:11%"></div></div><div class="col"><div class="bar2" style="height:14%"></div></div>
+      <div class="col"><div class="bar2" style="height:16%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
+      <div class="col dead"><div class="bar2" style="height:2%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
+    </div>
+    <div class="xlabels"><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div></div>
+    <div class="note">Пик <b>R7.2m</b> в окт 2025 (клиенты: Mota-Engil, Black Mountain, Acumen). С марта 2026 счет спящий (серые столбики), баланс ~R9.4k — сборы переехали на Bidvest.</div>
+  </div>
+
+  <!-- =================== FNB EMS =================== -->
+  <div data-view="fnb" class="hide">
+    <div class="pill">FNB EMS Mining Cheque 62322467681</div>
+    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R0</div><div class="m">овердрафт погашен</div></div>
+      <div class="k"><div class="l">Было</div><div class="v neg">−R2.21m</div><div class="m">до 12 июня</div></div>
+      <div class="k"><div class="l">Получено</div><div class="v">R2.21m</div><div class="m">из займа</div></div>
+      <div class="k"><div class="l">Данные</div><div class="v" style="font-size:14px">май–июн 2026</div><div class="m"></div></div></div>
+    <div class="note">Счет был в овердрафте −R2.21m (копились проценты по долгу). 12 июня поступило R2,207,979 из займа (через Bidvest) → овердрафт погашен, баланс R0.</div>
+  </div>
+
+  <!-- =================== 🎬 НУЛЕВАЯ ТОЧКА =================== -->
+  <div data-view="zero" class="hide">
+    <div class="domain zerobn">🎬 Нулевая точка · июнь 2026 — момент входа инвестиций <span class="stamp">замороженный срез · храним «откуда стартовали»</span></div>
+    <div class="note" style="margin-top:0">Это не меняется из недели в неделю — это исходная точка, относительно которой смотрим прогресс.</div>
+    <div class="two" style="margin-top:14px">
+      <div class="zcol">
+        <h4>⬅ До инвестиций (2025 → 31 мая 2026)</h4>
+        <ul>
+          <li>EMS на самофинансировании — выручка клиентов через ABSA (пик <b>R7.2m/мес</b>)</li>
+          <li>FNB cheque в овердрафте <b class="neg">−R2.21m</b></li>
+          <li>Долги SARS <b class="neg">R64.5m</b> · обязательства <b class="neg">R88.2m</b></li>
+          <li>Внешний капитал: <b>0</b></li>
+        </ul>
+      </div>
+      <div class="zcol">
+        <h4>➡ После (с 12 июня 2026)</h4>
+        <ul>
+          <li>Получен заем <b class="grn">R8.11m</b> (Drawdown 01)</li>
+          <li>Drill Tec <b>+R5.0m</b> · EMS FNB <b>+R2.21m</b> (овердрафт → R0)</li>
+          <li>Кэш EMS: <b>R2.32m</b></li>
+          <li>Обязательства те же — заем ≈ <b>9%</b> от них</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sec">Как разошелся заем — 12 июня 2026</div>
+    <div class="step"><div class="n">1</div><div>Drawdown 01 от Claim Co зашел в <b>EMS Bidvest</b></div><div class="a">+R8,114,083</div></div>
+    <div class="step"><div class="n">2</div><div>→ <b>Drill Tec</b> (операции, поставщики, зарплаты)</div><div class="a">R5,000,000</div></div>
+    <div class="step"><div class="n">3</div><div>→ <b>EMS Mining FNB</b> (погасил овердрафт −R2.21m → R0)</div><div class="a">R2,207,979</div></div>
+    <div class="cav">Нулевая точка зафиксирована вручную и не пересобирается автоматически — это «нулевой километр» для сравнения прогресса EMS в будущем.</div>
+  </div>
+
+  <div class="foot">Источники: 🟢 live — FNB / Bidvest / ABSA / Drill Tec выписки (Григорий); 🟦 snapshot — SmartBuilder (обязательства 31 мая 2026, age analysis, бюджет FY2027); 🎬 нулевая точка — зафиксирована вручную. Bidvest: владелец счета (EMS vs SCV) — уточнить. Confidential.</div>
 </div>
 
 <script>
@@ -258,17 +295,9 @@ else{document.getElementById('e').style.display='block';}}
 document.addEventListener('keydown',function(e){var o=document.getElementById('ov');if(e.key==='Enter'&&o&&o.style.display!=='none')lo();});
 try{if(sessionStorage.getItem('sam_auth')==='1'){document.getElementById('ov').style.display='none';document.getElementById('main').style.display='block';}}catch(e){}
 function tg(el){el.classList.toggle('open');var d=el.nextElementSibling;if(d&&d.classList.contains('detail'))d.classList.toggle('open');}
-var activeBank='all', activePeriod='all';
+var activeBank='all';
 function setBank(t){activeBank=t.getAttribute('data-bank');document.querySelectorAll('.tab[data-bank]').forEach(function(x){x.classList.toggle('active',x===t);});apply();}
-function setPeriod(t){activePeriod=t.getAttribute('data-period');document.querySelectorAll('.tab[data-period]').forEach(function(x){x.classList.toggle('active',x===t);});apply();}
-function apply(){
-  document.querySelectorAll('[data-bank][data-period]').forEach(function(el){
-    var b=el.getAttribute('data-bank'), p=el.getAttribute('data-period');
-    var bankOk=(b===activeBank);
-    var perOk=(p==='any')||(activePeriod==='all')||(p===activePeriod);
-    el.classList.toggle('hide', !(bankOk && perOk));
-  });
-}
+function apply(){document.querySelectorAll('[data-view]').forEach(function(el){el.classList.toggle('hide', el.getAttribute('data-view')!==activeBank);});}
 apply();
 </script>
 </body>
