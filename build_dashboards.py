@@ -464,7 +464,7 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="wrap" id="main" style="display:none">
 <div class="top">Confidential · For Board / IC use only · auto-generated</div>
 <h1>SA Minerals Group — Shareholder Dashboard</h1>
-<div class="sub">Консолидированное развертывание капитала инвестора по двум счетам FNB (Asset Co + Claim Co). Интеркомпани-переводы исключены из KPI развертывания. Собрано автоматически из сырых банковских выписок FNB (классификатор).</div>
+<div class="sub">Собрано автоматически из сырых банковских выписок FNB (Asset Co + Claim Co), классификатор.</div>
 <div class="meta"><span>Capital injected: @@KPI_INJECTED@@</span><span>Generated: @@GEN@@</span></div>
 <hr class="hr">
 <div class="kgrid">
@@ -547,7 +547,6 @@ td{padding:7px 9px;border-bottom:1px solid var(--line)}td.n,th.n{text-align:righ
 <div class="wrap" id="main" style="display:none">
 <div class="top">Confidential · For Board / IC use only · auto-generated</div>
 <h1>SA Minerals Group — Consolidated Overview</h1>
-<div class="sub">Один взгляд на оба слоя: инвест-капитал (SA Minerals) и операционная компания (EMS). Деньги идут от фандера через SA Minerals в EMS и его диспенсер Drill Tec.</div>
 <div class="flow">AdRu Tech → <b>SCV Minerals</b> (холдинг/CLN) → SA Minerals <b>Asset Co</b> → <b>Claim Co</b> → <b>EMS Mining</b> → Drill Tec</div>
 <div class="meta"><span>Capital injected: @@INJ@@</span><span>Generated: @@GEN@@</span><span>EMS balances as of: @@ASOF@@</span></div>
 <hr class="hr">
