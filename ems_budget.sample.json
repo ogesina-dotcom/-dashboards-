@@ -1,0 +1,18 @@
+{
+ "overheads_monthly": 1970000,
+ "target_ebitda": 500000,
+ "paye_arrears": 40400000,
+ "vat_arrears": 24100000,
+ "path": {
+  "window": "Aug 2026 -> Jun 2027",
+  "revenue": 59900000,
+  "ebitda_year": 1200000,
+  "first_positive": "Oct '26",
+  "condition": "IF 5 contracts start Aug '26 (signed) and SARS instalment agreement in place"
+ },
+ "day_zero": {
+  "date": "June 2026",
+  "note": "frozen snapshot of the investment-entry moment; the 'mile zero' baseline for comparison. Fixed manually, not auto-rebuilt."
+ },
+ "notes": "SARS = PAYE + VAT (statutory, manual). General Overheads from Budget FY2026-2027."
+}
