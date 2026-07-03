@@ -1,0 +1,7 @@
+agreement,type,creditor_seller,debtor,counterparty_key,amount_zar,vat,status,source_file,folder
+EMS Term Loan Facility,loan_facility,SA Minerals Capital,EMS,DRAWDOWN,110000000,,active,SA MInerals - EMS Loan Agreement .docx.pdf,01_SA_Minerals/Agreements
+Sale of Claims & Cession of Security,sale_of_claims,SA Minerals Capital / EMS,EMS,,,,execution,SALE_OF_CLAIMS_AND_CESSION_OF_SECURITY_AGREEMENT_EXECUTION_VERSION.pdf,01_SA_Minerals/Agreements
+Sale of Claims — Ronloth,sale_of_claims,Ronloth,EMS,RONLOTH,,,signed,Sale_of_Claims_SA_Minerals_Ronloth.pdf,01_SA_Minerals/Agreements
+Sale of Claims — Bubesi,sale_of_claims,Bubesi Investments 46,EMS,BUBESI,,VAT,signed,Complete_with_Docusign_Sale_of_Claims_-_Bube (1).pdf,01_SA_Minerals/Agreements
+Sale of Claims — Template,sale_of_claims_template,,EMS,,,,template,20260618_EMS_Sale_of_Claims_SA_Minerals_Template_(002) (1).pdf,01_SA_Minerals/Agreements
+Toyota vehicle finance settlement,asset_finance,Toyota Financial Services,EMS,86135822030,647250.59,,quote,sp_onlinee20260624160507747657000sp_on86135822030.pdf,02_EMS/Asset_finance

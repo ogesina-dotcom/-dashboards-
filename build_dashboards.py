@@ -84,6 +84,10 @@ def classify_raw(desc, ref, amt):
     if "BUBESI" in t: return "Claim Acquisition", False, "Bubesi Investments 46 (Pty) Ltd"
     if "SANDVIK" in t: return "Claim Acquisition", False, "Sandvik Mining RSA (Pty) Ltd"
     if "WILROCK" in t: return "Claim Acquisition", False, "Wilrock Properties (Pty) Ltd"
+    if "RONLOTH" in t: return "Claim Acquisition", False, "Ronloth (creditor of EMS)"
+    if "S99120" in t: return "Claim Acquisition", False, "S99120 Engineering (creditor of EMS)"
+    # Toyota Financial Services — погашение автокредита EMS (settlement quote ref 86135822030)
+    if "86135822030" in t or "TOYOTA" in t: return "Claim Acquisition", False, "Toyota Financial Services (EMS vehicle finance)"
     if any(k in t for k in ("SWIFT COMMISSION", "INWARD SWIFT", "FOREX TRANSFER", "SWIFT CORRECTION")):
         return "Bank Charges", False, "FNB"
     if ("TRF" in t or "TRANSFER FUNDS" in t) and ("SA MINERALS" in t or "TRANSFER FUNDS" in t):
@@ -179,6 +183,26 @@ def compute(rows):
     m["claim_rows"] = [r for r in rows if r["category"] == "Claim Acquisition"]
     m["loan_rows"] = [r for r in rows if "Loan to EMS" in r["category"]]
     m["txns"] = rows
+    # --- EMS loan facility (условия: loan_terms.yaml) ---
+    FAC_MAX, RATE = 110_000_000.0, 0.08   # ZAR 110m committed; SARB repo 7% + 100bps
+    def _d(s): return datetime.date(int(s[:4]), int(s[5:7]), int(s[8:10]))
+    dates = [r["date"] for r in rows if len(r["date"]) >= 10]
+    as_of = max(dates) if dates else ""
+    accr = 0.0
+    if as_of:
+        ao = _d(as_of)
+        for r in m["loan_rows"]:
+            try:
+                days = max((ao - _d(r["date"])).days, 0)
+            except ValueError:
+                days = 0
+            accr += r["outflow"] * RATE * days / 365.0
+    m["facility_max"] = FAC_MAX
+    m["facility_drawn"] = loan
+    m["facility_util"] = (loan / FAC_MAX) if FAC_MAX else 0.0
+    m["facility_avail"] = FAC_MAX - loan
+    m["accrued_interest"] = accr
+    m["accr_asof"] = as_of
     return m
 
 
@@ -250,6 +274,12 @@ def render(m, gen_date):
         "@@CASH_PCT@@": f'{m["cash"]/inj*100 if inj else 0:.1f}%',
         "@@OVH_PCT@@": f'{m["overhead"]/inj*100 if inj else 0:.1f}%',
         "@@NTXN@@": str(len(m["txns"])),
+        "@@FAC_DRAWN@@": millions(m["facility_drawn"]),
+        "@@FAC_MAX@@": millions(m["facility_max"]),
+        "@@FAC_UTIL_P@@": f'{m["facility_util"]*100:.1f}%',
+        "@@FAC_AVAIL@@": millions(m["facility_avail"]),
+        "@@ACCR_INT@@": f'R{m["accrued_interest"]/1e3:.1f}k',
+        "@@ACCR_ASOF@@": (f'as of {m["accr_asof"][5:]}' if m["accr_asof"] else ""),
         "@@CLAIM_ROWS@@": crows,
         "@@LEDGER_JS@@": ledger_js,
     }
@@ -488,6 +518,13 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
 <div class="sec">Capital status</div>
 <div class="stack"><div style="width:@@REC_PCT@@;background:var(--fill1)">Recoverable</div><div style="width:@@CASH_PCT@@;background:var(--fill3);color:#1A1A1A">Cash</div><div style="width:@@OVH_PCT@@;background:var(--alert)"></div></div>
 <div class="legend"><span><i class="dot" style="background:var(--fill1)"></i>Recoverable @@REC_PCT@@</span><span><i class="dot" style="background:var(--fill3)"></i>Cash @@CASH_PCT@@</span><span><i class="dot" style="background:var(--alert)"></i>Overhead @@OVH_PCT@@</span></div>
+<div class="sec">EMS loan facility <span>SARB repo 7.00% + 100bps = 8.00% p.a.</span></div>
+<div class="brow"><div class="blab">Facility drawn</div><div class="btr"><div class="bfl" style="width:@@FAC_UTIL_P@@"></div></div><div class="bamt">@@FAC_DRAWN@@ / @@FAC_MAX@@</div></div>
+<div class="kgrid">
+<div class="k"><div class="l">Facility utilisation</div><div class="v">@@FAC_UTIL_P@@</div><div class="m">drawn ÷ ZAR 110m</div></div>
+<div class="k"><div class="l">Available facility</div><div class="v">@@FAC_AVAIL@@</div><div class="m">R110m − drawn</div></div>
+<div class="k"><div class="l">Accrued interest</div><div class="v">@@ACCR_INT@@</div><div class="m">8.00% p.a. @@ACCR_ASOF@@</div></div>
+</div>
 <div class="sec">Claim portfolio &amp; loan to EMS</div>
 <table><thead><tr><th>#</th><th>Counterparty</th><th>Date</th><th class="n">Cost (R)</th><th class="n">Face (R)</th></tr></thead><tbody>@@CLAIM_ROWS@@</tbody></table>
 <div class="sec">Full transaction ledger <span>@@NTXN@@ transactions</span></div>

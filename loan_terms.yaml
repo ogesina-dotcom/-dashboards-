@@ -1,0 +1,27 @@
+# Условия займа SA Minerals Capital → EMS (инвест-слой).
+# Источник: "SA Minerals - EMS Loan Agreement" (Term Loan Facility Agreement).
+# Хранить в 01_SA_Minerals/Agreements/. Обновлять при изменении repo SARB или подписании допников.
+
+facility:
+  creditor: "SA Minerals Capital (Pty) Ltd"
+  borrower: "Engineered Mining Solutions (Pty) Ltd"   # EMS
+  max_facility_zar: 110000000        # ZAR 110,000,000 committed
+  currency: ZAR
+  permitted_purpose: "Погашение существующих требований кредиторов EMS (по Drawdown Request)"
+  drawdown: "Траншами по письменному Drawdown Request"
+  maturity_months: 12               # 12 месяцев с даты соглашения
+  security: "Обеспечение над всеми активами Borrower (cession of security)"
+
+interest:
+  base: "SARB repo rate"
+  base_rate_pct: 7.00               # repo на 4 июня 2026
+  base_effective: 2026-06-04
+  margin_bps: 100                   # +100 базисных пунктов
+  all_in_rate_pct: 8.00             # итоговая ставка = repo + 1.00%
+  reset: "1-е число месяца, следующего за изменением repo SARB"
+  default_rate_pct: 13.00           # Interest Rate + 5%
+  day_count: "официальная ставка процента (SARS), начисление по фактическим дням"
+
+# Для дашборда:
+#  - facility utilization = сумма выбранных траншей (category 'Loan to EMS') / max_facility_zar
+#  - accrued interest ≈ по каждому траншу: сумма * all_in_rate_pct/100 * дней/365
