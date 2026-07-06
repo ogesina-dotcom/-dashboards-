@@ -80,6 +80,7 @@ def classify_raw(desc, ref, amt):
     if "ADRU TECH" in t: return "Capital Injection", False, "AdRu Tech Ltd (Cyprus)"
     if "ADT CASH DEPO" in t or ("DEPOSIT" in t and abs(amt) <= 5000): return "Account Activation", False, "Funded by Paul Khourie"
     if "DRAWDOWN" in t: return "Loan to EMS (Receivable)", False, "EMS Mining"
+    if "LOAN AGREEMENT" in t: return "Loan to EMS (Receivable)", False, "EMS Mining"
     if "INVESTEC" in t: return "Claim Acquisition", False, "Investec Bank"
     if "BUBESI" in t: return "Claim Acquisition", False, "Bubesi Investments 46 (Pty) Ltd"
     if "SANDVIK" in t: return "Claim Acquisition", False, "Sandvik Mining RSA (Pty) Ltd"
@@ -88,6 +89,7 @@ def classify_raw(desc, ref, amt):
     if "S99120" in t: return "Claim Acquisition", False, "S99120 Engineering (creditor of EMS)"
     # Toyota Financial Services — погашение автокредита EMS (settlement quote ref 86135822030)
     if "86135822030" in t or "TOYOTA" in t: return "Claim Acquisition", False, "Toyota Financial Services (EMS vehicle finance)"
+    if "FNB OBE" in t: return "Bank Charges", False, "FNB"
     if any(k in t for k in ("SWIFT COMMISSION", "INWARD SWIFT", "FOREX TRANSFER", "SWIFT CORRECTION")):
         return "Bank Charges", False, "FNB"
     if ("TRF" in t or "TRANSFER FUNDS" in t) and ("SA MINERALS" in t or "TRANSFER FUNDS" in t):
