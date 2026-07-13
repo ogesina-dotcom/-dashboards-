@@ -106,20 +106,20 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
   <div data-view="all">
     <div class="domain live">🟢 Live · bank statements <span class="stamp">current · Grigory · 09 Jul 2026</span></div>
     <div class="kgrid">
-      <div class="k"><div class="l">EMS cash on hand</div><div class="v">R4.70m</div><div class="m">4 accounts</div></div>
-      <div class="k"><div class="l">Loan received</div><div class="v">R8.11m</div><div class="m">Drawdown 01, 12 Jun</div></div>
-      <div class="k"><div class="l">Drill Tec balance</div><div class="v">R1.08m</div><div class="m">operating acc</div></div>
+      <div class="k"><div class="l">EMS cash on hand</div><div class="v"><span class="money" data-zar="4700000.00" data-st="m">R4.70m</span></div><div class="m">4 accounts</div></div>
+      <div class="k"><div class="l">Loan received</div><div class="v"><span class="money" data-zar="8110000.00" data-st="m">R8.11m</span></div><div class="m">Drawdown 01, 12 Jun</div></div>
+      <div class="k"><div class="l">Drill Tec balance</div><div class="v"><span class="money" data-zar="1080000.00" data-st="m">R1.08m</span></div><div class="m">operating acc</div></div>
       <div class="k"><div class="l">FNB cheque</div><div class="v">R0</div><div class="m">overdraft cleared</div></div>
     </div>
     <div class="sec">EMS cash by bank account <span>latest statement</span></div>
     <table>
-      <thead><tr><th>Account</th><th>Bank</th><th>Role</th><th class="n">Balance (R)</th></tr></thead>
+      <thead><tr><th>Account</th><th>Bank</th><th>Role</th><th class="n">Balance (<span class="cursym">R</span>)</th></tr></thead>
       <tbody>
-        <tr><td>Drill Tec</td><td>FNB …146263</td><td>Trade / supplier disbursement</td><td class="n">1,082,270</td></tr>
-        <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + loan transit</td><td class="n">3,608,017</td></tr>
-        <tr><td>EMS Mining</td><td>ABSA …757136</td><td>2025 collections — wound down</td><td class="n">8,743</td></tr>
+        <tr><td>Drill Tec</td><td>FNB …146263</td><td>Trade / supplier disbursement</td><td class="n"><span class="money" data-zar="1082270.00" data-st="plain">1,082,270</span></td></tr>
+        <tr><td>EMS operating</td><td>Bidvest</td><td>Client receipts + loan transit</td><td class="n"><span class="money" data-zar="3608017.00" data-st="plain">3,608,017</span></td></tr>
+        <tr><td>EMS Mining</td><td>ABSA …757136</td><td>2025 collections — wound down</td><td class="n"><span class="money" data-zar="8743.00" data-st="plain">8,743</span></td></tr>
         <tr><td>EMS Mining Cheque</td><td>FNB …467681</td><td>Was overdrawn → cleared</td><td class="n">0</td></tr>
-        <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n">4,699,030</td></tr>
+        <tr class="tot"><td colspan="3">Total EMS cash</td><td class="n"><span class="money" data-zar="4699030.00" data-st="plain">4,699,030</span></td></tr>
       </tbody>
     </table>
 
@@ -127,18 +127,18 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
     <div class="domain snap">🟦 EMS accounting view · SmartBuilder <span class="stamp">snapshot · obligations 31 May 2026</span></div>
     <div class="risk">
       <h3>⚠ SARS risk — the defining issue</h3>
-      <div class="big">R64.5m tax arrears</div>
-      <p><b>PAYE R40.4m</b> (withheld from salaries, not remitted to SARS) + <b>VAT R24.1m</b>. Unpaid for years — cash was diverted to operations. SARS <b>can freeze accounts without a court order</b>. Before any receivables are collected, a <b>Section 167 instalment agreement</b> must be in place — otherwise SARS intercepts collections (R12.5m), and all new revenue is at risk.</p>
+      <div class="big"><span class="money" data-zar="64500000.00" data-st="m">R64.5m</span> tax arrears</div>
+      <p><b>PAYE <span class="money" data-zar="40400000.00" data-st="m">R40.4m</span></b> (withheld from salaries, not remitted to SARS) + <b>VAT <span class="money" data-zar="24100000.00" data-st="m">R24.1m</span></b>. Unpaid for years — cash was diverted to operations. SARS <b>can freeze accounts without a court order</b>. Before any receivables are collected, a <b>Section 167 instalment agreement</b> must be in place — otherwise SARS intercepts collections (<span class="money" data-zar="12500000.00" data-st="m">R12.5m</span>), and all new revenue is at risk.</p>
     </div>
     <div class="kgrid" style="margin-top:12px">
-      <div class="k"><div class="l">SARS arrears</div><div class="v red">R64.5m</div><div class="m">PAYE 40.4 + VAT 24.1</div></div>
-      <div class="k"><div class="l">Gross obligations</div><div class="v red">R88.2m</div><div class="m">SARS + AP</div></div>
-      <div class="k"><div class="l">Net exposure</div><div class="v red">R75.7m</div><div class="m">less AR R12.5m</div></div>
-      <div class="k"><div class="l">Investment (loan)</div><div class="v">R8.11m</div><div class="m">≈ 9% of obligations</div></div>
+      <div class="k"><div class="l">SARS arrears</div><div class="v red"><span class="money" data-zar="64500000.00" data-st="m">R64.5m</span></div><div class="m">PAYE 40.4 + VAT 24.1</div></div>
+      <div class="k"><div class="l">Gross obligations</div><div class="v red"><span class="money" data-zar="88200000.00" data-st="m">R88.2m</span></div><div class="m">SARS + AP</div></div>
+      <div class="k"><div class="l">Net exposure</div><div class="v red"><span class="money" data-zar="75700000.00" data-st="m">R75.7m</span></div><div class="m">less AR <span class="money" data-zar="12500000.00" data-st="m">R12.5m</span></div></div>
+      <div class="k"><div class="l">Investment (loan)</div><div class="v"><span class="money" data-zar="8110000.00" data-st="m">R8.11m</span></div><div class="m">≈ 9% of obligations</div></div>
     </div>
     <div class="sec">Total obligations — gross exposure <span>SmartBuilder · May 2026</span></div>
     <table>
-      <thead><tr><th>Obligation</th><th>Priority</th><th class="n">R</th></tr></thead>
+      <thead><tr><th>Obligation</th><th>Priority</th><th class="n"><span class="cursym">R</span></th></tr></thead>
       <tbody>
         <tr><td>SARS — PAYE</td><td><span class="tag t-stat">STATUTORY</span></td><td class="n">40.4m</td></tr>
         <tr><td>SARS — VAT</td><td><span class="tag t-stat">STATUTORY</span></td><td class="n">24.1m</td></tr>
@@ -155,42 +155,42 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
     <div class="two">
       <div>
         <div class="sec">AR — clients owe us <span>Jun 2026</span></div>
-        <div class="note" style="margin-top:0"><b>R12.5m</b> · TAU Mining R5.2m · Black Mountain R3.8m (overdue) · Take-On R4.5m</div>
+        <div class="note" style="margin-top:0"><b><span class="money" data-zar="12500000.00" data-st="m">R12.5m</span></b> · TAU Mining <span class="money" data-zar="5200000.00" data-st="m">R5.2m</span> · Black Mountain <span class="money" data-zar="3800000.00" data-st="m">R3.8m</span> (overdue) · Take-On <span class="money" data-zar="4500000.00" data-st="m">R4.5m</span></div>
         <div class="brow"><div class="blab">Current</div><div class="btr"><div class="bfl" style="width:56%"></div></div><div class="bamt">56%</div></div>
         <div class="brow"><div class="blab">30d</div><div class="btr"><div class="bfl" style="width:8%"></div></div><div class="bamt">8%</div></div>
         <div class="brow"><div class="blab">&gt;90d (overdue)</div><div class="btr"><div class="bfl" style="width:37%;background:var(--alert)"></div></div><div class="bamt">37%</div></div>
       </div>
       <div>
         <div class="sec">AP — we owe suppliers <span>May 2026</span></div>
-        <div class="note" style="margin-top:0"><b>R24.4m</b> (after Take-On contra) · Legal R15m · Rentals R4.9m</div>
+        <div class="note" style="margin-top:0"><b><span class="money" data-zar="24400000.00" data-st="m">R24.4m</span></b> (after Take-On contra) · Legal <span class="money" data-zar="15000000.00" data-st="m">R15m</span> · Rentals <span class="money" data-zar="4900000.00" data-st="m">R4.9m</span></div>
         <div class="brow"><div class="blab">Current / 30–60d</div><div class="btr"><div class="bfl" style="width:8%"></div></div><div class="bamt">~8%</div></div>
-        <div class="brow"><div class="blab">&gt;90d (overdue)</div><div class="btr"><div class="bfl" style="width:92%;background:var(--alert)"></div></div><div class="bamt">92% · R22.4m</div></div>
+        <div class="brow"><div class="blab">&gt;90d (overdue)</div><div class="btr"><div class="bfl" style="width:92%;background:var(--alert)"></div></div><div class="bamt">92% · <span class="money" data-zar="22400000.00" data-st="m">R22.4m</span></div></div>
         <div class="note">92% of payables overdue &gt;90 days — acute working-capital shortage.</div>
       </div>
     </div>
     <div class="sec">Cost structure — SmartBuilder GL <span>FY2026 cumulative · click to expand</span></div>
     <div id="costs">
-      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">R144.1m</div></div></div>
-      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R30.95m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R22.59m</span></div><div class="drow"><span>Mota-Engil</span><span>R17.81m</span></div><div class="drow"><span>Tharisa Phase 2</span><span>R17.26m</span></div><div class="drow"><span>Bushveld Vametco</span><span>R11.09m</span></div></div>
-      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">R66.1m</div></div></div>
-      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R41.21m</span></div><div class="drow"><span>Mota-Engil</span><span>R14.69m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R3.95m</span></div></div>
-      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt">R61.2m</div></div></div>
-      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R28.40m</span></div><div class="drow"><span>Mota-Engil</span><span>R16.24m</span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span>R8.26m</span></div></div>
-      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt">R19.1m</div></div></div>
-      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R17.96m</span></div><div class="drow"><span>Mota-Engil</span><span>R1.69m</span></div></div>
-      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt">R14.7m</div></div></div>
-      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span>R8.54m</span></div><div class="drow"><span>Mota-Engil</span><span>R2.54m</span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Salaries</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt"><span class="money" data-zar="144100000.00" data-st="m">R144.1m</span></div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span><span class="money" data-zar="30950000.00" data-st="m">R30.95m</span></span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span><span class="money" data-zar="22590000.00" data-st="m">R22.59m</span></span></div><div class="drow"><span>Mota-Engil</span><span><span class="money" data-zar="17810000.00" data-st="m">R17.81m</span></span></div><div class="drow"><span>Tharisa Phase 2</span><span><span class="money" data-zar="17260000.00" data-st="m">R17.26m</span></span></div><div class="drow"><span>Bushveld Vametco</span><span><span class="money" data-zar="11090000.00" data-st="m">R11.09m</span></span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Drill Rig Repairs &amp; Maint.</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt"><span class="money" data-zar="66100000.00" data-st="m">R66.1m</span></div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span><span class="money" data-zar="41210000.00" data-st="m">R41.21m</span></span></div><div class="drow"><span>Mota-Engil</span><span><span class="money" data-zar="14690000.00" data-st="m">R14.69m</span></span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span><span class="money" data-zar="3950000.00" data-st="m">R3.95m</span></span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Rock Tools (GET)</div><div class="btr"><div class="bfl" style="width:42%"></div></div><div class="bamt"><span class="money" data-zar="61200000.00" data-st="m">R61.2m</span></div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span><span class="money" data-zar="28400000.00" data-st="m">R28.40m</span></span></div><div class="drow"><span>Mota-Engil</span><span><span class="money" data-zar="16240000.00" data-st="m">R16.24m</span></span></div><div class="drow"><span>Tau — Gamsberg Zinc</span><span><span class="money" data-zar="8260000.00" data-st="m">R8.26m</span></span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Spares</div><div class="btr"><div class="bfl" style="width:13%"></div></div><div class="bamt"><span class="money" data-zar="19100000.00" data-st="m">R19.1m</span></div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span><span class="money" data-zar="17960000.00" data-st="m">R17.96m</span></span></div><div class="drow"><span>Mota-Engil</span><span><span class="money" data-zar="1690000.00" data-st="m">R1.69m</span></span></div></div>
+      <div class="dd" onclick="tg(this)"><div class="brow"><div class="blab ddlab">Oils / Lubricants</div><div class="btr"><div class="bfl" style="width:10%"></div></div><div class="bamt"><span class="money" data-zar="14700000.00" data-st="m">R14.7m</span></div></div></div>
+      <div class="detail"><div class="drow"><span>Tharisa Minerals</span><span><span class="money" data-zar="8540000.00" data-st="m">R8.54m</span></span></div><div class="drow"><span>Mota-Engil</span><span><span class="money" data-zar="2540000.00" data-st="m">R2.54m</span></span></div></div>
     </div>
     <div class="sec">Budget P&amp;L FY2027 — path to EBITDA+ <span>plan · Aug 2026 → Jun 2027</span></div>
-    <div class="note" style="margin-top:0">Revenue <b>R59.9m</b> over 11 months, EBITDA <b>+R1.2m</b> for the year. First EBITDA-positive — <b>Oct '26</b>, IF 5 contracts start Aug '26 (signed, not pipeline) and a SARS instalment agreement is in place.</div>
+    <div class="note" style="margin-top:0">Revenue <b><span class="money" data-zar="59900000.00" data-st="m">R59.9m</span></b> over 11 months, EBITDA <b>+<span class="money" data-zar="1200000.00" data-st="m">R1.2m</span></b> for the year. First EBITDA-positive — <b>Oct '26</b>, IF 5 contracts start Aug '26 (signed, not pipeline) and a SARS instalment agreement is in place.</div>
     <table style="margin-top:10px">
       <thead><tr><th>Month</th><th class="n">Revenue</th><th class="n">Gross profit</th><th class="n">EBITDA</th></tr></thead>
       <tbody>
-        <tr><td>Aug '26</td><td class="n">R3.3m</td><td class="n">R0.5m</td><td class="n neg">−R1.4m</td></tr>
-        <tr><td>Sep '26</td><td class="n">R4.6m</td><td class="n">R1.5m</td><td class="n neg">−R0.5m</td></tr>
-        <tr><td>Oct '26 ✓</td><td class="n">R5.7m</td><td class="n">R2.3m</td><td class="n pos">+R0.3m</td></tr>
-        <tr><td>Nov '26</td><td class="n">R5.9m</td><td class="n">R2.4m</td><td class="n pos">+R0.4m</td></tr>
-        <tr><td>Jun '27</td><td class="n">R5.9m</td><td class="n">R2.4m</td><td class="n pos">+R0.4m</td></tr>
+        <tr><td>Aug '26</td><td class="n"><span class="money" data-zar="3300000.00" data-st="m">R3.3m</span></td><td class="n"><span class="money" data-zar="500000.00" data-st="m">R0.5m</span></td><td class="n neg">−<span class="money" data-zar="1400000.00" data-st="m">R1.4m</span></td></tr>
+        <tr><td>Sep '26</td><td class="n"><span class="money" data-zar="4600000.00" data-st="m">R4.6m</span></td><td class="n"><span class="money" data-zar="1500000.00" data-st="m">R1.5m</span></td><td class="n neg">−<span class="money" data-zar="500000.00" data-st="m">R0.5m</span></td></tr>
+        <tr><td>Oct '26 ✓</td><td class="n"><span class="money" data-zar="5700000.00" data-st="m">R5.7m</span></td><td class="n"><span class="money" data-zar="2300000.00" data-st="m">R2.3m</span></td><td class="n pos">+<span class="money" data-zar="300000.00" data-st="m">R0.3m</span></td></tr>
+        <tr><td>Nov '26</td><td class="n"><span class="money" data-zar="5900000.00" data-st="m">R5.9m</span></td><td class="n"><span class="money" data-zar="2400000.00" data-st="m">R2.4m</span></td><td class="n pos">+<span class="money" data-zar="400000.00" data-st="m">R0.4m</span></td></tr>
+        <tr><td>Jun '27</td><td class="n"><span class="money" data-zar="5900000.00" data-st="m">R5.9m</span></td><td class="n"><span class="money" data-zar="2400000.00" data-st="m">R2.4m</span></td><td class="n pos">+<span class="money" data-zar="400000.00" data-st="m">R0.4m</span></td></tr>
       </tbody>
     </table>
     <div class="cav"><b>This is an accounting snapshot, not live cash.</b> Obligations — as of 31 May 2026; categories — cumulative GL FY2026; budget — plan. These blocks do not depend on the account selection. For live P&L, Grigory exports a fresh Transaction Listing.</div>
@@ -199,27 +199,27 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
   <!-- =================== DRILL TEC =================== -->
   <div data-view="drilltec" class="hide">
     <div class="pill">Drill Tec · FNB 62857146263 · trade-disbursement</div>
-    <div class="kgrid"><div class="k"><div class="l">Balance (09 Jul)</div><div class="v">R1.08m</div><div class="m">operating</div></div>
-      <div class="k"><div class="l">Received from EMS</div><div class="v">R5.00m</div><div class="m">from loan, 12 Jun</div></div>
+    <div class="kgrid"><div class="k"><div class="l">Balance (09 Jul)</div><div class="v"><span class="money" data-zar="1080000.00" data-st="m">R1.08m</span></div><div class="m">operating</div></div>
+      <div class="k"><div class="l">Received from EMS</div><div class="v"><span class="money" data-zar="5000000.00" data-st="m">R5.00m</span></div><div class="m">from loan, 12 Jun</div></div>
       <div class="k"><div class="l">Role</div><div class="v" style="font-size:14px">Suppliers</div><div class="m">+ salaries</div></div>
       <div class="k"><div class="l">Data</div><div class="v" style="font-size:14px">May–Jun 2026</div><div class="m"></div></div></div>
     <div class="sec">Top payments (12 Jun batch)</div>
-    <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">654,519</div></div>
-    <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt">630,510</div></div>
-    <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt">587,500</div></div>
-    <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt">300,000</div></div>
-    <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt">241,500</div></div>
-    <div class="note">Drill Tec is EMS's operating disbursement account: R5.0m from the loan arrived here, and it pays suppliers and salaries.</div>
+    <div class="brow"><div class="blab">HSS</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt"><span class="money" data-zar="654519.00" data-st="plain">654,519</span></div></div>
+    <div class="brow"><div class="blab">Salaries (multiple)</div><div class="btr"><div class="bfl" style="width:96%"></div></div><div class="bamt"><span class="money" data-zar="630510.00" data-st="plain">630,510</span></div></div>
+    <div class="brow"><div class="blab">All Africa Supplies</div><div class="btr"><div class="bfl" style="width:90%"></div></div><div class="bamt"><span class="money" data-zar="587500.00" data-st="plain">587,500</span></div></div>
+    <div class="brow"><div class="blab">Vestra Advisory</div><div class="btr"><div class="bfl" style="width:46%"></div></div><div class="bamt"><span class="money" data-zar="300000.00" data-st="plain">300,000</span></div></div>
+    <div class="brow"><div class="blab">Emperor Consulting</div><div class="btr"><div class="bfl" style="width:37%"></div></div><div class="bamt"><span class="money" data-zar="241500.00" data-st="plain">241,500</span></div></div>
+    <div class="note">Drill Tec is EMS's operating disbursement account: <span class="money" data-zar="5000000.00" data-st="m">R5.0m</span> from the loan arrived here, and it pays suppliers and salaries.</div>
   </div>
 
   <!-- =================== BIDVEST =================== -->
   <div data-view="bidvest" class="hide">
     <div class="pill">Bidvest · client receipts + loan transit</div>
-    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R3.61m</div><div class="m">as of 03 Jul (loan just landed)</div></div>
-      <div class="k"><div class="l">Loan passed through</div><div class="v">R8.11m</div><div class="m">12 Jun</div></div>
-      <div class="k"><div class="l">Revenue/mo</div><div class="v">~R1.1m</div><div class="m">Mota-Engil</div></div>
+    <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v"><span class="money" data-zar="3610000.00" data-st="m">R3.61m</span></div><div class="m">as of 03 Jul (loan just landed)</div></div>
+      <div class="k"><div class="l">Loan passed through</div><div class="v"><span class="money" data-zar="8110000.00" data-st="m">R8.11m</span></div><div class="m">12 Jun</div></div>
+      <div class="k"><div class="l">Revenue/mo</div><div class="v">~<span class="money" data-zar="1100000.00" data-st="m">R1.1m</span></div><div class="m">Mota-Engil</div></div>
       <div class="k"><div class="l">Data</div><div class="v" style="font-size:14px">Feb–Jun 2026</div><div class="m"></div></div></div>
-    <div class="note" style="margin-top:6px">📌 <b>12 June — drawdown R8.11m</b> arrived here and split: → Drill Tec R5.0m, → EMS FNB R2.21m. (details — on the 🎬 Day Zero tab)</div>
+    <div class="note" style="margin-top:6px">📌 <b>12 June — drawdown <span class="money" data-zar="8110000.00" data-st="m">R8.11m</span></b> arrived here and split: → Drill Tec <span class="money" data-zar="5000000.00" data-st="m">R5.0m</span>, → EMS FNB <span class="money" data-zar="2210000.00" data-st="m">R2.21m</span>. (details — on the 🎬 Day Zero tab)</div>
     <div class="sec">Client receipts</div>
     <div class="brow"><div class="blab">Mota-Engil (monthly)</div><div class="btr"><div class="bfl" style="width:100%"></div></div><div class="bamt">~1,111,863</div></div>
     <div class="brow"><div class="blab">→ Drill Tec / Investerra</div><div class="btr"><div class="bfl" style="width:75%"></div></div><div class="bamt">operations</div></div>
@@ -241,17 +241,17 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
       <div class="col dead"><div class="bar2" style="height:2%"></div></div><div class="col dead"><div class="bar2" style="height:2%"></div></div>
     </div>
     <div class="xlabels"><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div></div>
-    <div class="note">Peak <b>R7.2m</b> in Oct 2025 (clients: Mota-Engil, Black Mountain, Acumen). Since March 2026 the account is dormant (grey bars), balance ~R9.4k — collections moved to Bidvest.</div>
+    <div class="note">Peak <b><span class="money" data-zar="7200000.00" data-st="m">R7.2m</span></b> in Oct 2025 (clients: Mota-Engil, Black Mountain, Acumen). Since March 2026 the account is dormant (grey bars), balance ~<span class="money" data-zar="9400.00" data-st="k">R9.4k</span> — collections moved to Bidvest.</div>
   </div>
 
   <!-- =================== FNB EMS =================== -->
   <div data-view="fnb" class="hide">
     <div class="pill">FNB EMS Mining Cheque 62322467681</div>
     <div class="kgrid"><div class="k"><div class="l">Balance</div><div class="v">R0</div><div class="m">overdraft cleared</div></div>
-      <div class="k"><div class="l">Was</div><div class="v neg">−R2.21m</div><div class="m">before 12 June</div></div>
-      <div class="k"><div class="l">Received</div><div class="v">R2.21m</div><div class="m">from loan</div></div>
+      <div class="k"><div class="l">Was</div><div class="v neg">−<span class="money" data-zar="2210000.00" data-st="m">R2.21m</span></div><div class="m">before 12 June</div></div>
+      <div class="k"><div class="l">Received</div><div class="v"><span class="money" data-zar="2210000.00" data-st="m">R2.21m</span></div><div class="m">from loan</div></div>
       <div class="k"><div class="l">Data</div><div class="v" style="font-size:14px">May–Jun 2026</div><div class="m"></div></div></div>
-    <div class="note">The account was overdrawn −R2.21m (accruing debt interest). On 12 June R2,207,979 arrived from the loan (via Bidvest) → overdraft cleared, balance R0.</div>
+    <div class="note">The account was overdrawn −<span class="money" data-zar="2210000.00" data-st="m">R2.21m</span> (accruing debt interest). On 12 June <span class="money" data-zar="2207979.00" data-st="rplain">R2,207,979</span> arrived from the loan (via Bidvest) → overdraft cleared, balance R0.</div>
   </div>
 
   <!-- =================== 🎬 DAY ZERO =================== -->
@@ -262,26 +262,26 @@ tr.tot td{font-weight:700;border-top:1px solid var(--ink);border-bottom:none}
       <div class="zcol">
         <h4>⬅ Before investment (2025 → 31 May 2026)</h4>
         <ul>
-          <li>EMS self-funded — client revenue via ABSA (peak <b>R7.2m/mo</b>)</li>
-          <li>FNB cheque overdrawn <b class="neg">−R2.21m</b></li>
-          <li>SARS arrears <b class="neg">R64.5m</b> · obligations <b class="neg">R88.2m</b></li>
+          <li>EMS self-funded — client revenue via ABSA (peak <b><span class="money" data-zar="7200000.00" data-st="m">R7.2m</span>/mo</b>)</li>
+          <li>FNB cheque overdrawn <b class="neg">−<span class="money" data-zar="2210000.00" data-st="m">R2.21m</span></b></li>
+          <li>SARS arrears <b class="neg"><span class="money" data-zar="64500000.00" data-st="m">R64.5m</span></b> · obligations <b class="neg"><span class="money" data-zar="88200000.00" data-st="m">R88.2m</span></b></li>
           <li>External capital: <b>0</b></li>
         </ul>
       </div>
       <div class="zcol">
         <h4>➡ After (from 12 June 2026)</h4>
         <ul>
-          <li>Loan received <b class="grn">R8.11m</b> (Drawdown 01)</li>
-          <li>Drill Tec <b>+R5.0m</b> · EMS FNB <b>+R2.21m</b> (overdraft → R0)</li>
-          <li>EMS cash: <b>R2.32m</b></li>
+          <li>Loan received <b class="grn"><span class="money" data-zar="8110000.00" data-st="m">R8.11m</span></b> (Drawdown 01)</li>
+          <li>Drill Tec <b>+<span class="money" data-zar="5000000.00" data-st="m">R5.0m</span></b> · EMS FNB <b>+<span class="money" data-zar="2210000.00" data-st="m">R2.21m</span></b> (overdraft → R0)</li>
+          <li>EMS cash: <b><span class="money" data-zar="2320000.00" data-st="m">R2.32m</span></b></li>
           <li>Obligations unchanged — loan ≈ <b>9%</b> of them</li>
         </ul>
       </div>
     </div>
     <div class="sec">How the loan was distributed — 12 June 2026</div>
-    <div class="step"><div class="n">1</div><div>Drawdown 01 from Claim Co arrived in <b>EMS Bidvest</b></div><div class="a">+R8,114,083</div></div>
-    <div class="step"><div class="n">2</div><div>→ <b>Drill Tec</b> (operations, suppliers, salaries)</div><div class="a">R5,000,000</div></div>
-    <div class="step"><div class="n">3</div><div>→ <b>EMS Mining FNB</b> (cleared overdraft −R2.21m → R0)</div><div class="a">R2,207,979</div></div>
+    <div class="step"><div class="n">1</div><div>Drawdown 01 from Claim Co arrived in <b>EMS Bidvest</b></div><div class="a">+<span class="money" data-zar="8114083.00" data-st="rplain">R8,114,083</span></div></div>
+    <div class="step"><div class="n">2</div><div>→ <b>Drill Tec</b> (operations, suppliers, salaries)</div><div class="a"><span class="money" data-zar="5000000.00" data-st="rplain">R5,000,000</span></div></div>
+    <div class="step"><div class="n">3</div><div>→ <b>EMS Mining FNB</b> (cleared overdraft −<span class="money" data-zar="2210000.00" data-st="m">R2.21m</span> → R0)</div><div class="a"><span class="money" data-zar="2207979.00" data-st="rplain">R2,207,979</span></div></div>
     <div class="cav">Day Zero is fixed manually and is not rebuilt automatically — it is the "mile zero" for comparing EMS's progress going forward.</div>
   </div>
 
@@ -300,5 +300,22 @@ function setBank(t){activeBank=t.getAttribute('data-bank');document.querySelecto
 function apply(){document.querySelectorAll('[data-view]').forEach(function(el){el.classList.toggle('hide', el.getAttribute('data-view')!==activeBank);});}
 apply();
 </script>
-</body>
+<div id="curbar" style="position:fixed;top:10px;right:12px;z-index:200;text-align:right;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<button id="curbtn" onclick="toggleCur()" style="border:1px solid #1A1A1A;background:#FCFAF4;border-radius:3px;padding:5px 11px;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer">Показать в USD</button>
+<div style="color:#8A8A82;font-size:10px;margin-top:3px">1 USD = R16.45 · ECB 9 Jun 2026</div></div><script>
+var FX={rate:16.4535,date:"9 Jun 2026",src:"ECB"},CUR="ZAR";
+function _usd(z,st){var u=z/FX.rate;
+  if(st==='m')return '$'+(u/1e6).toFixed(2)+'m';
+  if(st==='k')return '$'+(u/1e3).toFixed(1)+'k';
+  return '$'+Math.round(u).toLocaleString('en-US');}
+function applyCur(){
+  document.querySelectorAll('.money').forEach(function(el){
+    if(el._z0===undefined)el._z0=el.textContent;
+    el.textContent=(CUR==='ZAR')?el._z0:_usd(parseFloat(el.dataset.zar),el.dataset.st);});
+  document.querySelectorAll('.cursym').forEach(function(el){
+    if(el._s0===undefined)el._s0=el.textContent; el.textContent=(CUR==='ZAR')?el._s0:'USD';});
+  var b=document.getElementById('curbtn'); if(b)b.textContent=(CUR==='ZAR')?'Показать в USD':'Показать в ZAR';}
+function toggleCur(){CUR=(CUR==='ZAR')?'USD':'ZAR';applyCur();}
+document.addEventListener('DOMContentLoaded',applyCur);
+</script></body>
 </html>
