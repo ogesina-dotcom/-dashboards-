@@ -90,6 +90,7 @@ def classify_raw(desc, ref, amt):
     # Toyota Financial Services — погашение автокредита EMS (settlement quote ref 86135822030)
     if "86135822030" in t or "TOYOTA" in t: return "Claim Acquisition", False, "Toyota Financial Services (EMS vehicle finance)"
     if "FNB OBE" in t: return "Bank Charges", False, "FNB"
+    if "SERVICE FEE" in t: return "Bank Charges", False, "FNB"
     if any(k in t for k in ("SWIFT COMMISSION", "INWARD SWIFT", "FOREX TRANSFER", "SWIFT CORRECTION")):
         return "Bank Charges", False, "FNB"
     if ("TRF" in t or "TRANSFER FUNDS" in t) and ("SA MINERALS" in t or "TRANSFER FUNDS" in t):
