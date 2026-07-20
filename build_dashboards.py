@@ -72,6 +72,12 @@ ACC = {"63209738939": "Asset Co", "63209745116": "Claim Co"}
 OVERRIDES = {
     ("2026-06-22", -845375.09): {"category": "Claim Acquisition",
                                  "counterparty": "Wilrock Properties (Pty) Ltd"},
+    ("2026-07-14", -135072.16): {"category": "Operating Expense — Advisory",
+                                 "counterparty": "Chris Wood (advisor)"},
+    ("2026-07-15", -1604373.02): {"category": "Claim Acquisition",
+                                  "counterparty": "EMS creditor (agreement EMS001/2)"},
+    ("2026-07-17", -150000.00): {"category": "Claim Acquisition",
+                                 "counterparty": "Wilrock Properties (Pty) Ltd"},
 }
 
 def classify_raw(desc, ref, amt):
